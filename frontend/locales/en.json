@@ -1,0 +1,26 @@
+{
+  "app": {
+    "name": "ShebaShathi BD",
+    "tagline": "Official info, in simple language"
+  },
+  "nav": {
+    "fees": "Fee Calculator",
+    "wizard": "Service Wizard",
+    "copilot": "Copilot",
+    "grs": "GRS Draft",
+    "redflag": "Red Flag"
+  },
+  "footer": {
+    "disclaimer": "Independent tool, not a government website.",
+    "visit_official": "Visit official passport website"
+  },
+  "pages": {
+    "home": {
+      "hero": {
+        "title": "Correct passport info, in simple language",
+        "desc": "Official fees, exact documents, and a safe way to report issues."
+      },
+      "cta": "Get started"
+    }
+  }
+}
