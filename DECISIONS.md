@@ -1,0 +1,36 @@
+# Decisions Log
+
+Record of decisions made during development.
+
+| Date | Task | What Changed | Why |
+|------|------|--------------|-----|
+| 2026-10-14 | Scope definition | e-Passport MVP only | Planner §0 rule 1 |
+| 2026-10-14 | Stack selection | Next.js + FastAPI | Planner §4 architecture |
+| 2026-10-14 | Fee data | Full official domestic fee totals stored in `data/fees.json`; VAT is included in published totals. | Deterministic engine (§0 rule 5) |
+| 2026-10-14 | Credential storage | `.env.example` used | No secrets in repo (§15) |
+| 2026-10-14 | RAG fallback | Return a cited source excerpt when no optional generation API is configured. | Preserve grounding without claiming an unavailable model. |
+| 2026-10-14 | GRS template | Neutral, user-supplied facts only | Legal exposure mitigation (§14) |
+| 2026-10-14 | Testing | Pytest for backend | Deterministic engine verification |
+| 2026-10-15 | UX & Readiness | Added responsive `/wizard` and GRS print flows, local Noto Sans Bengali for PDF glyphs, aligned red-flag totals, and repaired backend startup/data paths. | Close the missing UX/PDF gaps and make API outputs consistent. |
+| 2026-10-15 | RAG and ML integration | Keep one multilingual embedder in `ml_core/ml/embeddings`; Chroma retrieval, verification, and optional API generation live in the backend. | Remove duplicate unused pipeline and avoid claiming a local generator. |
+| 2026-10-15 | Official data | Verified fee table and application instructions; added source snapshots with URLs and check dates. | Keep fee and age-specific checklist rules traceable to official sources. |
+| 2026-10-15 | PDF export | Use browser print-to-PDF with local Noto Sans Bengali instead of jsPDF. | Preserve Bangla shaping without adding font conversion dependencies. |
+| 2026-10-16 | Frontend security | Upgrade to patched Next.js 15.5.x, remove unused jsPDF packages, and pin patched PostCSS for production dependencies. | Clear production audit findings without migrating the Tailwind 3 UI to Tailwind 4. |
+| 2026-10-17 | P5-1 | Added a validated service catalog (`data/services/index.json` + per-service files) with a common contract (documents + tasks with `questions`, conditional `documents`, `steps`, `warnings`, `official_links`); the loader fails closed on missing `service_id`/`https` source/`last_verified`. | Planner §3.3/§6: keep each service's rules separate and every user-facing fact source-dated. |
+| 2026-10-17 | P5-1/§6 | Kept legacy `/api/checklist` (e-Passport) unchanged and added namespaced `GET /api/services`, `GET /api/services/{id}`, `POST /api/services/{id}/checklist`. | Avoid regressing the working e-Passport product while enabling new services. |
+| 2026-10-17 | §7.1 | Renamed the Chroma collection to `sources` and required `service_id` front matter in every corpus file; retrieval filters by `service_id`. | Prevent one authority's content from silently answering another service's question. |
+| 2026-10-17 | P5-3/P6/P8/P9 | Authored birth registration, NID, driving licence, and death registration service data from official sources checked the same day (see `data/VERIFICATION_LOG.md`). | Ship one source-checked guide per service area per Planner §0/§11. |
+| 2026-10-17 | P5-2/P6-3 | Added `/services`, `/services/[serviceId]`, `/services/[serviceId]/guide`, and a service selector in `/copilot`; all reuse a single conditional-checklist UI and show a persistent service label. | Reusable, bilingual service navigation and service-scoped retrieval/citations. |
+| 2026-10-17 | P7 | Added `/identity-check`, a browser-only comparison of user-chosen name/date/parent fields. Values live in component memory, are never sent to the API, cached, or logged; the page links to correction guides instead of advising a value. | Planner §2.2 R3 and §10: privacy-preserving consistency check that does not authenticate or decide legality. |
+| 2026-10-17 | §6 copilot scope | `/api/copilot/ask` accepts an optional `service_id` (validated, 404 if unknown/disabled) and uses that service's configured fallback; requests without `service_id` keep the legacy e-Passport behavior. | Scope retrieval/fallbacks to an authority while preserving existing e-Passport callers and tests. |
+| 2026-10-17 | RAG index | Added a backend-only fallback in `app/rag/retriever.py`: try `LocalEmbedder.get_instance(model)`, and on the pre-existing `ml_core` `TypeError` use the documented no-argument `LocalEmbedder()` singleton (same `EMBEDDING_MODEL` env). `ml_core/` was not modified. | The catalog rebuild and live retrieval were blocked by the `ml_core` constructor rejecting `model_name`; the workaround keeps the stack constraint and makes RAG usable. |
+| 2026-10-17 | P2-4 | Added `backend/app/tests/eval_questions.json` (30 grounded questions across 7 categories) and offline runner `test_eval_offline.py` (shape, mocked-retrieval answer, fallback, and verifier-rejection checks). | Planner §9/§15: a real evaluation set with rejection/fallback cases, runnable without live model downloads. |
+| 2026-10-17 | P2 freshness | Added `app/services/freshness.py` (180-day review window, 30-day due-soon, fail-closed unknown), exposed `review_status`/`review_after_days` on both checklist APIs, and showed a colored badge on `/services`, `/services/[id]`, and the guide page. | Planner §8/§10: surface stale verified data instead of hiding it; deterministic rules only. |
+| 2026-10-17 | P4-2/P4-3 | Wrote `docs/DEPLOYMENT.md` (Render + Vercel steps, production checklist), `docs/DEMO_SCRIPT.md` (3-minute script + backup-recording checklist), and `docs/UX_CHECKS.md` (local lint/build/mobile notes; no Lighthouse score claimed). | Planner §13.3/§15: deployment runbook and demo instructions without fabricating a live URL or scores. |
+
+## Open Questions
+
+- [ ] Actual LLM API key (to be provided by user)
+- [ ] ChromaDB credentials (local, no auth needed)
+- [ ] Deployment environment (Vercel + Render/Fly)
+

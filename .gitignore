@@ -1,0 +1,13 @@
+.env
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.chroma/
+.cache/
+.model_cache/
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+.tmp-test/
+.tmp-*.log
