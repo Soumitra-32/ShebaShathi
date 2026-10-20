@@ -1,0 +1,157 @@
+{
+  "service_url": "https://epassport.gov.bd/instructions/instructions",
+  "last_verified": "2026-10-15",
+  "source_updated": "2026-08-03",
+  "scenarios": [
+    {
+      "id": "first_time_adult",
+      "label_bn": "প্রথমবারের প্রাপ্তবয়স্ক আবেদন",
+      "label_en": "First application (adult)",
+      "required_documents": [
+        "identity_record"
+      ],
+      "optional_documents": [
+        "technical_certificate"
+      ]
+    },
+    {
+      "id": "minor",
+      "label_bn": "অপ্রাপ্তবয়স্ক আবেদনকারী",
+      "label_en": "Minor applicant",
+      "required_documents": [
+        "identity_record"
+      ],
+      "optional_documents": [
+        "parent_nid",
+        "child_photo"
+      ]
+    },
+    {
+      "id": "renewal",
+      "label_bn": "রি-ইস্যু / নবায়ন",
+      "label_en": "Re-issue / renewal",
+      "required_documents": [
+        "identity_record",
+        "previous_passport"
+      ],
+      "optional_documents": [
+        "technical_certificate"
+      ]
+    },
+    {
+      "id": "lost_passport",
+      "label_bn": "হারানো পাসপোর্টের রি-ইস্যু",
+      "label_en": "Re-issue for a lost passport",
+      "required_documents": [
+        "identity_record",
+        "lost_previous_copy",
+        "gd_report"
+      ],
+      "optional_documents": []
+    }
+  ],
+  "documents": [
+    {
+      "id": "identity_record",
+      "label_bn": "বয়স অনুযায়ী জাতীয় পরিচয়পত্র (NID) অথবা ইংরেজি জন্মনিবন্ধন সনদ (BRC)",
+      "label_en": "National ID (NID) or English Birth Registration Certificate (BRC), according to age",
+      "required": true,
+      "notes_bn": "আবেদনকারীর বয়স অনুযায়ী পরিচয়পত্র প্রযোজ্য: ১৮ বছরের কম হলে ইংরেজি BRC; ১৮–২০ বছর হলে NID অথবা ইংরেজি BRC; ২০ বছরের বেশি হলে NID। আবেদনের তথ্য এই নথির সঙ্গে মিলিয়ে পূরণ করুন।",
+      "notes_en": "The official instructions specify English BRC under 18; NID or English BRC from 18 to 20; and NID over 20. Complete the application to match the applicable record.",
+      "source_url": "https://epassport.gov.bd/instructions/instructions",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "id": "parent_nid",
+      "label_bn": "পিতা অথবা মাতার জাতীয় পরিচয়পত্র (NID)",
+      "label_en": "Father or mother's National ID (NID)",
+      "required": true,
+      "notes_bn": "১৮ বছরের কম বয়সী আবেদনকারীর নিজের NID না থাকলে আবেদনপত্রে পিতা অথবা মাতার NID নম্বর দিতে হবে।",
+      "notes_en": "For an applicant under 18 without an NID, the application must include the father or mother's NID number.",
+      "source_url": "https://epassport.gov.bd/instructions/instructions",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "id": "previous_passport",
+      "label_bn": "আগের পাসপোর্ট",
+      "label_en": "Previous passport",
+      "required": true,
+      "notes_bn": "রি-ইস্যুর সময় মূল আগের পাসপোর্ট দেখাতে হবে।",
+      "notes_en": "The official instructions say to present the original previous passport for re-issue.",
+      "source_url": "https://epassport.gov.bd/instructions/instructions",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "id": "gd_report",
+      "label_bn": "পাসপোর্ট হারানো বা চুরির ক্ষেত্রে মূল সাধারণ ডায়েরি (জিডি) কপি",
+      "label_en": "Original general diary (GD) copy for a lost or stolen passport",
+      "required": true,
+      "notes_bn": "পাসপোর্ট হারালে বা চুরি হলে নিকটস্থ থানায় জিডি করতে এবং রি-ইস্যু আবেদনের সঙ্গে জিডির কপি দিতে বলা হয়েছে।",
+      "notes_en": "For a lost or stolen passport, the official instructions say to report it to the nearest police station and provide the GD copy with the re-issue application.",
+      "source_url": "https://epassport.gov.bd/instructions/instructions",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "id": "lost_previous_copy",
+      "label_bn": "হারানো পাসপোর্টের ফটোকপি",
+      "label_en": "Photocopy of the previous passport",
+      "required": true,
+      "notes_bn": "হারানো পাসপোর্টের রি-ইস্যু আবেদনের সঙ্গে আগের পাসপোর্টের ফটোকপি দিতে বলা হয়েছে।",
+      "notes_en": "The official instructions say to submit a photocopy of the previous passport with a lost-passport re-issue application.",
+      "source_url": "https://epassport.gov.bd/instructions/instructions",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "id": "child_photo",
+      "label_bn": "ছয় বছরের কম শিশুর ৩R মাপের ছবি",
+      "label_en": "3R-size photograph for a child under six",
+      "required": false,
+      "notes_bn": "ছয় বছরের কম বয়সী আবেদনকারীর জন্য ৩R সাইজের ল্যাব-প্রিন্ট, ধূসর পটভূমির ছবি জমা দিতে বলা হয়েছে।",
+      "notes_en": "The instructions specify a 3R-size lab-printed photo with a grey background for applicants under six.",
+      "source_url": "https://epassport.gov.bd/instructions/instructions",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "id": "technical_certificate",
+      "label_bn": "প্রযোজ্য হলে পেশাসংক্রান্ত কারিগরি সনদ",
+      "label_en": "Relevant technical certificate, if applicable",
+      "required": false,
+      "notes_bn": "ডাক্তার, প্রকৌশলী বা চালকের মতো প্রাসঙ্গিক পেশার কারিগরি সনদ আপলোড বা সংযুক্ত করতে বলা হয়েছে।",
+      "notes_en": "The official instructions call for relevant technical certificates (for example, doctor, engineer, or driver) to be uploaded or attached.",
+      "source_url": "https://epassport.gov.bd/instructions/instructions",
+      "last_verified": "2026-10-15"
+    }
+  ],
+  "payment_channels": [
+    {
+      "id": "a_challan_online",
+      "label_bn": "অনলাইনে A-Challan",
+      "label_en": "A-Challan online",
+      "source_url": "https://www.epassport.gov.bd/instructions/passport-fees",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "id": "dgepay",
+      "label_bn": "DGePay",
+      "label_en": "DGePay",
+      "source_url": "https://www.epassport.gov.bd/instructions/passport-fees",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "id": "shurjopay",
+      "label_bn": "ShurjoPay",
+      "label_en": "ShurjoPay",
+      "source_url": "https://www.epassport.gov.bd/instructions/passport-fees",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "id": "a_challan_bank",
+      "label_bn": "সরকারি বা বেসরকারি ব্যাংকে A-Challan",
+      "label_en": "A-Challan at a government or private bank",
+      "source_url": "https://www.epassport.gov.bd/instructions/passport-fees",
+      "last_verified": "2026-10-15"
+    }
+  ],
+  "checklist_notice_bn": "এই তালিকা সরকারি নির্দেশনার সারাংশ; আবেদনকারীর ক্ষেত্রে সম্পূর্ণ নথির তালিকা জানতে সরকারি পোর্টালে যাচাই করুন।",
+  "checklist_notice_en": "This checklist summarizes official instructions; check the official portal for the complete document requirements that apply to you."
+}

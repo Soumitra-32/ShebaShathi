@@ -1,0 +1,16 @@
+  "payment_channels": [
+    { "id": "a_challan", "label_bn": "এ-চ্যালান", "label_en": "A-Challan", "description_bn": "ব্যাংক শাখায় বা অনলাইনে", "description_en": "Bank branch or online" },
+    { "id": "dgepay", "label_bn": "ডিজি পেয়", "label_en": "DGePay", "description_bn": "ডায়ালগ ই-কমার্স অ্যাপে", "description_en": "Via Dialog eCommerce app" },
+    { "id": "shurjopay", "label_bn": "শুর্জপায়", "label_en": "ShurjoPay", "description_bn": "বিকাশ অ্যাপের মাধ্যমে", "description_en": "Via bKash app" },
+    { "id": "bank_counter", "label_bn": "ব্যাংক কাউন্টার", "label_en": "Bank Counter", "description_bn": "নির্ধারিত ব্যাংক শাখায়", "description_en": "Designated bank counter" }
+  ],
+  "eligibility_checks": [
+    { "id": "min_age", "label_bn": "কমপক্ষে বয়স ১২ বছর", "label_en": "Minimum age 12 years", "check": "age >= 12" },
+    { "id": "nid_required", "label_bn": "NID থাকতে হবে", "label_en": "NID required", "check": "has_nid === true" }
+  ],
+  "rules": [
+    { "id": "no_cash_at_office", "label_bn": "ক্যাশ গ্রহণ করা হবে না", "label_en": "Cash not accepted at office" },
+    { "id": "no_document_attestation", "label_bn": "দলালের কাছ থেকে নথি অ্যাটেস্টেশন লাগবে না", "label_en": "No document attestation from dalal" },
+    { "id": "independent_tool", "label_bn": "স্বাধীন সরঞ্জাম, কোন সরকারি ওয়েবসাইট নয়", "label_en": "Independent tool, not a government website" }
+  ]
+}

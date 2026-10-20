@@ -1,0 +1,199 @@
+{
+  "service_id": "epassport",
+  "service_name_bn": "ই-পাসপোর্ট",
+  "service_name_en": "e-Passport",
+  "authority_bn": "ইমিগ্রেশন ও পাসপোর্ট অধিদপ্তর",
+  "authority_en": "Department of Immigration and Passports",
+  "summary_bn": "নতুন আবেদন, নবায়ন/রি-ইস্যু এবং হারানো পাসপোর্টের জন্য প্রয়োজনীয় নথি ও ধাপ। ফি ও বিতরণ সময় আলাদা ফি ক্যালকুলেটরে যাচাই করুন।",
+  "summary_en": "Documents and steps for new applications, renewal/re-issue, and lost passports. Verify fees and delivery timelines in the fee tool.",
+  "source_url": "https://epassport.gov.bd/instructions/instructions",
+  "last_verified": "2026-10-15",
+  "fallback_bn": "এই সুনির্দিষ্ট তথ্যটি যাচাই করা সরকারি উৎসে পাওয়া যায়নি। অনুগ্রহ করে epassport.gov.bd দেখুন।",
+  "fallback_en": "The available official sources do not specify this. Please check epassport.gov.bd.",
+  "official_links": [
+    {"label_bn": "সরকারি ই-পাসপোর্ট পোর্টাল", "label_en": "Official e-Passport portal", "url": "https://www.epassport.gov.bd/"},
+    {"label_bn": "সরকারি আবেদন নির্দেশনা", "label_en": "Official application instructions", "url": "https://epassport.gov.bd/instructions/instructions"},
+    {"label_bn": "ফি তালিকা", "label_en": "Fee schedule", "url": "https://www.epassport.gov.bd/instructions/passport-fees"}
+  ],
+  "documents": [
+    {
+      "id": "identity_record",
+      "label_bn": "বয়স অনুযায়ী জাতীয় পরিচয়পত্র (NID) অথবা ইংরেজি জন্মনিবন্ধন সনদ (BRC)",
+      "label_en": "National ID (NID) or English Birth Registration Certificate (BRC), according to age",
+      "notes_bn": "আবেদনকারীর বয়স অনুযায়ী পরিচয়পত্র প্রযোজ্য: ১৮ বছরের কম হলে ইংরেজি BRC; ১৮–২০ বছর হলে NID অথবা ইংরেজি BRC; ২০ বছরের বেশি হলে NID। আবেদনের তথ্য এই নথির সঙ্গে মিলিয়ে পূরণ করুন।",
+      "notes_en": "The official instructions specify English BRC under 18; NID or English BRC from 18 to 20; and NID over 20. Complete the application to match the applicable record.",
+      "source_url": "https://epassport.gov.bd/instructions/instructions",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "id": "parent_nid",
+      "label_bn": "পিতা অথবা মাতার জাতীয় পরিচয়পত্র (NID)",
+      "label_en": "Father or mother's National ID (NID)",
+      "notes_bn": "১৮ বছরের কম বয়সী আবেদনকারীর নিজের NID না থাকলে আবেদনপত্রে পিতা অথবা মাতার NID নম্বর দিতে হবে।",
+      "notes_en": "For an applicant under 18 without an NID, the application must include the father or mother's NID number.",
+      "source_url": "https://epassport.gov.bd/instructions/instructions",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "id": "previous_passport",
+      "label_bn": "আগের পাসপোর্ট",
+      "label_en": "Previous passport",
+      "notes_bn": "রি-ইস্যুর সময় মূল আগের পাসপোর্ট দেখাতে হবে।",
+      "notes_en": "The official instructions say to present the original previous passport for re-issue.",
+      "source_url": "https://epassport.gov.bd/instructions/instructions",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "id": "gd_report",
+      "label_bn": "পাসপোর্ট হারানো বা চুরির ক্ষেত্রে মূল সাধারণ ডায়েরি (জিডি) কপি",
+      "label_en": "Original general diary (GD) copy for a lost or stolen passport",
+      "notes_bn": "পাসপোর্ট হারালে বা চুরি হলে নিকটস্থ থানায় জিডি করতে এবং রি-ইস্যু আবেদনের সঙ্গে জিডির কপি দিতে বলা হয়েছে।",
+      "notes_en": "For a lost or stolen passport, the official instructions say to report it to the nearest police station and provide the GD copy with the re-issue application.",
+      "source_url": "https://epassport.gov.bd/instructions/instructions",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "id": "lost_previous_copy",
+      "label_bn": "হারানো পাসপোর্টের ফটোকপি",
+      "label_en": "Photocopy of the previous passport",
+      "notes_bn": "হারানো পাসপোর্টের রি-ইস্যু আবেদনের সঙ্গে আগের পাসপোর্টের ফটোকপি দিতে বলা হয়েছে।",
+      "notes_en": "The official instructions say to submit a photocopy of the previous passport with a lost-passport re-issue application.",
+      "source_url": "https://epassport.gov.bd/instructions/instructions",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "id": "child_photo",
+      "label_bn": "ছয় বছরের কম শিশুর ৩R মাপের ছবি",
+      "label_en": "3R-size photograph for a child under six",
+      "notes_bn": "ছয় বছরের কম বয়সী আবেদনকারীর জন্য ৩R সাইজের ল্যাব-প্রিন্ট, ধূসর পটভূমির ছবি জমা দিতে বলা হয়েছে।",
+      "notes_en": "The instructions specify a 3R-size lab-printed photo with a grey background for applicants under six.",
+      "source_url": "https://epassport.gov.bd/instructions/instructions",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "id": "technical_certificate",
+      "label_bn": "প্রযোজ্য হলে পেশাসংক্রান্ত কারিগরি সনদ",
+      "label_en": "Relevant technical certificate, if applicable",
+      "notes_bn": "ডাক্তার, প্রকৌশলী বা চালকের মতো প্রাসঙ্গিক পেশার কারিগরি সনদ আপলোড বা সংযুক্ত করতে বলা হয়েছে।",
+      "notes_en": "The official instructions call for relevant technical certificates (for example, doctor, engineer, or driver) to be uploaded or attached.",
+      "source_url": "https://epassport.gov.bd/instructions/instructions",
+      "last_verified": "2026-10-15"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "first_time_adult",
+      "label_bn": "প্রথমবারের আবেদন (প্রাপ্তবয়স্ক)",
+      "label_en": "First application (adult)",
+      "questions": [
+        {"field": "age", "type": "number", "required": true, "min": 18, "max": 120, "label_bn": "আবেদনকারীর বয়স", "label_en": "Applicant's age"}
+      ],
+      "documents": [
+        {"id": "identity_record", "required": true, "conditions": []},
+        {"id": "technical_certificate", "required": false, "conditions": []}
+      ],
+      "steps_bn": [
+        "সরকারি e-Passport পোর্টালে নতুন আবেদন পূরণ করুন।",
+        "ফি তালিকায় দেখানো মোট টাকা নির্ধারিত পেমেন্ট মাধ্যমে পরিশোধ করুন।",
+        "বায়োমেট্রিক তথ্য দেওয়ার জন্য নির্ধারিত পাসপোর্ট অফিসে যান।",
+        "আবেদন ও সংগ্রহ-সংক্রান্ত হালনাগাদ নির্দেশনা সরকারি পোর্টালে দেখুন।"
+      ],
+      "steps_en": [
+        "Complete a new application on the official e-Passport portal.",
+        "Pay the total shown in the fee schedule through a listed payment channel.",
+        "Visit the assigned passport office for biometric enrolment.",
+        "Check the official portal for current application and collection instructions."
+      ],
+      "warnings_bn": ["এই তালিকা সরকারি নির্দেশনার সারাংশ; সম্পূর্ণ নথির তালিকা সরকারি পোর্টালে যাচাই করুন।"],
+      "warnings_en": ["This checklist summarizes official instructions; check the official portal for the complete document requirements that apply to you."],
+      "official_links": [
+        {"label_bn": "সরকারি আবেদন পোর্টাল", "label_en": "Official application portal", "url": "https://www.epassport.gov.bd/"}
+      ]
+    },
+    {
+      "id": "minor",
+      "label_bn": "শিশুর আবেদন",
+      "label_en": "Child application",
+      "questions": [
+        {"field": "age", "type": "number", "required": true, "min": 0, "max": 17, "label_bn": "আবেদনকারীর বয়স", "label_en": "Applicant's age"},
+        {"field": "has_own_nid", "type": "boolean", "required": true, "label_bn": "আবেদনকারীর নিজস্ব NID আছে", "label_en": "Applicant has their own NID"}
+      ],
+      "documents": [
+        {"id": "identity_record", "required": true, "conditions": []},
+        {"id": "parent_nid", "required": true, "conditions": [{"field": "has_own_nid", "operator": "eq", "value": false}]},
+        {"id": "child_photo", "required": true, "conditions": [{"field": "age", "operator": "lt", "value": 6}]}
+      ],
+      "steps_bn": [
+        "সরকারি e-Passport পোর্টালে শিশুর নতুন আবেদন পূরণ করুন।",
+        "ফি তালিকায় দেখানো মোট টাকা নির্ধারিত পেমেন্ট মাধ্যমে পরিশোধ করুন।",
+        "বায়োমেট্রিক তথ্য দেওয়ার জন্য নির্ধারিত পাসপোর্ট অফিসে যান।",
+        "১৮ বছরের কম বয়সীদের পাসপোর্টের মেয়াদ ৫ বছর এবং পৃষ্ঠা ৪৮টি।"
+      ],
+      "steps_en": [
+        "Complete the child's new application on the official e-Passport portal.",
+        "Pay the total shown in the fee schedule through a listed payment channel.",
+        "Visit the assigned passport office for biometric enrolment.",
+        "Applicants under 18 receive a 5-year, 48-page passport."
+      ],
+      "warnings_bn": ["১৮ বছরের কম বয়সীদের জন্য নির্ধারিত মেয়াদ ও পৃষ্ঠাসংখ্যা প্রযোজ্য; সম্পূর্ণ নথির তালিকা সরকারি পোর্টালে যাচাই করুন।"],
+      "warnings_en": ["For applicants under 18, the fixed validity and page count apply; check the official portal for the complete document list."],
+      "official_links": [
+        {"label_bn": "সরকারি আবেদন পোর্টাল", "label_en": "Official application portal", "url": "https://www.epassport.gov.bd/"}
+      ]
+    },
+    {
+      "id": "renewal",
+      "label_bn": "নবায়ন / পুনরায় ইস্যু",
+      "label_en": "Renewal / re-issue",
+      "questions": [],
+      "documents": [
+        {"id": "identity_record", "required": true, "conditions": []},
+        {"id": "previous_passport", "required": true, "conditions": []},
+        {"id": "technical_certificate", "required": false, "conditions": []}
+      ],
+      "steps_bn": [
+        "সরকারি e-Passport পোর্টালে রি-ইস্যু আবেদন পূরণ করুন।",
+        "ফি তালিকায় দেখানো মোট টাকা নির্ধারিত পেমেন্ট মাধ্যমে পরিশোধ করুন।",
+        "বায়োমেট্রিক তথ্য দেওয়ার জন্য নির্ধারিত পাসপোর্ট অফিসে যান।"
+      ],
+      "steps_en": [
+        "Complete a re-issue application on the official e-Passport portal.",
+        "Pay the total shown in the fee schedule through a listed payment channel.",
+        "Visit the assigned passport office for biometric enrolment."
+      ],
+      "warnings_bn": ["সরকারি নির্দেশনা অনুযায়ী মূল আগের পাসপোর্ট দেখাতে হবে; সম্পূর্ণ তালিকা সরকারি পোর্টালে যাচাই করুন।"],
+      "warnings_en": ["The official instructions require the original previous passport to be presented; check the portal for the complete list."],
+      "official_links": [
+        {"label_bn": "সরকারি আবেদন পোর্টাল", "label_en": "Official application portal", "url": "https://www.epassport.gov.bd/"}
+      ]
+    },
+    {
+      "id": "lost_passport",
+      "label_bn": "পাসপোর্ট হারিয়েছে",
+      "label_en": "Passport lost",
+      "questions": [],
+      "documents": [
+        {"id": "identity_record", "required": true, "conditions": []},
+        {"id": "lost_previous_copy", "required": true, "conditions": []},
+        {"id": "gd_report", "required": true, "conditions": []}
+      ],
+      "steps_bn": [
+        "পাসপোর্ট হারানো বা চুরি হলে নিকটস্থ থানায় সাধারণ ডায়েরি (জিডি) করুন।",
+        "সরকারি e-Passport পোর্টালে হারানো পাসপোর্টের রি-ইস্যু আবেদন পূরণ করুন।",
+        "ফি তালিকায় দেখানো মোট টাকা নির্ধারিত পেমেন্ট মাধ্যমে পরিশোধ করুন।",
+        "বায়োমেট্রিক তথ্য দেওয়ার জন্য নির্ধারিত পাসপোর্ট অফিসে যান।"
+      ],
+      "steps_en": [
+        "Report the lost or stolen passport in a general diary (GD) at the nearest police station.",
+        "Complete the lost-passport re-issue application on the official e-Passport portal.",
+        "Pay the total shown in the fee schedule through a listed payment channel.",
+        "Visit the assigned passport office for biometric enrolment."
+      ],
+      "warnings_bn": ["সরকারি নির্দেশনা অনুযায়ী জিডি কপি ও আগের পাসপোর্টের ফটোকপি প্রয়োজন; বিস্তারিত সরকারি পোর্টালে যাচাই করুন।"],
+      "warnings_en": ["The official instructions require the GD copy and a photocopy of the previous passport; verify details on the official portal."],
+      "official_links": [
+        {"label_bn": "সরকারি আবেদন পোর্টাল", "label_en": "Official application portal", "url": "https://www.epassport.gov.bd/"}
+      ]
+    }
+  ]
+}

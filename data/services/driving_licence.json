@@ -1,0 +1,210 @@
+{
+  "service_id": "driving_licence",
+  "service_name_bn": "ড্রাইভিং লাইসেন্স",
+  "service_name_en": "Driving Licence",
+  "authority_bn": "বাংলাদেশ রোড ট্রান্সপোর্ট অথরিটি (BRTA)",
+  "authority_en": "Bangladesh Road Transport Authority (BRTA)",
+  "summary_bn": "লার্নার/শিক্ষানবিশ, স্মার্ট কার্ড ড্রাইভিং লাইসেন্স, নবায়ন এবং ডুপ্লিকেট লাইসেন্সের প্রস্তুতি। আবেদন BRTA সার্ভিস পোর্টালে সম্পন্ন করুন।",
+  "summary_en": "Prepare for a learner permit, a smart-card driving licence, renewal, and a duplicate licence. Apply on the BRTA Service Portal.",
+  "source_url": "https://bsp.brta.gov.bd/drivingLicense",
+  "last_verified": "2026-10-17",
+  "fallback_bn": "এই সুনির্দিষ্ট তথ্যটি যাচাই করা সরকারি উৎসে পাওয়া যায়নি। অনুগ্রহ করে bsp.brta.gov.bd দেখুন অথবা নিকটস্থ BRTA সার্কেল অফিসে যোগাযোগ করুন।",
+  "fallback_en": "The available official sources do not specify this. Please check bsp.brta.gov.bd or contact your nearest BRTA circle office.",
+  "official_links": [
+    {"label_bn": "BRTA সার্ভিস পোর্টাল (BSP)", "label_en": "BRTA Service Portal (BSP)", "url": "https://bsp.brta.gov.bd/"},
+    {"label_bn": "ড্রাইভিং লাইসেন্স প্রক্রিয়া", "label_en": "Driving licence procedure", "url": "https://bsp.brta.gov.bd/drivingLicense"},
+    {"label_bn": "ফি ক্যালকুলেটর", "label_en": "Fee calculator", "url": "https://bsp.brta.gov.bd/feeCalculator"}
+  ],
+  "documents": [
+    {
+      "id": "application_form",
+      "label_bn": "নির্ধারিত ফরমে আবেদন",
+      "label_en": "Application in the prescribed form",
+      "notes_bn": "লার্নার/লাইসেন্সের আবেদন BRTA সার্ভিস পোর্টালের নির্ধারিত ফরমে করতে হয়।",
+      "notes_en": "Apply using the prescribed form on the BRTA Service Portal.",
+      "source_url": "https://bsp.brta.gov.bd/drivingLicense",
+      "last_verified": "2026-10-17"
+    },
+    {
+      "id": "medical_certificate",
+      "label_bn": "রেজিস্টার্ড ডাক্তার কর্তৃক মেডিকেল সার্টিফিকেট",
+      "label_en": "Medical certificate from a registered doctor",
+      "notes_bn": "সরকারি পেজে নিবন্ধিত ডাক্তারের মেডিকেল সার্টিফিকেট চাওয়া হয়েছে।",
+      "notes_en": "The official page requires a medical certificate from a registered doctor.",
+      "source_url": "https://bsp.brta.gov.bd/drivingLicense",
+      "last_verified": "2026-10-17"
+    },
+    {
+      "id": "identity_copy",
+      "label_bn": "NID / জন্ম সনদ / পাসপোর্টের সত্যায়িত ফটোকপি",
+      "label_en": "Attested photocopy of NID / birth certificate / passport",
+      "notes_bn": "সরকারি পেজে NID, জন্ম সনদ বা পাসপোর্টের সত্যায়িত ফটোকপি চাওয়া হয়েছে।",
+      "notes_en": "The official page requires an attested photocopy of the NID, birth certificate, or passport.",
+      "source_url": "https://bsp.brta.gov.bd/drivingLicense",
+      "last_verified": "2026-10-17"
+    },
+    {
+      "id": "fee_receipt",
+      "label_bn": "নির্ধারিত ফি জমাদানের রশিদ",
+      "label_en": "Receipt of the designated fee deposit",
+      "notes_bn": "লার্নার: ১ ক্যাটাগরি ৩৪৫ টাকা ও ২ ক্যাটাগরি ৫১৮ টাকা। স্মার্ট কার্ড: পেশাদার ১৪৩৮ টাকা ও অপেশাদার ২৩০০ টাকা। নবায়ন: মেয়াদোত্তীর্ণের ১৫ দিনের মধ্যে অপেশাদার ২১৮৫ টাকা, পেশাদার ১৩২৩ টাকা। ডুপ্লিকেট: হাই সিকিউরিটি কার্ডের ক্ষেত্রে ৬৩৩ টাকা। চূড়ান্ত অঙ্ক ফি ক্যালকুলেটরে যাচাই করুন।",
+      "notes_en": "Learner: category 1 = BDT 345 and category 2 = BDT 518. Smart card: professional BDT 1,438 and non-professional BDT 2,300. Renewal: within 15 days of expiry, non-professional BDT 2,185 and professional BDT 1,323. Duplicate: BDT 633 for a high-security card. Confirm the final amount with the fee calculator.",
+      "source_url": "https://bsp.brta.gov.bd/drivingLicense",
+      "last_verified": "2026-10-17"
+    },
+    {
+      "id": "photos",
+      "label_bn": "সদ্য তোলা পাসপোর্ট ও স্ট্যাম্প সাইজ ছবি",
+      "label_en": "Recent passport-size and stamp-size photographs",
+      "notes_bn": "লার্নারের জন্য ৩ কপি স্ট্যাম্প ও ১ কপি পাসপোর্ট সাইজ; স্মার্ট কার্ড ও ডুপ্লিকেটের জন্য ১ কপি পাসপোর্ট সাইজ ছবি।",
+      "notes_en": "Learner: three stamp-size and one passport-size photo; smart card and duplicate: one passport-size photo.",
+      "source_url": "https://bsp.brta.gov.bd/drivingLicense",
+      "last_verified": "2026-10-17"
+    },
+    {
+      "id": "police_report",
+      "label_bn": "পুলিশি তদন্ত প্রতিবেদন (পেশাদার)",
+      "label_en": "Police investigation report (professional)",
+      "notes_bn": "সরকারি পেজ অনুযায়ী পেশাদার ড্রাইভিং লাইসেন্সের জন্য পুলিশি তদন্ত প্রতিবেদন প্রয়োজন।",
+      "notes_en": "Per the official page, a police investigation report is required for a professional driving licence.",
+      "source_url": "https://bsp.brta.gov.bd/drivingLicense",
+      "last_verified": "2026-10-17"
+    },
+    {
+      "id": "gd_and_traffic_clearance",
+      "label_bn": "জিডি কপি ও ট্রাফিক ক্লিয়ারেন্স (ডুপ্লিকেট)",
+      "label_en": "GD copy and traffic clearance (duplicate)",
+      "notes_bn": "ডুপ্লিকেট লাইসেন্সের আবেদনে জিডি কপি ও ট্রাফিক ক্লিয়ারেন্স চাওয়া হয়েছে।",
+      "notes_en": "A duplicate-licence application requires a GD copy and traffic clearance.",
+      "source_url": "https://bsp.brta.gov.bd/drivingLicense",
+      "last_verified": "2026-10-17"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "learner",
+      "label_bn": "লার্নার / শিক্ষানবিশ লাইসেন্স",
+      "label_en": "Learner / apprentice licence",
+      "questions": [],
+      "documents": [
+        {"id": "application_form", "required": true, "conditions": []},
+        {"id": "medical_certificate", "required": true, "conditions": []},
+        {"id": "identity_copy", "required": true, "conditions": []},
+        {"id": "fee_receipt", "required": true, "conditions": []},
+        {"id": "photos", "required": true, "conditions": []}
+      ],
+      "steps_bn": [
+        "BRTA সার্ভিস পোর্টালে নির্ধারিত ফরমে লার্নার আবেদন করুন।",
+        "মেডিকেল সার্টিফিকেটসহ প্রয়োজনীয় কাগজপত্র প্রস্তুত করুন।",
+        "নির্ধারিত ফি BRTA-র নির্ধারিত ব্যাংকে জমা দিন।",
+        "আবেদন সম্পন্ন হলে লার্নার/শিক্ষানবিশ লাইসেন্স সংগ্রহ করে প্রশিক্ষণ শুরু করুন।"
+      ],
+      "steps_en": [
+        "Apply for a learner licence in the prescribed form on the BRTA Service Portal.",
+        "Prepare the required documents, including the medical certificate.",
+        "Deposit the designated fee at a BRTA-designated bank.",
+        "Collect the learner/apprentice licence and begin training."
+      ],
+      "warnings_bn": ["লাইসেন্সের পূর্বশর্ত লার্নার/শিক্ষানবিশ লাইসেন্স; নিজের স্থায়ী বা বর্তমান ঠিকানার আওতাভুক্ত BRTA সার্কেলে আবেদন করুন।", "পেশাদার ও অপেশাদার প্রক্রিয়ায় পার্থক্য আছে; সঠিক ক্যাটাগরি বেছে নিন।"],
+      "warnings_en": ["A learner/apprentice licence is the prerequisite; apply in the BRTA circle covering your declared address.", "Professional and non-professional processes differ; select the right category."],
+      "official_links": [
+        {"label_bn": "লার্নার ও লাইসেন্স সেবা", "label_en": "Learner and licence services", "url": "https://bsp.brta.gov.bd/drivingLicense"}
+      ]
+    },
+    {
+      "id": "smart_card",
+      "label_bn": "স্মার্ট কার্ড ড্রাইভিং লাইসেন্স (প্রথম)",
+      "label_en": "Smart-card driving licence (first)",
+      "questions": [
+        {"field": "professional", "type": "boolean", "required": true, "label_bn": "পেশাদার ড্রাইভিং লাইসেন্স", "label_en": "Professional driving licence"}
+      ],
+      "documents": [
+        {"id": "application_form", "required": true, "conditions": []},
+        {"id": "medical_certificate", "required": true, "conditions": []},
+        {"id": "identity_copy", "required": true, "conditions": []},
+        {"id": "fee_receipt", "required": true, "conditions": []},
+        {"id": "photos", "required": true, "conditions": []},
+        {"id": "police_report", "required": true, "conditions": [{"field": "professional", "operator": "eq", "value": true}]}
+      ],
+      "steps_bn": [
+        "লিখিত, মৌখিক ও ফিল্ড টেস্টে অংশ নিয়ে উত্তীর্ণ হন।",
+        "উত্তীর্ণ হওয়ার পর নির্ধারিত ফরমে ও কাগজপত্রসহ স্মার্টকার্ড আবেদন করুন।",
+        "নির্ধারিত ফি জমা দিয়ে সংশ্লিষ্ট সার্কেল অফিসে বায়োমেট্রিক্স দিন।",
+        "স্মার্ট কার্ড প্রিন্টিং শেষ হলে SMS-এর বার্তা অনুসরণ করে কার্ড সংগ্রহ করুন।"
+      ],
+      "steps_en": [
+        "Take and pass the written, oral, and field tests.",
+        "After passing, apply for the smart card with the prescribed form and documents.",
+        "Pay the designated fee and provide biometrics at the concerned circle office.",
+        "When the smart card is printed, follow the SMS instructions to collect it."
+      ],
+      "warnings_bn": ["পেশাদার লাইসেন্সের জন্য পুলিশি তদন্ত প্রতিবেদন প্রয়োজন।", "পেশাদার লাইসেন্সের জন্য বয়স: হালকা ন্যূনতম ২০, মধ্যম ২৩ ও ভারী ২৬ বছর; তথ্য সরকারি পোর্টালে যাচাই করুন।"],
+      "warnings_en": ["A professional licence requires a police investigation report.", "Professional licence minimum ages: light 20, medium 23, heavy 26 years; verify on the official portal."],
+      "official_links": [
+        {"label_bn": "লাইসেন্স নবায়ন ও ডুপ্লিকেট সেবা", "label_en": "Licence services", "url": "https://bsp.brta.gov.bd/drivingLicense"}
+      ]
+    },
+    {
+      "id": "renewal",
+      "label_bn": "ড্রাইভিং লাইসেন্স নবায়ন",
+      "label_en": "Driving licence renewal",
+      "questions": [
+        {"field": "professional", "type": "boolean", "required": true, "label_bn": "পেশাদার ড্রাইভিং লাইসেন্স", "label_en": "Professional driving licence"}
+      ],
+      "documents": [
+        {"id": "application_form", "required": true, "conditions": []},
+        {"id": "medical_certificate", "required": true, "conditions": []},
+        {"id": "identity_copy", "required": true, "conditions": []},
+        {"id": "fee_receipt", "required": true, "conditions": []},
+        {"id": "photos", "required": true, "conditions": []},
+        {"id": "police_report", "required": true, "conditions": [{"field": "professional", "operator": "eq", "value": true}]}
+      ],
+      "steps_bn": [
+        "নির্ধারিত ফি জমা দিয়ে প্রয়োজনীয় কাগজপত্রসহ BRTA-র নির্দিষ্ট সার্কেল অফিসে আবেদন করুন।",
+        "পেশাদার হলে পুনরায় ব্যবহারিক পরীক্ষায় অংশ নিন।",
+        "আবেদন ও কাগজপত্র সঠিক হলে একইদিনে বায়োমেট্রিক্স দিন।",
+        "স্মার্ট কার্ড প্রিন্টিং শেষ হলে SMS-এর বার্তা অনুসরণ করুন।"
+      ],
+      "steps_en": [
+        "Pay the designated fee and apply with the required documents at your BRTA circle office.",
+        "If professional, take the practical test again.",
+        "Once the application and documents are correct, provide biometrics the same day.",
+        "When the smart card is printed, follow the SMS instructions."
+      ],
+      "warnings_bn": ["মেয়াদোত্তীর্ণের ১৫ দিন পরে হলে প্রতি বছর অতিরিক্ত ২০০ টাকা জরিমানা প্রযোজ্য।", "পেশাদার লাইসেন্সে ব্যবহারিক পরীক্ষা বাধ্যতামূলক।"],
+      "warnings_en": ["After 15 days beyond expiry, an additional BDT 200 per year applies.", "A practical test is mandatory for a professional licence."],
+      "official_links": [
+        {"label_bn": "ফি ক্যালকুলেটর", "label_en": "Fee calculator", "url": "https://bsp.brta.gov.bd/feeCalculator"}
+      ]
+    },
+    {
+      "id": "duplicate",
+      "label_bn": "ডুপ্লিকেট লাইসেন্স",
+      "label_en": "Duplicate licence",
+      "questions": [],
+      "documents": [
+        {"id": "application_form", "required": true, "conditions": []},
+        {"id": "gd_and_traffic_clearance", "required": true, "conditions": []},
+        {"id": "fee_receipt", "required": true, "conditions": []},
+        {"id": "photos", "required": true, "conditions": []}
+      ],
+      "steps_bn": [
+        "নির্ধারিত ফরমে ডুপ্লিকেট লাইসেন্সের আবেদন করুন।",
+        "জিডি কপি ও ট্রাফিক ক্লিয়ারেন্স সংগ্রহ করুন।",
+        "নির্ধারিত ফি জমা দিয়ে আবেদন জমা দিন।",
+        "স্মার্ট কার্ড ইস্যু হলে SMS-এর বার্তা অনুসরণ করুন।"
+      ],
+      "steps_en": [
+        "Apply for a duplicate licence in the prescribed form.",
+        "Obtain the GD copy and traffic clearance.",
+        "Pay the designated fee and submit the application.",
+        "When the card is issued, follow the SMS instructions."
+      ],
+      "warnings_bn": ["ডুপ্লিকেট লাইসেন্সের তথ্য ও ফি সরকারি পোর্টালে যাচাই করুন।"],
+      "warnings_en": ["Verify duplicate-licence details and fees on the official portal."],
+      "official_links": [
+        {"label_bn": "ডুপ্লিকেট লাইসেন্স সেবা", "label_en": "Duplicate licence service", "url": "https://bsp.brta.gov.bd/drivingLicense"}
+      ]
+    }
+  ]
+}

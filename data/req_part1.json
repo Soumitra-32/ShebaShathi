@@ -1,0 +1,55 @@
+{
+  "generated_at": "2026-10-14",
+  "last_verified": "2026-10-14",
+  "service": "e-Passport",
+  "service_url": "https://epassport.gov.bd",
+  "scenarios": [
+    {
+      "id": "first_time_adult",
+      "label_bn": "প্রথমবারের জন্য পাসপোর্ট (বয়স্ক)",
+      "label_en": "First-time passport (adult)",
+      "age_range": ["12+"],
+      "default_pages": 48,
+      "default_delivery": "regular",
+      "default_validity_years": 10,
+      "required_documents": ["nid", "birth_certificate", "passport_size_photo"],
+      "optional_documents": ["domicile_certificate"],
+      "notes": "Applicant aged 12+, never held a passport before."
+    },
+    {
+      "id": "minor",
+      "label_bn": "অাঁশ্চ্ছন্ন মিনরের জন্য পাসপোর্ট",
+      "label_en": "Minor (under 12) passport",
+      "age_range": ["0-11"],
+      "default_pages": 36,
+      "default_delivery": "regular",
+      "default_validity_years": 5,
+      "required_documents": ["nid_child", "birth_certificate", "parent_nid", "passport_size_photo"],
+      "optional_documents": [],
+      "notes": "Parent/guardian must accompany the minor."
+    },
+    {
+      "id": "renewal",
+      "label_bn": "পাসপোর্ট নতুন করে লাগানো",
+      "label_en": "Passport renewal",
+      "age_range": ["12+"],
+      "default_pages": 48,
+      "default_delivery": "regular",
+      "default_validity_years": 10,
+      "required_documents": ["nid", "old_passport", "passport_size_photo"],
+      "optional_documents": ["birth_certificate"],
+      "notes": "Applicant has previously held a Bangladeshi passport."
+    },
+    {
+      "id": "lost_passport",
+      "label_bn": "পাসপোর্ট হারানো অাঁশ্চ্ছন্ন",
+      "label_en": "Lost passport reporting",
+      "age_range": ["12+"],
+      "default_pages": 48,
+      "default_delivery": "express",
+      "default_validity_years": 10,
+      "required_documents": ["nid", "old_passport_number", "police_report", "passport_size_photo"],
+      "optional_documents": [],
+      "notes": "Must file FIR at local police station."
+    }
+  ],

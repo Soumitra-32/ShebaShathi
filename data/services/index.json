@@ -1,0 +1,33 @@
+{
+  "catalog_version": "1.0",
+  "last_updated": "2026-10-17",
+  "disclaimer_bn": "ShebaShathi BD একটি স্বাধীন নাগরিক সহায়তা টুল, কোনো সরকারি ওয়েবসাইট নয়। চূড়ান্ত তথ্য সবসময় সংশ্লিষ্ট সরকারি পোর্টালে যাচাই করুন।",
+  "disclaimer_en": "ShebaShathi BD is an independent citizen-help tool, not a government website. Always confirm final details on the relevant official portal.",
+  "services": [
+    {
+      "service_id": "epassport",
+      "data_file": "epassport.json",
+      "enabled": true
+    },
+    {
+      "service_id": "birth_registration",
+      "data_file": "birth_registration.json",
+      "enabled": true
+    },
+    {
+      "service_id": "nid",
+      "data_file": "nid.json",
+      "enabled": true
+    },
+    {
+      "service_id": "driving_licence",
+      "data_file": "driving_licence.json",
+      "enabled": true
+    },
+    {
+      "service_id": "death_registration",
+      "data_file": "death_registration.json",
+      "enabled": true
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "service": "Bangladesh e-Passport, applications inside Bangladesh",
+  "currency": "BDT",
+  "vat_rate": 0.15,
+  "fees_include_vat": true,
+  "separate_service_charge": false,
+  "last_verified": "2026-10-15",
+  "source_url": "https://www.epassport.gov.bd/instructions/passport-fees",
+  "source_updated": "2026-07-12",
+  "delivery_timelines": {
+    "regular": "Within 15 working days / 21 days from biometric enrolment",
+    "express": "Within 7 working days / 10 days from biometric enrolment",
+    "super_express": "Within 2 working days from biometric enrolment"
+  },
+  "fees": [
+    {"pages": 48, "validity_years": 5, "delivery": "regular", "total": 4025},
+    {"pages": 48, "validity_years": 5, "delivery": "express", "total": 6325},
+    {"pages": 48, "validity_years": 5, "delivery": "super_express", "total": 8625},
+    {"pages": 48, "validity_years": 10, "delivery": "regular", "total": 5750},
+    {"pages": 48, "validity_years": 10, "delivery": "express", "total": 8050},
+    {"pages": 48, "validity_years": 10, "delivery": "super_express", "total": 10350},
+    {"pages": 64, "validity_years": 5, "delivery": "regular", "total": 6325},
+    {"pages": 64, "validity_years": 5, "delivery": "express", "total": 8625},
+    {"pages": 64, "validity_years": 5, "delivery": "super_express", "total": 12075},
+    {"pages": 64, "validity_years": 10, "delivery": "regular", "total": 8050},
+    {"pages": 64, "validity_years": 10, "delivery": "express", "total": 10350},
+    {"pages": 64, "validity_years": 10, "delivery": "super_express", "total": 13800}
+  ]
+}

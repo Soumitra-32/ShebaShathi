@@ -1,0 +1,90 @@
+  "documents": [
+    {
+      "id": "nid",
+      "label_bn": "নিজের নিবন্ধনের আবেদনপত্র / NID Card",
+      "label_en": "NID Card (National ID Card)",
+      "required": true,
+      "required_for": ["first_time_adult", "renewal", "lost_passport"],
+      "notes_bn": "জাতীয় পরিচয়পত্র। কমপক্ষে পেন নম্বর সহ।",
+      "notes_en": "National ID card. Must include passport number.",
+      "source_url": "https://epassport.gov.bd",
+      "last_verified": "2026-10-14"
+    },
+    {
+      "id": "nid_child",
+      "label_bn": "শিশুর নিবন্ধনের আবেদনপত্র (০-১১ বছর)",
+      "label_en": "Child NID Registration (0-11 years)",
+      "required": true,
+      "required_for": ["minor"],
+      "notes_bn": "শিশুর নিজস্ব নিবন্ধন কার্ড। যদি না থাকে তবে অাঁশ্চ্ছন্ন।",
+      "notes_en": "Child's own registration card.",
+      "source_url": "https://epassport.gov.bd",
+      "last_verified": "2026-10-14"
+    },
+    {
+      "id": "birth_certificate",
+      "label_bn": "জন্ম নিবন্ধন পত্র (১২ বছরের বেশি)",
+      "label_en": "Birth Registration Certificate (12+ years)",
+      "required": true,
+      "required_for": ["first_time_adult", "minor"],
+      "notes_bn": "জন্ম নিবন্ধন পত্রের ১৭-অংকের ডিজিটাল সংখ্যা প্রয়োজন।",
+      "notes_en": "17-digit digital number from birth certificate required.",
+      "source_url": "https://epassport.gov.bd",
+      "last_verified": "2026-10-14"
+    },
+    {
+      "id": "birth_registration_17digit",
+      "label_bn": "জন্ম নিবন্ধনের ১৭-অংকের ডিজিটাল সংখ্যা",
+      "label_en": "17-digit Digital Birth Number",
+      "required": false,
+      "required_for": ["first_time_adult", "minor"],
+      "notes_bn": "জন্ম নিবন্ধনের ১৭-অংকের নম্বর জারি না থাকলে নতুন করে জারি করতে হবে।",
+      "notes_en": "17-digit number must be obtained from birth registration office.",
+      "source_url": "https://epassport.gov.bd",
+      "last_verified": "2026-10-14"
+    },
+    {
+      "id": "old_passport",
+      "label_bn": "পুরনো পাসপোর্ট (নতুন করে লাগানোর ক্ষেত্রে)",
+      "label_en": "Old Passport (for renewal)",
+      "required": true,
+      "required_for": ["renewal", "lost_passport"],
+      "notes_bn": "পুরনো পাসপোর্ট নথি সহজে সহযোগী করতে প্রয়োজন।",
+      "notes_en": "Old passport needed for renewal and lost cases.",
+      "source_url": "https://epassport.gov.bd",
+      "last_verified": "2026-10-14"
+    },
+    {
+      "id": "police_report",
+      "label_bn": "PIR ফাইলিং / পুলিশ রিপোর্ট",
+      "label_en": "Police Report (FIR) - Lost Passport",
+      "required": true,
+      "required_for": ["lost_passport"],
+      "notes_bn": "হারানো পাসপোর্টের জন্য নিবন্ধিত থানায় FIR ফাইল করতে হবে।",
+      "notes_en": "Must file FIR at registered police station.",
+      "source_url": "https://epassport.gov.bd",
+      "last_verified": "2026-10-14"
+    },
+    {
+      "id": "passport_size_photo",
+      "label_bn": "পাসপোর্টের ফোটো (ডেস্কে অতিরিক্ত করা প্রয়োজন)",
+      "label_en": "Passport Photo (submit with application)",
+      "required": true,
+      "required_for": ["first_time_adult", "minor", "renewal", "lost_passport"],
+      "notes_bn": "সাদা ব্যাকগ্রাউন্ডে ২×২ ইঞ্চি। বর্তমান ছবি।",
+      "notes_en": "White background, 2x2 inches. Should be recent.",
+      "source_url": "https://epassport.gov.bd",
+      "last_verified": "2026-10-14"
+    },
+    {
+      "id": "domicile_certificate",
+      "label_bn": "নিবাস সার্টিফিকেট",
+      "label_en": "Domicile Certificate",
+      "required": false,
+      "required_for": ["first_time_adult"],
+      "notes_bn": "যদি কোন প্রয়োজন হয় তবে থানা থেকে পাওয়া যাবে।",
+      "notes_en": "Available from police station if needed.",
+      "source_url": "https://epassport.gov.bd",
+      "last_verified": "2026-10-14"
+    }
+  ],

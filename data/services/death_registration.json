@@ -1,0 +1,163 @@
+{
+  "service_id": "death_registration",
+  "service_name_bn": "মৃত্যু নিবন্ধন",
+  "service_name_en": "Death Registration",
+  "authority_bn": "জন্ম ও মৃত্যু নিবন্ধন অধিদপ্তর (রেজিস্ট্রার জেনারেলের কার্যালয়)",
+  "authority_en": "Office of the Registrar General, Birth and Death Registration",
+  "summary_bn": "নতুন মৃত্যু নিবন্ধন, তথ্য সংশোধন, সনদ পুনঃমুদ্রণ এবং তথ্য যাচাইয়ের প্রস্তুতি। আবেদন BDRIS-এ সম্পন্ন করুন এবং চূড়ান্ত নথি নিবন্ধক অফিসে যাচাই করুন।",
+  "summary_en": "Prepare for new death registration, correction, certificate reprint, and record verification. Apply on BDRIS and confirm final documents with the registrar office.",
+  "source_url": "https://bdris.gov.bd/dr/application",
+  "last_verified": "2026-10-17",
+  "fallback_bn": "এই সুনির্দিষ্ট তথ্যটি যাচাই করা সরকারি উৎসে পাওয়া যায়নি। অনুগ্রহ করে bdris.gov.bd দেখুন অথবা স্থানীয় নিবন্ধক অফিসে যোগাযোগ করুন।",
+  "fallback_en": "The available official sources do not specify this. Please check bdris.gov.bd or contact your local registrar office.",
+  "official_links": [
+    {"label_bn": "নতুন মৃত্যু নিবন্ধন আবেদন", "label_en": "New death registration application", "url": "https://bdris.gov.bd/dr/application"},
+    {"label_bn": "মৃত্যু তথ্য অনুসন্ধান (everify)", "label_en": "Death record verification (everify)", "url": "https://everify.bdris.gov.bd/UDRNVerification"},
+    {"label_bn": "জন্ম ও মৃত্যু নিবন্ধন বিধিমালা, ২০১৮", "label_en": "Birth and Death Registration Rules, 2018", "url": "https://orgbdr.gov.bd/pages/static-pages/6922df21933eb65569e20100"}
+  ],
+  "documents": [
+    {
+      "id": "death_proof",
+      "label_bn": "মৃত্যুর প্রমাণ (হাসপাতাল/চিকিৎসকের মৃত্যু সনদ, স্বাস্থ্যকর্মীর প্রত্যয়ন, ময়নাতদন্ত প্রতিবেদন, দাফন/সৎকারের রসিদ, ইউপি/পৌর/সিটি কর্পোরেশন/ক্যান্টনমেন্ট প্রত্যয়ন, বা ধর্মীয় নেতার প্রত্যয়ন)",
+      "label_en": "Proof of death (hospital/physician death certificate, health-worker certification, autopsy report, burial/funeral receipt, union/municipality/city corporation/cantonment certification, or religious leader certification)",
+      "notes_bn": "বিধিমালা অনুযায়ী যেকোনো একটি প্রমাণক গ্রহণযোগ্য। হাসপাতালের মৃত্যু সনদ ও করবস্থান/সৎকারের রসিদ না থাকলে কাউন্সিলর থেকে মৃত্যুর প্রত্যয়ন নিয়ে জমা দিতে হবে।",
+      "notes_en": "Any one of these is accepted under the Rules. If the hospital death certificate and burial receipt are unavailable, obtain a death certification from the councillor and submit it.",
+      "source_url": "https://bdris.dscc.gov.bd/dr/application.html",
+      "last_verified": "2026-10-17"
+    },
+    {
+      "id": "deceased_birth_certificate",
+      "label_bn": "মৃত ব্যক্তির প্রমাণক/জন্ম নিবন্ধন তথ্য",
+      "label_en": "Deceased's identification / birth registration information",
+      "notes_bn": "মৃত্যু নিবন্ধনের আবেদনে মৃত ব্যক্তির জন্ম নিবন্ধন নম্বর ও জন্ম তারিখ দিয়ে অনলাইনে অনুসন্ধান করতে হয়।",
+      "notes_en": "The online application looks up the deceased's record using their birth registration number and date of birth.",
+      "source_url": "https://bdris.gov.bd/dr/application",
+      "last_verified": "2026-10-17"
+    },
+    {
+      "id": "applicant_identity",
+      "label_bn": "আবেদনকারী/তথ্য প্রদানকারীর পরিচয় (জন্ম নিবন্ধন নম্বর বা NID)",
+      "label_en": "Applicant/informant identity (birth registration number or NID)",
+      "notes_bn": "আবেদনকারী ও তথ্য প্রদানকারীর জন্ম নিবন্ধন নম্বর বা NID তথ্য ফরমে দিতে হয়। এই সহায়ক টুলে কোনো পরিচয় নম্বর দেওয়ার প্রয়োজন নেই বা তা সংরক্ষণ করা হয় না।",
+      "notes_en": "The form asks for the applicant's and informant's birth registration number or NID. This helper never asks you to enter or stores any identity number.",
+      "source_url": "https://bdris.gov.bd/application/print",
+      "last_verified": "2026-10-17"
+    },
+    {
+      "id": "guardian_proof",
+      "label_bn": "অভিভাবক/ক্ষমতাপ্রাপ্তির প্রমাণ (প্রযোজ্য ক্ষেত্রে)",
+      "label_en": "Guardian/power-of-attorney proof (where applicable)",
+      "notes_bn": "পিতা, মাতা, স্বামী/স্ত্রী, সন্তান, দাদা-দাদি বা নানা-নানি ছাড়া অন্য কেউ আবেদন করলে অভিভাবক ক্ষমতাপ্রাপ্তির আদেশনামা/প্রত্যয়ন সংযুক্ত করতে হবে।",
+      "notes_en": "If someone other than a parent, spouse, child, or grandparent applies, they must attach a court order or certification of guardianship authority.",
+      "source_url": "https://bdris.dscc.gov.bd/dr/application.html",
+      "last_verified": "2026-10-17"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "new_registration",
+      "label_bn": "নতুন মৃত্যু নিবন্ধন",
+      "label_en": "New death registration",
+      "questions": [
+        {"field": "related_to_deceased", "type": "boolean", "required": true, "label_bn": "আমি মৃত ব্যক্তির নিকট আত্মীয় (পিতা/মাতা/স্বামী-স্ত্রী/সন্তান/দাদা-দাদি)", "label_en": "I am a close relative of the deceased (parent/spouse/child/grandparent)"}
+      ],
+      "documents": [
+        {"id": "death_proof", "required": true, "conditions": []},
+        {"id": "deceased_birth_certificate", "required": true, "conditions": []},
+        {"id": "applicant_identity", "required": true, "conditions": []},
+        {"id": "guardian_proof", "required": true, "conditions": [{"field": "related_to_deceased", "operator": "eq", "value": false}]}
+      ],
+      "steps_bn": [
+        "bdris.gov.bd/dr/application-এ মৃত ব্যক্তির জন্ম নিবন্ধন নম্বর ও জন্ম তারিখ দিয়ে অনুসন্ধান করুন।",
+        "নিবন্ধক কার্যালয়, মৃত্যুর তথ্য, ঠিকানা এবং আবেদনকারীর তথ্য পূরণ করুন।",
+        "মৃত্যুর প্রমাণক আপলোড করে মোবাইল OTP যাচাই করে আবেদন সাবমিট করুন।",
+        "আবেদনপত্র প্রিন্ট করে প্রয়োজনীয় কাগজপত্রসহ সংশ্লিষ্ট নিবন্ধকের নিকট জমা দিন।"
+      ],
+      "steps_en": [
+        "Look up the deceased at bdris.gov.bd/dr/application using their birth registration number and date of birth.",
+        "Fill in the registrar office, death details, addresses, and applicant information.",
+        "Upload the proof of death, verify with the mobile OTP, and submit.",
+        "Print the application and submit it with the documents to the concerned registrar."
+      ],
+      "warnings_bn": ["৪৫ দিনের মধ্যে নিবন্ধনের জন্য কোনো ফি প্রযোজ্য নয়; বিলম্বিত নিবন্ধনের ফি ও শর্ত সরকারি পোর্টালে যাচাই করুন।", "মৃত ব্যক্তির অন্য কোথাও মৃত্যু নিবন্ধিত না থাকার ঘোষণা দিতে হয়।"],
+      "warnings_en": ["No fee applies for registration within 45 days; verify late-registration fees and conditions on the official portal.", "You must declare that the death is not registered elsewhere."],
+      "official_links": [
+        {"label_bn": "নতুন মৃত্যু নিবন্ধন আবেদন", "label_en": "New death registration application", "url": "https://bdris.gov.bd/dr/application"}
+      ]
+    },
+    {
+      "id": "correction",
+      "label_bn": "মৃত্যু তথ্য সংশোধন",
+      "label_en": "Correction of death information",
+      "questions": [
+        {"field": "correction_type", "type": "select", "required": true, "label_bn": "কী সংশোধন করতে চান", "label_en": "What do you want to correct",
+         "options": [
+           {"value": "name", "label_bn": "নাম", "label_en": "Name"},
+           {"value": "death_date", "label_bn": "মৃত্যুর তারিখ", "label_en": "Date of death"},
+           {"value": "parents_name", "label_bn": "পিতা/মাতার নাম", "label_en": "Parent's name"},
+           {"value": "other", "label_bn": "অন্যান্য", "label_en": "Other"}
+         ]}
+      ],
+      "documents": [
+        {"id": "death_proof", "required": true, "conditions": []}
+      ],
+      "steps_bn": [
+        "bdris.gov.bd/dr/correction-এ মৃত্যু তথ্য সংশোধনের আবেদন পূরণ করুন।",
+        "শুধু যে তথ্য পরিবর্তন করতে চান সেটি পূরণ করে সংশোধনের কারণ নির্বাচন করুন।",
+        "প্রয়োজনীয় প্রমাণক ও ফি রশিদ নিয়ে সংশ্লিষ্ট নিবন্ধক অফিসে আবেদন জমা দিন।"
+      ],
+      "steps_en": [
+        "Fill in the death-information correction application at bdris.gov.bd/dr/correction.",
+        "Fill in only the field you are changing and select the reason.",
+        "Submit the application with the supporting evidence and fee receipt to the concerned registrar office."
+      ],
+      "warnings_bn": ["প্রমাণক ছাড়া সংশোধন গ্রহণযোগ্য হয় না; সঠিক প্রমাণক সরকারি পোর্টালে যাচাই করুন।"],
+      "warnings_en": ["Corrections are not accepted without evidence; verify the right evidence on the official portal."],
+      "official_links": [
+        {"label_bn": "মৃত্যু তথ্য সংশোধন", "label_en": "Death correction", "url": "https://bdris.gov.bd/dr/correction"}
+      ]
+    },
+    {
+      "id": "reprint",
+      "label_bn": "সনদ পুনঃমুদ্রণ",
+      "label_en": "Certificate reprint",
+      "questions": [],
+      "documents": [],
+      "steps_bn": [
+        "bdris.gov.bd/dr/reprint/add-এ মৃত্যু নিবন্ধন সনদ পুনঃমুদ্রণের আবেদন করুন।",
+        "নির্ধারিত ফি পরিশোধ করুন (প্রযোজ্য হলে)।",
+        "অনলাইন থেকে অনুমোদিত সনদের কপি ডাউনলোড করুন।"
+      ],
+      "steps_en": [
+        "Apply for a death certificate reprint at bdris.gov.bd/dr/reprint/add.",
+        "Pay the designated fee where applicable.",
+        "Download the approved certificate copy online."
+      ],
+      "warnings_bn": ["পুনঃমুদ্রণের ফি ও শর্ত পরিবর্তিত হতে পারে; সরকারি পোর্টালে যাচাই করুন।"],
+      "warnings_en": ["Reprint fees and conditions may change; verify on the official portal."],
+      "official_links": [
+        {"label_bn": "সনদ পুনঃমুদ্রণ", "label_en": "Certificate reprint", "url": "https://bdris.gov.bd/dr/reprint/add"}
+      ]
+    },
+    {
+      "id": "verification",
+      "label_bn": "মৃত্যু তথ্য অনুসন্ধান/যাচাই",
+      "label_en": "Death record lookup / verification",
+      "questions": [],
+      "documents": [],
+      "steps_bn": [
+        "everify.bdris.gov.bd/UDRNVerification-এ মৃত্যু নিবন্ধন তথ্য যাচাই করুন।",
+        "প্রয়োজনীয় ক্ষেত্রে সংশ্লিষ্ট নিবন্ধক অফিস থেকে তথ্য যাচাই করুন।"
+      ],
+      "steps_en": [
+        "Verify the death registration record at everify.bdris.gov.bd/UDRNVerification.",
+        "Where needed, verify the information with the concerned registrar office."
+      ],
+      "warnings_bn": ["এই টুল কোনো নথি বা ব্যক্তির সত্যতা প্রত্যয়ন করে না; সরকারি যাচাই সবসময় সরকারি পোর্টালে করুন।"],
+      "warnings_en": ["This tool does not authenticate any document or person; always use the official portal for verification."],
+      "official_links": [
+        {"label_bn": "মৃত্যু নিবন্ধন তথ্য যাচাই", "label_en": "Death record verification", "url": "https://everify.bdris.gov.bd/UDRNVerification"}
+      ]
+    }
+  ]
+}

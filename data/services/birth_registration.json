@@ -1,0 +1,218 @@
+{
+  "service_id": "birth_registration",
+  "service_name_bn": "জন্ম নিবন্ধন",
+  "service_name_en": "Birth Registration",
+  "authority_bn": "জন্ম ও মৃত্যু নিবন্ধন অধিদপ্তর (রেজিস্ট্রার জেনারেলের কার্যালয়)",
+  "authority_en": "Office of the Registrar General, Birth and Death Registration",
+  "summary_bn": "নতুন জন্ম নিবন্ধন, তথ্য সংশোধন, সনদ পুনঃমুদ্রণ, বাতিল এবং তথ্য অনুসন্ধানের প্রস্তুতি। আবেদন ও চূড়ান্ত নথি সংশ্লিষ্ট নিবন্ধক অফিসে যাচাই করুন।",
+  "summary_en": "Prepare for new birth registration, correction, certificate reprint, cancellation, and record verification. Confirm final documents with your local registrar office.",
+  "source_url": "https://bdris.gov.bd/",
+  "last_verified": "2026-10-17",
+  "fallback_bn": "এই সুনির্দিষ্ট তথ্যটি যাচাই করা সরকারি উৎসে পাওয়া যায়নি। অনুগ্রহ করে bdris.gov.bd দেখুন অথবা স্থানীয় নিবন্ধক অফিসে যোগাযোগ করুন।",
+  "fallback_en": "The available official sources do not specify this. Please check bdris.gov.bd or contact your local registrar office.",
+  "official_links": [
+    {"label_bn": "সরকারি জন্ম ও মৃত্যু নিবন্ধন পোর্টাল (BDRIS)", "label_en": "Official Birth & Death Registration portal (BDRIS)", "url": "https://bdris.gov.bd/"},
+    {"label_bn": "জন্ম নিবন্ধন তথ্য অনুসন্ধান (everify)", "label_en": "Birth record verification (everify)", "url": "https://everify.bdris.gov.bd"},
+    {"label_bn": "জন্ম ও মৃত্যু নিবন্ধন বিধিমালা, ২০১৮", "label_en": "Birth and Death Registration Rules, 2018", "url": "https://orgbdr.gov.bd/pages/static-pages/6922df21933eb65569e20100"}
+  ],
+  "documents": [
+    {
+      "id": "birth_proof_under5",
+      "label_bn": "৫ বছরের কম বয়সের জন্য জন্মের প্রমাণ (হাসপাতালের ছাড়পত্র / জন্মসংক্রান্ত সনদ / বার্থ-অ্যাটেন্ডের প্রত্যয়ন / EPI কার্ডের সত্যায়িত অনুলিপি)",
+      "label_en": "For under 5 years: proof of birth (hospital discharge / birth certificate / birth-attendant attestation / attested EPI card)",
+      "notes_bn": "নিবন্ধনাধীন ব্যক্তির বয়স ৫ বছরের কম হলে চিকিৎসা প্রতিষ্ঠানের ছাড়পত্র বা জন্মসংক্রান্ত সনদের সত্যায়িত কপি, অথবা বার্থ-অ্যাটেন্ডের প্রত্যয়ন, অথবা ইপিআই কার্ডের সত্যায়িত অনুলিপি।",
+      "notes_en": "Where the person is under 5, an attested copy of the medical institution's discharge or birth certificate, or a birth-attendant attestation, or an attested EPI card.",
+      "source_url": "https://bdris.dscc.gov.bd/",
+      "last_verified": "2026-10-17"
+    },
+    {
+      "id": "age_proof_over5",
+      "label_bn": "৫ বছরের বেশি বয়সের জন্য বয়সের প্রমাণ (চিকিৎসকের প্রত্যয়ন বা প্রথমিক/জেএসসি/এসএসসি সনদ)",
+      "label_en": "For over 5 years: proof of age (physician attestation or PSC/JSC/SSC certificate)",
+      "notes_bn": "নিবন্ধনাধীন ব্যক্তির বয়স ৫ বছরের বেশি হলে এমবিবিএস বা তদূর্ধ্ব চিকিৎসকের প্রত্যয়নপত্র, অথবা সরকার পরিচালিত প্রথমিক শিক্ষা সমাপনী/জুনিয়র স্কুল সার্টিফিকেট/মাধ্যমিক স্কুল সার্টিফিকেট।",
+      "notes_en": "Where the person is over 5, a certificate from an MBBS-or-higher physician, or a government PSC/Junior School Certificate/Secondary School Certificate.",
+      "source_url": "https://bdris.dscc.gov.bd/",
+      "last_verified": "2026-10-17"
+    },
+    {
+      "id": "permanent_address_proof",
+      "label_bn": "স্থায়ী ঠিকানার প্রমাণ (হালনাগাদ কর পরিশোধের প্রমাণ / অভিভাবকের NID বা পাসপোর্ট / জমি-বাড়ির দলিল, খাজনা ও কর রশিদ)",
+      "label_en": "Permanent address proof (updated tax receipt / guardian's NID or passport / land or house deed, tax receipt)",
+      "notes_bn": "পিতা/মাতা/পিতামহ/পিতামহীর স্বনামে ঘোষিত স্থায়ী ঠিকানার বিপরীতে কর পরিশোধের প্রমাণপত্র, অথবা তাদের NID/পাসপোর্ট, অথবা জমি বা বাড়ি ক্রয়ের দলিল ও খাজনা-কর পরিশোধের রশিদ।",
+      "notes_en": "An updated tax receipt against the declared permanent address, or the parent's/grandparent's NID or passport, or a land/house purchase deed with tax receipts.",
+      "source_url": "https://bdris.dscc.gov.bd/",
+      "last_verified": "2026-10-17"
+    },
+    {
+      "id": "correction_supporting_document",
+      "label_bn": "সংশোধনের পক্ষে দলিল (সংশোধনের ধরন অনুযায়ী)",
+      "label_en": "Supporting document for the correction (depends on correction type)",
+      "notes_bn": "নাম বা জন্মতারিখ সংশোধনে SSC/সমমান সনদ বা অন্যান্য প্রামাণিক দলিল; পিতা/মাতার নাম সংশোধনে তাদের জন্মনিবন্ধন বা NID; ঠিকানা সংশোধনে হালনাগাদ কর/ইউটিলিটি রশিদ প্রয়োজনে লাগে। শুধুমাত্র যেসব তথ্য পরিবর্তন করতে চান সেগুলোই পূরণ করুন।",
+      "notes_en": "Name/date-of-birth correction needs an SSC-equivalent or other authoritative document; parent-name correction needs their birth registration or NID; address correction may need an updated tax/utility receipt. Fill in only the fields you are changing.",
+      "source_url": "https://bdris.dscc.gov.bd/br/correction.html",
+      "last_verified": "2026-10-17"
+    },
+    {
+      "id": "applicant_identity",
+      "label_bn": "আবেদনকারীর পরিচয় (জন্ম নিবন্ধন নম্বর বা NID)",
+      "label_en": "Applicant's identity (birth registration number or NID)",
+      "notes_bn": "অনলাইন ইঙ্গিত: অভিভাবক/আবেদনকারীর জন্ম নিবন্ধন নম্বর ও NID তথ্য ফরমে প্রয়োজন হয়। এই সহায়ক টুলে কোনো পরিচয় নম্বর দেওয়ার প্রয়োজন নেই বা তা সংরক্ষণ করা হয় না।",
+      "notes_en": "The online form asks for the applicant/guardian's birth registration number and NID details. This helper never asks you to enter or stores any identity number.",
+      "source_url": "https://bdris.gov.bd/br/correction",
+      "last_verified": "2026-10-17"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "new_registration",
+      "label_bn": "নতুন জন্ম নিবন্ধন",
+      "label_en": "New birth registration",
+      "questions": [
+        {"field": "age", "type": "number", "required": true, "min": 0, "max": 120, "label_bn": "নিবন্ধনাধীন ব্যক্তির বয়স (বছর)", "label_en": "Age of the person to register (years)"}
+      ],
+      "documents": [
+        {"id": "birth_proof_under5", "required": true, "conditions": [{"field": "age", "operator": "lt", "value": 5}]},
+        {"id": "age_proof_over5", "required": true, "conditions": [{"field": "age", "operator": "gte", "value": 5}]},
+        {"id": "permanent_address_proof", "required": true, "conditions": []}
+      ],
+      "steps_bn": [
+        "bdris.gov.bd-এ জন্ম নিবন্ধন আবেদন পূরণ করুন।",
+        "প্রয়োজনীয় কাগজপত্র আপলোড করে মোবাইল OTP যাচাই করুন।",
+        "আবেদনপত্র প্রিন্ট করে প্রয়োজনীয় কাগজপত্রসহ নির্ধারিত নিবন্ধক অফিসে জমা দিন।",
+        "আবেদনের অবস্থা সরকারি পোর্টালে দেখুন এবং সনদ সংগ্রহের নির্দেশনা অনুসরণ করুন।"
+      ],
+      "steps_en": [
+        "Fill in the birth registration application at bdris.gov.bd.",
+        "Upload the required documents and verify with the mobile OTP.",
+        "Print the application and submit it with the documents to the assigned registrar office.",
+        "Track the status on the official portal and follow the certificate collection instructions."
+      ],
+      "warnings_bn": ["৪৫ দিনের মধ্যে নিবন্ধনের জন্য কোনো ফি প্রযোজ্য নয়; বিলম্বিত নিবন্ধনের ফি ও শর্ত সরকারি পোর্টালে যাচাই করুন।", "আবেদনকারীর বয়স ও স্থান অনুযায়ী নির্দিষ্ট কাগজপত্র ভিন্ন হতে পারে; স্থানীয় নিবন্ধক অফিসে নিশ্চিত করুন।"],
+      "warnings_en": ["No fee applies for registration within 45 days; verify late-registration fees and conditions on the official portal.", "Exact documents may vary by age and area; confirm with your local registrar office."],
+      "official_links": [
+        {"label_bn": "জন্ম নিবন্ধন আবেদন", "label_en": "Birth registration application", "url": "https://bdris.gov.bd/br/application"}
+      ]
+    },
+    {
+      "id": "correction",
+      "label_bn": "জন্ম তথ্য সংশোধন",
+      "label_en": "Correction of birth information",
+      "questions": [
+        {"field": "correction_type", "type": "select", "required": true, "label_bn": "কী সংশোধন করতে চান", "label_en": "What do you want to correct",
+         "options": [
+           {"value": "name", "label_bn": "নাম", "label_en": "Name"},
+           {"value": "birth_date", "label_bn": "জন্ম তারিখ", "label_en": "Date of birth"},
+           {"value": "parents_name", "label_bn": "পিতা/মাতার নাম", "label_en": "Parent's name"},
+           {"value": "address", "label_bn": "ঠিকানা", "label_en": "Address"},
+           {"value": "other", "label_bn": "অন্যান্য", "label_en": "Other"}
+         ]}
+      ],
+      "documents": [
+        {"id": "correction_supporting_document", "required": true, "conditions": []},
+        {"id": "applicant_identity", "required": true, "conditions": []}
+      ],
+      "steps_bn": [
+        "bdris.gov.bd/br/correction-এ সংশোধনের আবেদন পূরণ করুন।",
+        "শুধু যে তথ্যগুলো পরিবর্তন করতে চান সেগুলো পূরণ করুন এবং সংশোধনের কারণ নির্বাচন করুন।",
+        "ফি নির্ধারিত মাধ্যমে পরিশোধ করে চালানের কপি সংরক্ষণ করুন।",
+        "প্রিন্ট করা আবেদনপত্র, মূল কাগজপত্র ও চালানের কপি স্থানীয় নিবন্ধক অফিসে জমা দিন।"
+      ],
+      "steps_en": [
+        "Fill in the correction application at bdris.gov.bd/br/correction.",
+        "Fill in only the fields you are changing and select the reason for correction.",
+        "Pay the fee through a designated channel and keep the receipt.",
+        "Submit the printed application, original documents, and receipt to your local registrar office."
+      ],
+      "warnings_bn": ["সরকারি নিয়ম অনুযায়ী সর্বোচ্চ ৩ বার জন্ম নিবন্ধন সংশোধনের আবেদন করা যায়।", "পিতা/মাতার নাম সংশোধনের শর্ত জন্মতারিখ ও নিবন্ধন তথ্যের উপর নির্ভর করে; বিস্তারিত সরকারি পোর্টালে যাচাই করুন।"],
+      "warnings_en": ["Official rules allow at most three birth-registration correction applications.", "Parent-name correction conditions depend on the date of birth and existing records; verify on the official portal."],
+      "official_links": [
+        {"label_bn": "জন্ম তথ্য সংশোধনের আবেদন", "label_en": "Birth correction application", "url": "https://bdris.gov.bd/br/correction"},
+        {"label_bn": "আবেদনপত্র প্রিন্ট", "label_en": "Application print", "url": "https://bdris.gov.bd/application/print"}
+      ]
+    },
+    {
+      "id": "reprint",
+      "label_bn": "সনদ পুনঃমুদ্রণ",
+      "label_en": "Certificate reprint",
+      "questions": [],
+      "documents": [],
+      "steps_bn": [
+        "bdris.gov.bd/br/reprint-এ জন্ম নিবন্ধন সনদ পুনঃমুদ্রণের আবেদন করুন।",
+        "নির্ধারিত ফি পরিশোধ করুন (প্রযোজ্য হলে)।",
+        "অনলাইন থেকে অনুমোদিত সনদের কপি ডাউনলোড করুন।"
+      ],
+      "steps_en": [
+        "Apply for a birth certificate reprint at bdris.gov.bd/br/reprint.",
+        "Pay the designated fee where applicable.",
+        "Download the approved certificate copy online."
+      ],
+      "warnings_bn": ["পুনঃমুদ্রণের ফি ও শর্ত পরিবর্তিত হতে পারে; সরকারি পোর্টালে যাচাই করুন।"],
+      "warnings_en": ["Reprint fees and conditions may change; verify on the official portal."],
+      "official_links": [
+        {"label_bn": "সনদ পুনঃমুদ্রণ", "label_en": "Certificate reprint", "url": "https://bdris.gov.bd/br/reprint/add"}
+      ]
+    },
+    {
+      "id": "cancellation",
+      "label_bn": "সনদ বাতিল",
+      "label_en": "Certificate cancellation",
+      "questions": [],
+      "documents": [],
+      "steps_bn": [
+        "bdris.gov.bd-এর আবেদনপত্র প্রিন্ট-এ 'একাধিক জন্ম নিবন্ধন সনদ বাতিলের জন্য আবেদন' নির্বাচন করুন।",
+        "প্রয়োজনীয় তথ্য দিয়ে আবেদনপত্র তৈরি ও প্রিন্ট করুন।",
+        "প্রমাণকসহ সংশ্লিষ্ট নিবন্ধক অফিসে আবেদন জমা দিন।"
+      ],
+      "steps_en": [
+        "At bdris.gov.bd application print, choose 'cancellation of multiple birth certificates'.",
+        "Prepare and print the application with the required information.",
+        "Submit the application with supporting evidence to the concerned registrar office."
+      ],
+      "warnings_bn": ["একাধিক নিবন্ধন বাতিল একটি আইনি প্রক্রিয়া; সঠিক পথ ও প্রমাণক সরকারি পোর্টালে যাচাই করুন।"],
+      "warnings_en": ["Cancelling a duplicate registration is a legal process; verify the correct route and evidence on the official portal."],
+      "official_links": [
+        {"label_bn": "আবেদনপত্র প্রিন্ট", "label_en": "Application print", "url": "https://bdris.gov.bd/application/print"}
+      ]
+    },
+    {
+      "id": "verification",
+      "label_bn": "জন্ম তথ্য অনুসন্ধান/যাচাই",
+      "label_en": "Birth record lookup / verification",
+      "questions": [],
+      "documents": [],
+      "steps_bn": [
+        "everify.bdris.gov.bd-এ জন্ম নিবন্ধন তথ্য অনুসন্ধান করুন।",
+        "প্রয়োজনীয় ক্ষেত্রে সংশ্লিষ্ট নিবন্ধক অফিস থেকে তথ্য যাচাই করুন।"
+      ],
+      "steps_en": [
+        "Look up the birth record at everify.bdris.gov.bd.",
+        "Where needed, verify the information with the concerned registrar office."
+      ],
+      "warnings_bn": ["এই টুল কোনো নথি বা ব্যক্তির সত্যতা প্রত্যয়ন করে না; সরকারি যাচাই সবসময় সরকারি পোর্টালে করুন।"],
+      "warnings_en": ["This tool does not authenticate any document or person; always use the official portal for verification."],
+      "official_links": [
+        {"label_bn": "জন্ম নিবন্ধন তথ্য অনুসন্ধান", "label_en": "Birth record lookup", "url": "https://everify.bdris.gov.bd"}
+      ]
+    },
+    {
+      "id": "status",
+      "label_bn": "আবেদনের বর্তমান অবস্থা",
+      "label_en": "Application status",
+      "questions": [],
+      "documents": [],
+      "steps_bn": [
+        "bdris.gov.bd/br/application/status-এ আবেদনের অবস্থা দেখুন।",
+        "আবেদনপত্র নম্বর ব্যবহার করে সর্বশেষ অবস্থা যাচাই করুন।"
+      ],
+      "steps_en": [
+        "Check the application status at bdris.gov.bd/br/application/status.",
+        "Use the application number to view the latest status."
+      ],
+      "warnings_bn": ["আবেদনপত্র নম্বর এই টুলে দিতে হবে না; শুধু সরকারি পোর্টালে যাচাই করুন।"],
+      "warnings_en": ["Do not enter your application number here; verify only on the official portal."],
+      "official_links": [
+        {"label_bn": "আবেদনের অবস্থা", "label_en": "Application status", "url": "https://bdris.gov.bd/br/application/status"}
+      ]
+    }
+  ]
+}

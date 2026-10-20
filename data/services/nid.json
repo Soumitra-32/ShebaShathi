@@ -1,0 +1,167 @@
+{
+  "service_id": "nid",
+  "service_name_bn": "জাতীয় পরিচয়পত্র (NID)",
+  "service_name_en": "National ID (NID)",
+  "authority_bn": "বাংলাদেশ নির্বাচন কমিশন (NID অনুবিভাগ)",
+  "authority_en": "Bangladesh Election Commission (NID Wing)",
+  "summary_bn": "নতুন NID নিবন্ধন, তথ্য সংশোধন এবং হারানো/নষ্ট কার্ড পুনঃইস্যুর প্রস্তুতি। আবেদন ও চূড়ান্ত নথি নির্বাচন কমিশনের সরকারি পোর্টালে সম্পন্ন করুন।",
+  "summary_en": "Prepare for new NID registration, correction, and lost/damaged card re-issue. Complete applications and final requirements on the Election Commission's official portal.",
+  "source_url": "https://services.nidw.gov.bd/",
+  "last_verified": "2026-10-17",
+  "fallback_bn": "এই সুনির্দিষ্ট তথ্যটি যাচাই করা সরকারি উৎসে পাওয়া যায়নি। অনুগ্রহ করে services.nidw.gov.bd দেখুন অথবা নির্বাচন কমিশন হেল্পলাইন ১০৫-এ যোগাযোগ করুন।",
+  "fallback_en": "The available official sources do not specify this. Please check services.nidw.gov.bd or contact the Election Commission helpline 105.",
+  "official_links": [
+    {"label_bn": "NID আবেদন পোর্টাল (নির্বাচন কমিশন)", "label_en": "NID application portal (Election Commission)", "url": "https://services.nidw.gov.bd/"},
+    {"label_bn": "NID ফি হিসাব", "label_en": "NID fee calculator", "url": "https://services.nidw.gov.bd/nid-pub/fees"},
+    {"label_bn": "নির্বাচন কমিশন ফ্রেমওয়ার্ক (EC)", "label_en": "Election Commission website", "url": "https://ecs.gov.bd/"}
+  ],
+  "documents": [
+    {
+      "id": "printed_online_form",
+      "label_bn": "অনলাইনে পূরণ করা ফরমের প্রিন্ট কপি",
+      "label_en": "Printed copy of the online application form",
+      "notes_bn": "অনলাইনে ফরম পূরণ করে প্রিভিউ দেখে সাবমিট করুন, এরপর প্রিন্ট করে প্রয়োজনীয় কাগজপত্রসহ নিকটস্থ নির্বাচন অফিসে জমা দিন।",
+      "notes_en": "Complete the form online, review the preview, submit, then print it and submit with the documents to your nearest election office.",
+      "source_url": "https://services.nidw.gov.bd/nid-pub/faq?tab=faq-register",
+      "last_verified": "2026-10-17"
+    },
+    {
+      "id": "age_proof",
+      "label_bn": "বয়সের প্রমাণ (এসএসসি বা সমমান সনদ / জন্ম নিবন্ধন / পাসপোর্ট / ড্রাইভিং লাইসেন্স / টিআইএন — যেটি প্রযোজ্য)",
+      "label_en": "Proof of age (SSC or equivalent certificate / birth registration / passport / driving licence / TIN — whichever applies)",
+      "notes_bn": "সরকারি FAQ অনুযায়ী বয়সের প্রমাণ হিসেবে এসএসসি সনদ, জন্ম নিবন্ধন, পাসপোর্ট/ড্রাইভিং লাইসেন্স/টিআইএন দেওয়া যায়।",
+      "notes_en": "Per the official FAQ, age can be evidenced by an SSC certificate, birth registration, passport, driving licence, or TIN.",
+      "source_url": "https://services.nidw.gov.bd/nid-pub/faq?tab=faq-register",
+      "last_verified": "2026-10-17"
+    },
+    {
+      "id": "residence_proof",
+      "label_bn": "ঠিকানার প্রমাণ (ইউটিলিটি বিলের কপি / বাড়ি ভাড়ার রশিদ / হোল্ডিং ট্যাক্স রশিদ)",
+      "label_en": "Address proof (copy of a utility bill / house rent receipt / holding tax receipt)",
+      "notes_bn": "ঐ এলাকায় সচরাচর বসবাসের প্রমাণ হিসেবে ইউটিলিটি বিল, বাড়ি ভাড়ার রশিদ বা হোল্ডিং ট্যাক্স রশিদ।",
+      "notes_en": "Evidence of habitual residence in the area: a utility bill, house-rent receipt, or holding-tax receipt.",
+      "source_url": "https://services.nidw.gov.bd/nid-pub/faq?tab=faq-register",
+      "last_verified": "2026-10-17"
+    },
+    {
+      "id": "citizenship_certificate",
+      "label_bn": "নাগরিকত্বের সনদ (প্রযোজ্য ক্ষেত্রে)",
+      "label_en": "Citizenship certificate (where applicable)",
+      "notes_bn": "প্রযোজ্য ক্ষেত্রে সরকারি FAQ-তে নাগরিকত্বের সনদ চাওয়া হয়েছে।",
+      "notes_en": "The official FAQ lists a citizenship certificate where applicable.",
+      "source_url": "https://services.nidw.gov.bd/nid-pub/faq?tab=faq-register",
+      "last_verified": "2026-10-17"
+    },
+    {
+      "id": "parents_or_spouse_nid",
+      "label_bn": "পিতা/মাতা/স্বামী-স্ত্রীর NID কার্ডের কপি (প্রযোজ্য ক্ষেত্রে)",
+      "label_en": "Copy of father's/mother's/spouse's NID card (where applicable)",
+      "notes_bn": "প্রযোজ্য ক্ষেত্রে বাবা, মা, স্বামী/স্ত্রীর এনআইডি কার্ডের কপি দিতে বলা হয়েছে।",
+      "notes_en": "Where applicable, the official FAQ asks for a copy of the father's, mother's, or spouse's NID card.",
+      "source_url": "https://services.nidw.gov.bd/nid-pub/faq?tab=faq-register",
+      "last_verified": "2026-10-17"
+    },
+    {
+      "id": "correction_evidence",
+      "label_bn": "সংশোধনের পক্ষে প্রমাণক (সংশোধনের ধরন অনুযায়ী)",
+      "label_en": "Supporting evidence for the correction (depends on correction type)",
+      "notes_bn": "নাম/জন্মতারিখ সংশোধনে সাধারণত এসএসসি/সমমান সনদ; পিতা/মাতার নাম সংশোধনে তাদের NID; নামের আমূল পরিবর্তনে হলফনামা ও পত্রিকা বিজ্ঞপ্তি; ঠিকানা সংশোধনে সঠিক ঠিকানার প্রমাণক লাগে।",
+      "notes_en": "Name/date-of-birth correction usually needs an SSC-equivalent certificate; parent-name correction needs their NID; a full name change needs an affidavit and newspaper notice; address correction needs proof of the correct address.",
+      "source_url": "https://services.nidw.gov.bd/nid-pub/faq?tab=faq-correction",
+      "last_verified": "2026-10-17"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "new_registration",
+      "label_bn": "নতুন NID নিবন্ধন",
+      "label_en": "New NID registration",
+      "questions": [
+        {"field": "age", "type": "number", "required": true, "min": 10, "max": 120, "label_bn": "আবেদনকারীর বয়স (বছর)", "label_en": "Applicant's age (years)"}
+      ],
+      "documents": [
+        {"id": "printed_online_form", "required": true, "conditions": []},
+        {"id": "age_proof", "required": true, "conditions": []},
+        {"id": "residence_proof", "required": true, "conditions": []},
+        {"id": "citizenship_certificate", "required": false, "conditions": []},
+        {"id": "parents_or_spouse_nid", "required": false, "conditions": []}
+      ],
+      "steps_bn": [
+        "services.nidw.gov.bd-এ নতুন নিবন্ধনের জন্য অনলাইন ফরম পূরণ করুন (ব্যক্তিগত তথ্য, অন্যান্য তথ্য, ঠিকানা—তিন ধাপ)।",
+        "প্রিভিউ দেখে সব তথ্য যাচাই করে সাবমিট করুন এবং ফরমের PDF প্রিন্ট করুন।",
+        "প্রয়োজনীয় কাগজপত্রসহ সিডিউল অনুযায়ী সংশ্লিষ্ট উপজেলা/থানা নির্বাচন অফিসে বায়োমেট্রিক দিতে যান।",
+        "নিবন্ধন সম্পন্ন হলে অনলাইনে অ্যাকাউন্ট রেজিস্টার করে কার্ড সংগ্রহ সংক্রান্ত বার্তা অনুসরণ করুন।"
+      ],
+      "steps_en": [
+        "Fill in the new-registration form at services.nidw.gov.bd (three steps: personal, other, and address information).",
+        "Check the preview, submit, and print the PDF form.",
+        "Attend the scheduled biometrics at your upazila/thana election office with the required documents.",
+        "Once registration completes, register online and follow the message about collecting your card."
+      ],
+      "warnings_bn": ["ভোটার তালিকায় ইতোমধ্যে নিবন্ধিত হলে পুনরায় আবেদন করা যাবে না এবং তা দণ্ডনীয়।", "সঠিক সময়ে বায়োমেট্রিক না দিলে আবেদন বিলম্বিত হতে পারে; অফিসের সিডিউল অনুসরণ করুন।"],
+      "warnings_en": ["If you are already registered as a voter, do not apply again — doing so is punishable.", "Missing your biometrics appointment can delay the application; follow the office schedule."],
+      "official_links": [
+        {"label_bn": "নতুন নিবন্ধন ফরম", "label_en": "New registration form", "url": "https://services.nidw.gov.bd/nid-pub/register-account"}
+      ]
+    },
+    {
+      "id": "correction",
+      "label_bn": "NID তথ্য সংশোধন",
+      "label_en": "NID information correction",
+      "questions": [
+        {"field": "correction_type", "type": "select", "required": true, "label_bn": "কী সংশোধন করতে চান", "label_en": "What do you want to correct",
+         "options": [
+           {"value": "name", "label_bn": "নাম/বানান", "label_en": "Name / spelling"},
+           {"value": "birth_date", "label_bn": "জন্ম তারিখ", "label_en": "Date of birth"},
+           {"value": "parents_name", "label_bn": "পিতা/মাতার নাম", "label_en": "Parent's name"},
+           {"value": "address", "label_bn": "ঠিকানা", "label_en": "Address"},
+           {"value": "other", "label_bn": "অন্যান্য", "label_en": "Other"}
+         ]}
+      ],
+      "documents": [
+        {"id": "correction_evidence", "required": true, "conditions": []},
+        {"id": "parents_or_spouse_nid", "required": false, "conditions": []}
+      ],
+      "steps_bn": [
+        "services.nidw.gov.bd-এ রেজিস্টার/লগইন করুন, তারপর সংশোধনের আবেদন শুরু করুন।",
+        "কেবল যে তথ্য সংশোধন করতে চান সেটি পূরণ করে সংশ্লিষ্ট প্রমাণক সংযুক্ত করুন।",
+        "প্রয়োজনীয় ক্ষেত্রে অনলাইন/সংশ্লিষ্ট উপজেলা, থানা বা জেলা নির্বাচন অফিসে আবেদন জমা দিন।",
+        "আবেদনের অবস্থা সরকারি পোর্টালে দেখুন।"
+      ],
+      "steps_en": [
+        "Register/log in at services.nidw.gov.bd and start the correction application.",
+        "Fill in only the field you are correcting and attach the corresponding evidence.",
+        "Where required, submit the application online or at the concerned upazila/thana/district election office.",
+        "Check the application status on the official portal."
+      ],
+      "warnings_bn": ["একটি তথ্য সাধারণত একবারই সংশোধন করা যায়; প্রমাণক ছাড়া সংশোধন গ্রহণযোগ্য হয় না।", "হারানো কার্ড উদ্ধার ও সংশোধন একসাথে সম্ভব নয়—আগে পুনঃইস্যু, পরে সংশোধন।"],
+      "warnings_en": ["A given field can usually be corrected only once; corrections are not accepted without evidence.", "Lost-card re-issue and correction cannot be done together — re-issue first, then correction."],
+      "official_links": [
+        {"label_bn": "NID সংশোধনের FAQ", "label_en": "NID correction FAQ", "url": "https://services.nidw.gov.bd/nid-pub/faq?tab=faq-correction"}
+      ]
+    },
+    {
+      "id": "reissue",
+      "label_bn": "হারানো/নষ্ট কার্ড পুনঃইস্যু",
+      "label_en": "Lost / damaged card re-issue",
+      "questions": [],
+      "documents": [],
+      "steps_bn": [
+        "services.nidw.gov.bd-এ রেজিস্টার/লগইন করুন।",
+        "অনলাইনে পুনঃমুদ্রণের (রিইস্যু) আবেদন করুন এবং নির্ধারিত ফি পরিশোধ করুন।",
+        "অনুমোদনের বার্তা পাওয়ার পর অনলাইন থেকে NID কার্ডের কপি ডাউনলোড করুন।"
+      ],
+      "steps_en": [
+        "Register/log in at services.nidw.gov.bd.",
+        "Apply for a re-issue (reprint) online and pay the designated fee.",
+        "After approval, download your NID card copy online."
+      ],
+      "warnings_bn": ["পুনঃইস্যুর ফি আবেদনের ধরন অনুযায়ী ভিন্ন; সরকারি ফি পেজে হিসাব করে নিন।", "একই তথ্য একবারই সংশোধনযোগ্য, তাই প্রয়োজনে আগে পুনঃইস্যু সম্পন্ন করুন।"],
+      "warnings_en": ["Re-issue fees vary by application type; calculate them on the official fee page.", "A field can be corrected only once, so complete re-issue first if needed."],
+      "official_links": [
+        {"label_bn": "NID ফি হিসাব", "label_en": "NID fee calculator", "url": "https://services.nidw.gov.bd/nid-pub/fees"},
+        {"label_bn": "NID কার্ড নিজেই ডাউনলোড করুন", "label_en": "Download your NID card", "url": "https://services.nidw.gov.bd/nid-pub/form/download"}
+      ]
+    }
+  ]
+}
