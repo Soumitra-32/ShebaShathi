@@ -1,0 +1,407 @@
+{
+  "catalog_version": "2026-10-20",
+  "currency": "BDT",
+  "last_updated": "2026-10-20",
+  "notes_bn": "এখানে শুধু যাচাই করা সরকারি ফির তালিকা আছে। যেসব সেবার ফি তালিকা যাচাই করা যায়নি, সেগুলো 'ম্যানুয়াল যাচাই প্রয়োজন' হিসেবে দেখানো হয়েছে।",
+  "notes_en": "Only verified official fee schedules are listed. Services whose fee schedule could not be verified are shown as 'manual verification required'.",
+  "services": [
+    {
+      "service_id": "epassport",
+      "label_bn": "ই-পাসপোর্ট",
+      "label_en": "e-Passport",
+      "authority_bn": "ইমিগ্রেশন ও পাসপোর্ট অধিদপ্তর",
+      "authority_en": "Department of Immigration and Passports",
+      "available": true,
+      "source_url": "https://www.epassport.gov.bd/instructions/passport-fees",
+      "last_verified": "2026-10-15",
+      "scope_note_bn": "বাংলাদেশের ভেতরে আবেদনের প্রকাশিত ফি। প্রকাশিত অঙ্কে ১৫% ভ্যাট অন্তর্ভুক্ত; আলাদা কোনো সার্ভিস চার্জ দেখানো হয়নি। মিশন ফি অন্তর্ভুক্ত নয়।",
+      "scope_note_en": "Published fees for applications inside Bangladesh. The published totals include 15% VAT; no separate service charge is listed. Mission fees are not included.",
+      "parameters": [
+        {
+          "id": "pages",
+          "type": "select",
+          "label_bn": "পাসপোর্টের পৃষ্ঠা",
+          "label_en": "Passport pages",
+          "options": [
+            {"value": "48", "label_bn": "৪৮ পৃষ্ঠা", "label_en": "48 pages"},
+            {"value": "64", "label_bn": "৬৪ পৃষ্ঠা", "label_en": "64 pages"}
+          ]
+        },
+        {
+          "id": "validity_years",
+          "type": "select",
+          "label_bn": "মেয়াদ",
+          "label_en": "Validity",
+          "options": [
+            {"value": "5", "label_bn": "৫ বছর", "label_en": "5 years"},
+            {"value": "10", "label_bn": "১০ বছর", "label_en": "10 years"}
+          ]
+        },
+        {
+          "id": "delivery",
+          "type": "select",
+          "label_bn": "বিতরণ পদ্ধতি",
+          "label_en": "Delivery",
+          "options": [
+            {"value": "regular", "label_bn": "সাধারণ", "label_en": "Regular"},
+            {"value": "express", "label_bn": "জরুরি", "label_en": "Express"},
+            {"value": "super_express", "label_bn": "অতি জরুরি", "label_en": "Super express"}
+          ]
+        }
+      ],
+      "fee_rules": [
+        {
+          "id": "epassport-48-5-regular",
+          "selection": {"pages": "48", "validity_years": "5", "delivery": "regular"},
+          "components": [
+            {"id": "base", "label_bn": "ভ্যাট-পূর্ব ফি", "label_en": "Fee before VAT", "amount": 3500},
+            {"id": "vat", "label_bn": "১৫% ভ্যাট", "label_en": "15% VAT", "amount": 525}
+          ],
+          "total": 4025,
+          "notes_bn": "সাধারণ বিতরণ: ১৫ কার্যদিবস (বায়োমেট্রিক এনরোলমেন্টের পর ২১ দিন)।",
+          "notes_en": "Regular delivery: within 15 working days (21 days from biometric enrolment)."
+        },
+        {
+          "id": "epassport-48-5-express",
+          "selection": {"pages": "48", "validity_years": "5", "delivery": "express"},
+          "components": [
+            {"id": "base", "label_bn": "ভ্যাট-পূর্ব ফি", "label_en": "Fee before VAT", "amount": 5500},
+            {"id": "vat", "label_bn": "১৫% ভ্যাট", "label_en": "15% VAT", "amount": 825}
+          ],
+          "total": 6325,
+          "notes_bn": "জরুরি বিতরণ: ৭ কার্যদিবস (বায়োমেট্রিক এনরোলমেন্টের পর ১০ দিন)।",
+          "notes_en": "Express delivery: within 7 working days (10 days from biometric enrolment)."
+        },
+        {
+          "id": "epassport-48-5-super-express",
+          "selection": {"pages": "48", "validity_years": "5", "delivery": "super_express"},
+          "components": [
+            {"id": "base", "label_bn": "ভ্যাট-পূর্ব ফি", "label_en": "Fee before VAT", "amount": 7500},
+            {"id": "vat", "label_bn": "১৫% ভ্যাট", "label_en": "15% VAT", "amount": 1125}
+          ],
+          "total": 8625,
+          "notes_bn": "অতি জরুরি বিতরণ: বায়োমেট্রিক এনরোলমেন্টের পর ২ কার্যদিবস।",
+          "notes_en": "Super express delivery: within 2 working days from biometric enrolment."
+        },
+        {
+          "id": "epassport-48-10-regular",
+          "selection": {"pages": "48", "validity_years": "10", "delivery": "regular"},
+          "components": [
+            {"id": "base", "label_bn": "ভ্যাট-পূর্ব ফি", "label_en": "Fee before VAT", "amount": 5000},
+            {"id": "vat", "label_bn": "১৫% ভ্যাট", "label_en": "15% VAT", "amount": 750}
+          ],
+          "total": 5750,
+          "notes_bn": "সাধারণ বিতরণ: ১৫ কার্যদিবস (বায়োমেট্রিক এনরোলমেন্টের পর ২১ দিন)।",
+          "notes_en": "Regular delivery: within 15 working days (21 days from biometric enrolment)."
+        },
+        {
+          "id": "epassport-48-10-express",
+          "selection": {"pages": "48", "validity_years": "10", "delivery": "express"},
+          "components": [
+            {"id": "base", "label_bn": "ভ্যাট-পূর্ব ফি", "label_en": "Fee before VAT", "amount": 7000},
+            {"id": "vat", "label_bn": "১৫% ভ্যাট", "label_en": "15% VAT", "amount": 1050}
+          ],
+          "total": 8050,
+          "notes_bn": "জরুরি বিতরণ: ৭ কার্যদিবস (বায়োমেট্রিক এনরোলমেন্টের পর ১০ দিন)।",
+          "notes_en": "Express delivery: within 7 working days (10 days from biometric enrolment)."
+        },
+        {
+          "id": "epassport-48-10-super-express",
+          "selection": {"pages": "48", "validity_years": "10", "delivery": "super_express"},
+          "components": [
+            {"id": "base", "label_bn": "ভ্যাট-পূর্ব ফি", "label_en": "Fee before VAT", "amount": 9000},
+            {"id": "vat", "label_bn": "১৫% ভ্যাট", "label_en": "15% VAT", "amount": 1350}
+          ],
+          "total": 10350,
+          "notes_bn": "অতি জরুরি বিতরণ: বায়োমেট্রিক এনরোলমেন্টের পর ২ কার্যদিবস।",
+          "notes_en": "Super express delivery: within 2 working days from biometric enrolment."
+        },
+        {
+          "id": "epassport-64-5-regular",
+          "selection": {"pages": "64", "validity_years": "5", "delivery": "regular"},
+          "components": [
+            {"id": "base", "label_bn": "ভ্যাট-পূর্ব ফি", "label_en": "Fee before VAT", "amount": 5500},
+            {"id": "vat", "label_bn": "১৫% ভ্যাট", "label_en": "15% VAT", "amount": 825}
+          ],
+          "total": 6325,
+          "notes_bn": "সাধারণ বিতরণ: ১৫ কার্যদিবস (বায়োমেট্রিক এনরোলমেন্টের পর ২১ দিন)।",
+          "notes_en": "Regular delivery: within 15 working days (21 days from biometric enrolment)."
+        },
+        {
+          "id": "epassport-64-5-express",
+          "selection": {"pages": "64", "validity_years": "5", "delivery": "express"},
+          "components": [
+            {"id": "base", "label_bn": "ভ্যাট-পূর্ব ফি", "label_en": "Fee before VAT", "amount": 7500},
+            {"id": "vat", "label_bn": "১৫% ভ্যাট", "label_en": "15% VAT", "amount": 1125}
+          ],
+          "total": 8625,
+          "notes_bn": "জরুরি বিতরণ: ৭ কার্যদিবস (বায়োমেট্রিক এনরোলমেন্টের পর ১০ দিন)।",
+          "notes_en": "Express delivery: within 7 working days (10 days from biometric enrolment)."
+        },
+        {
+          "id": "epassport-64-5-super-express",
+          "selection": {"pages": "64", "validity_years": "5", "delivery": "super_express"},
+          "components": [
+            {"id": "base", "label_bn": "ভ্যাট-পূর্ব ফি", "label_en": "Fee before VAT", "amount": 10500},
+            {"id": "vat", "label_bn": "১৫% ভ্যাট", "label_en": "15% VAT", "amount": 1575}
+          ],
+          "total": 12075,
+          "notes_bn": "অতি জরুরি বিতরণ: বায়োমেট্রিক এনরোলমেন্টের পর ২ কার্যদিবস।",
+          "notes_en": "Super express delivery: within 2 working days from biometric enrolment."
+        },
+        {
+          "id": "epassport-64-10-regular",
+          "selection": {"pages": "64", "validity_years": "10", "delivery": "regular"},
+          "components": [
+            {"id": "base", "label_bn": "ভ্যাট-পূর্ব ফি", "label_en": "Fee before VAT", "amount": 7000},
+            {"id": "vat", "label_bn": "১৫% ভ্যাট", "label_en": "15% VAT", "amount": 1050}
+          ],
+          "total": 8050,
+          "notes_bn": "সাধারণ বিতরণ: ১৫ কার্যদিবস (বায়োমেট্রিক এনরোলমেন্টের পর ২১ দিন)।",
+          "notes_en": "Regular delivery: within 15 working days (21 days from biometric enrolment)."
+        },
+        {
+          "id": "epassport-64-10-express",
+          "selection": {"pages": "64", "validity_years": "10", "delivery": "express"},
+          "components": [
+            {"id": "base", "label_bn": "ভ্যাট-পূর্ব ফি", "label_en": "Fee before VAT", "amount": 9000},
+            {"id": "vat", "label_bn": "১৫% ভ্যাট", "label_en": "15% VAT", "amount": 1350}
+          ],
+          "total": 10350,
+          "notes_bn": "জরুরি বিতরণ: ৭ কার্যদিবস (বায়োমেট্রিক এনরোলমেন্টের পর ১০ দিন)।",
+          "notes_en": "Express delivery: within 7 working days (10 days from biometric enrolment)."
+        },
+        {
+          "id": "epassport-64-10-super-express",
+          "selection": {"pages": "64", "validity_years": "10", "delivery": "super_express"},
+          "components": [
+            {"id": "base", "label_bn": "ভ্যাট-পূর্ব ফি", "label_en": "Fee before VAT", "amount": 12000},
+            {"id": "vat", "label_bn": "১৫% ভ্যাট", "label_en": "15% VAT", "amount": 1800}
+          ],
+          "total": 13800,
+          "notes_bn": "অতি জরুরি বিতরণ: বায়োমেট্রিক এনরোলমেন্টের পর ২ কার্যদিবস।",
+          "notes_en": "Super express delivery: within 2 working days from biometric enrolment."
+        }
+      ]
+    },
+    {
+      "service_id": "driving_licence",
+      "label_bn": "ড্রাইভিং লাইসেন্স",
+      "label_en": "Driving licence",
+      "authority_bn": "বাংলাদেশ রোড ট্রান্সপোর্ট অথরিটি (BRTA)",
+      "authority_en": "Bangladesh Road Transport Authority (BRTA)",
+      "available": true,
+      "source_url": "https://bsp.brta.gov.bd/drivingLicense",
+      "last_verified": "2026-10-17",
+      "scope_note_bn": "সরকারি BRTA পাতায় প্রকাশিত ফি। চূড়ান্ত অঙ্ক BRTA ফি ক্যালকুলেটরে যাচাই করুন; এখানে কোনো ডেলিভারি বা তৃতীয় পক্ষের সেবা ফি অন্তর্ভুক্ত নয়।",
+      "scope_note_en": "Fees published on the official BRTA page. Confirm the final amount in the BRTA fee calculator; no delivery or third-party service charge is included here.",
+      "parameters": [
+        {
+          "id": "service_type",
+          "type": "select",
+          "label_bn": "সেবার ধরন",
+          "label_en": "Service type",
+          "options": [
+            {"value": "learner", "label_bn": "লার্নার / শিক্ষানবিশ লাইসেন্স", "label_en": "Learner / apprentice licence"},
+            {"value": "smart_card", "label_bn": "স্মার্ট কার্ড ড্রাইভিং লাইসেন্স (প্রথম)", "label_en": "Smart-card driving licence (first)"},
+            {"value": "renewal", "label_bn": "ড্রাইভিং লাইসেন্স নবায়ন", "label_en": "Driving licence renewal"},
+            {"value": "duplicate", "label_bn": "ডুপ্লিকেট লাইসেন্স", "label_en": "Duplicate licence"}
+          ]
+        },
+        {
+          "id": "learner_category",
+          "type": "select",
+          "label_bn": "লাইসেন্সের ক্যাটাগরি",
+          "label_en": "Licence category",
+          "applies_when": {"service_type": "learner"},
+          "options": [
+            {"value": "1", "label_bn": "১ ক্যাটাগরি", "label_en": "Category 1"},
+            {"value": "2", "label_bn": "২ ক্যাটাগরি", "label_en": "Category 2"}
+          ]
+        },
+        {
+          "id": "professional",
+          "type": "select",
+          "label_bn": "লাইসেন্সের ধরন",
+          "label_en": "Licence type",
+          "applies_when": {"service_type": "smart_card"},
+          "options": [
+            {"value": "no", "label_bn": "অপেশাদার", "label_en": "Non-professional"},
+            {"value": "yes", "label_bn": "পেশাদার", "label_en": "Professional"}
+          ]
+        },
+        {
+          "id": "professional",
+          "type": "select",
+          "label_bn": "লাইসেন্সের ধরন",
+          "label_en": "Licence type",
+          "applies_when": {"service_type": "renewal"},
+          "options": [
+            {"value": "no", "label_bn": "অপেশাদার", "label_en": "Non-professional"},
+            {"value": "yes", "label_bn": "পেশাদার", "label_en": "Professional"}
+          ]
+        },
+        {
+          "id": "years_late",
+          "type": "number",
+          "label_bn": "মেয়াদোত্তীর্ণের কত বছর পরে (১৫ দিনের বেশি)",
+          "label_en": "Years past expiry (more than 15 days)",
+          "applies_when": {"service_type": "renewal"},
+          "min": 0,
+          "max": 10,
+          "default": 0,
+          "hint_bn": "মেয়াদোত্তীর্ণের ১৫ দিনের মধ্যে নবায়নে জরিমানা লাগে না। প্রতি বছরের জন্য ২০০ টাকা জরিমানা যোগ হয়।",
+          "hint_en": "No penalty within 15 days of expiry. BDT 200 is added for each year after that."
+        }
+      ],
+      "fee_rules": [
+        {
+          "id": "brta-learner-category-1",
+          "selection": {"service_type": "learner", "learner_category": "1"},
+          "components": [
+            {"id": "base", "label_bn": "লার্নার ফি", "label_en": "Learner fee", "amount": 345}
+          ],
+          "total": 345,
+          "notes_bn": "১ ক্যাটাগরি লার্নার/শিক্ষানবিশ লাইসেন্সের ফি।",
+          "notes_en": "Category 1 learner/apprentice licence fee."
+        },
+        {
+          "id": "brta-learner-category-2",
+          "selection": {"service_type": "learner", "learner_category": "2"},
+          "components": [
+            {"id": "base", "label_bn": "লার্নার ফি", "label_en": "Learner fee", "amount": 518}
+          ],
+          "total": 518,
+          "notes_bn": "২ ক্যাটাগরি লার্নার/শিক্ষানবিশ লাইসেন্সের ফি।",
+          "notes_en": "Category 2 learner/apprentice licence fee."
+        },
+        {
+          "id": "brta-smart-card-non-professional",
+          "selection": {"service_type": "smart_card", "professional": "no"},
+          "components": [
+            {"id": "base", "label_bn": "স্মার্ট কার্ড ফি", "label_en": "Smart card fee", "amount": 2300}
+          ],
+          "total": 2300,
+          "notes_bn": "প্রথমবারের অপেশাদার স্মার্ট কার্ড ড্রাইভিং লাইসেন্সের ফি।",
+          "notes_en": "First-time non-professional smart-card driving licence fee."
+        },
+        {
+          "id": "brta-smart-card-professional",
+          "selection": {"service_type": "smart_card", "professional": "yes"},
+          "components": [
+            {"id": "base", "label_bn": "স্মার্ট কার্ড ফি", "label_en": "Smart card fee", "amount": 1438}
+          ],
+          "total": 1438,
+          "notes_bn": "প্রথমবারের পেশাদার স্মার্ট কার্ড ড্রাইভিং লাইসেন্সের ফি।",
+          "notes_en": "First-time professional smart-card driving licence fee."
+        },
+        {
+          "id": "brta-renewal-non-professional",
+          "selection": {"service_type": "renewal", "professional": "no"},
+          "components": [
+            {"id": "base", "label_bn": "নবায়ন ফি", "label_en": "Renewal fee", "amount": 2185}
+          ],
+          "total": 2185,
+          "variable_components": [
+            {
+              "id": "late_penalty",
+              "label_bn": "বিলম্বের জরিমানা (প্রতি বছর)",
+              "label_en": "Late renewal penalty (per year)",
+              "amount_per_unit": 200,
+              "unit_field": "years_late",
+              "min_units": 1
+            }
+          ],
+          "notes_bn": "মেয়াদোত্তীর্ণের ১৫ দিনের মধ্যে অপেশাদার লাইসেন্স নবায়নের ফি। এর বেশি সময় পার হলে প্রতি বছর ২০০ টাকা জরিমানা যোগ হয়।",
+          "notes_en": "Non-professional licence renewal within 15 days of expiry. After that, BDT 200 is added for each year."
+        },
+        {
+          "id": "brta-renewal-professional",
+          "selection": {"service_type": "renewal", "professional": "yes"},
+          "components": [
+            {"id": "base", "label_bn": "নবায়ন ফি", "label_en": "Renewal fee", "amount": 1323}
+          ],
+          "total": 1323,
+          "variable_components": [
+            {
+              "id": "late_penalty",
+              "label_bn": "বিলম্বের জরিমানা (প্রতি বছর)",
+              "label_en": "Late renewal penalty (per year)",
+              "amount_per_unit": 200,
+              "unit_field": "years_late",
+              "min_units": 1
+            }
+          ],
+          "notes_bn": "মেয়াদোত্তীর্ণের ১৫ দিনের মধ্যে পেশাদার লাইসেন্স নবায়নের ফি। এর বেশি সময় পার হলে প্রতি বছর ২০০ টাকা জরিমানা যোগ হয়।",
+          "notes_en": "Professional licence renewal within 15 days of expiry. After that, BDT 200 is added for each year."
+        },
+        {
+          "id": "brta-duplicate",
+          "selection": {"service_type": "duplicate"},
+          "components": [
+            {"id": "base", "label_bn": "ডুপ্লিকেট ফি", "label_en": "Duplicate fee", "amount": 633}
+          ],
+          "total": 633,
+          "notes_bn": "হাই সিকিউরিটি কার্ডের ডুপ্লিকেট লাইসেন্সের ফি।",
+          "notes_en": "Duplicate licence fee for a high-security card."
+        }
+      ]
+    },
+    {
+      "service_id": "nid",
+      "label_bn": "জাতীয় পরিচয়পত্র (NID)",
+      "label_en": "National ID (NID)",
+      "authority_bn": "নির্বাচন কমিশন",
+      "authority_en": "Election Commission",
+      "available": false,
+      "source_url": "https://services.nidw.gov.bd/nid-pub/fees",
+      "last_verified": "2026-10-17",
+      "unavailable_reason_bn": "এই সেবার ফি তালিকা এখনও যাচাই করা হয়নি, তাই এখানে কোনো অঙ্ক দেখানো হচ্ছে না। সরকারি ফি পাতায় অঙ্ক যাচাই করুন।",
+      "unavailable_reason_en": "The fee schedule for this service has not been verified yet, so no amount is shown. Check the official fee page.",
+      "parameters": [],
+      "fee_rules": []
+    },
+    {
+      "service_id": "birth_registration",
+      "label_bn": "জন্ম নিবন্ধন",
+      "label_en": "Birth registration",
+      "authority_bn": "জন্ম ও মৃত্যু নিবন্ধন অধিদপ্তর (BDRIS)",
+      "authority_en": "Directorate of Registration of Births and Deaths (BDRIS)",
+      "available": false,
+      "source_url": "https://bdris.gov.bd/",
+      "last_verified": "2026-10-17",
+      "unavailable_reason_bn": "জন্ম নিবন্ধনের ফি তালিকা যাচাই করা যায়নি (পরিষেবাটি সরকারি পোর্টালে দেখা যায়)। এখানে কোনো অঙ্ক দেখানো হচ্ছে না।",
+      "unavailable_reason_en": "The birth-registration fee schedule could not be verified, so no amount is shown. Check the official portal.",
+      "parameters": [],
+      "fee_rules": []
+    },
+    {
+      "service_id": "death_registration",
+      "label_bn": "মৃত্যু নিবন্ধন",
+      "label_en": "Death registration",
+      "authority_bn": "জন্ম ও মৃত্যু নিবন্ধন অধিদপ্তর (BDRIS)",
+      "authority_en": "Directorate of Registration of Births and Deaths (BDRIS)",
+      "available": false,
+      "source_url": "https://bdris.gov.bd/",
+      "last_verified": "2026-10-17",
+      "unavailable_reason_bn": "মৃত্যু নিবন্ধনের ফি তালিকা যাচাই করা যায়নি, তাই এখানে কোনো অঙ্ক দেখানো হচ্ছে না। সরকারি পোর্টালে যাচাই করুন।",
+      "unavailable_reason_en": "The death-registration fee schedule could not be verified, so no amount is shown. Check the official portal.",
+      "parameters": [],
+      "fee_rules": []
+    },
+    {
+      "service_id": "land_mutation",
+      "label_bn": "জমি হস্তান্তর (মাল্টিজারিফ)",
+      "label_en": "Land mutation",
+      "authority_bn": "আল ও জমি অধিদপ্তর",
+      "authority_en": "Department of Land Records",
+      "available": false,
+      "source_url": "https://land.gov.bd/",
+      "last_verified": "2026-10-20",
+      "unavailable_reason_bn": "জমি হস্তান্তরের ফি তালিকা ও একক প্রকাশিত সরকারি সূত্রে যাচাই করা যায়নি, তাই এখানে কোনো অঙ্ক দেখানো হচ্ছে না। সংশ্লিষ্ট সরকারি অফিসে যাচাই করুন।",
+      "unavailable_reason_en": "No single verifiable official fee schedule was located for land mutation, so no amount is shown. Verify with the relevant government office.",
+      "parameters": [],
+      "fee_rules": []
+    }
+  ]
+}

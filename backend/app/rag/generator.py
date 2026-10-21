@@ -21,6 +21,8 @@ def generate(question: str, profile=None, language: str = "bn", docs: list[dict]
 
     mode = "extractive"
     generated = None
+    provider = "none"
+    model = None
     if llm.is_configured():
         context = "\n\n".join(
             f"[chunk_id={doc['id']} section={doc['metadata'].get('section', '')}]\n{doc['text']}"
@@ -33,10 +35,14 @@ def generate(question: str, profile=None, language: str = "bn", docs: list[dict]
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": prompt},
             ])
-            parsed = json.loads(response["content"])
+            parsed = response.get("parsed")
+            if parsed is None:
+                parsed = json.loads(response["content"])
             if isinstance(parsed.get("answer"), str) and isinstance(parsed.get("used_chunk_ids"), list):
                 generated = parsed
                 mode = "api"
+                provider = llm.provider_name()
+                model = llm.model_id()
         except Exception:
             # The source-grounded extractive path remains available if the optional API fails.
             generated = None
@@ -47,4 +53,6 @@ def generate(question: str, profile=None, language: str = "bn", docs: list[dict]
         **generated,
         "retrieved_chunks": results,
         "generation_mode": mode,
+        "llm_provider": provider,
+        "llm_model": model,
     }

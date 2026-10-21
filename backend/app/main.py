@@ -2,6 +2,17 @@
 ShebaShathi BD - Backend API
 FastAPI application for e-Passport services.
 """
+import asyncio
+import sys
+
+if sys.platform == "win32":
+    # On Windows the default Proactor event loop can abort the whole server with
+    # "WinError 64: The specified network name is no longer available" when a
+    # client resets a connection. The selector loop is the documented
+    # workaround. uvicorn creates the loop after the app is imported, so this
+    # takes effect for `uvicorn app.main:app` as well.
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
@@ -23,6 +34,7 @@ from .schemas import (
 from .engine import fees as fees_engine
 from .engine import checklist as checklist_engine
 from .engine import redflag as redflag_engine
+from .engine import fee_schedules as fee_schedule_engine
 from .drafter import grs as grs_drafter
 from .services import engine as service_engine
 from .services import loader as service_loader
@@ -143,6 +155,8 @@ async def copilot_ask(req: CopilotAskRequest):
                     for d in docs
                 ],
                 "generation_mode": answer_result.get("generation_mode", "unavailable"),
+                "llm_provider": answer_result.get("llm_provider", "none"),
+                "llm_model": answer_result.get("llm_model"),
             }
 
         citations = []
@@ -166,6 +180,8 @@ async def copilot_ask(req: CopilotAskRequest):
                 for d in docs
             ],
             "generation_mode": answer_result.get("generation_mode", "extractive"),
+            "llm_provider": answer_result.get("llm_provider", "none"),
+            "llm_model": answer_result.get("llm_model"),
         }
     except HTTPException:
         raise
@@ -174,7 +190,15 @@ async def copilot_ask(req: CopilotAskRequest):
         if req.service_id is not None and service_loader.is_enabled(req.service_id):
             service = service_loader.get_service(req.service_id)
             fallback = service["fallback_en"] if req.language == "en" else service["fallback_bn"]
-        return {"answer": fallback, "citations": [], "grounded": False, "retrieved_chunks": [], "generation_mode": "unavailable"}
+        return {
+            "answer": fallback,
+            "citations": [],
+            "grounded": False,
+            "retrieved_chunks": [],
+            "generation_mode": "unavailable",
+            "llm_provider": "none",
+            "llm_model": None,
+        }
 
 @app.post("/api/redflag/check", response_model=RedFlagCheckResponse, tags=["Red Flag"])
 async def check_red_flag(req: RedFlagCheckRequest):
@@ -216,10 +240,27 @@ async def health():
     fees_path = Path(__file__).resolve().parents[2] / "data" / "fees.json"
     with fees_path.open("r", encoding="utf-8") as source:
         data_last_verified = json.load(source).get("last_verified")
+    from . import llm
+    provider = llm.describe_provider()
     return {
         "status": "ok",
-        "data_last_verified": data_last_verified
+        "data_last_verified": data_last_verified,
+        "llm_provider": provider["provider"],
+        "llm_model": provider["model"],
     }
+
+@app.get("/api/fee-schedules", tags=["Fees"])
+async def fee_schedules():
+    """Public, non-sensitive catalog of verified official fee schedules.
+
+    The browser performs the calculation locally; only these public labels,
+    parameters, amounts, source URLs and verification dates are fetched.
+    """
+    try:
+        return fee_schedule_engine.catalog()
+    except RuntimeError:
+        raise HTTPException(status_code=500, detail={"error": {"code": "FEE_DATA_UNAVAILABLE", "message": "The verified fee schedule is not available right now."}})
+
 
 @app.post("/api/fees/calculate", response_model=FeeCalculateResponse, tags=["Fees"])
 async def calculate_fees(req: FeeCalculateRequest):

@@ -9,5 +9,9 @@ __pycache__/
 frontend/node_modules/
 frontend/.next/
 frontend/out/
+frontend/public/tessdata/
+frontend/public/tesseract/
+frontend/public/ort/
+frontend/public/pdf/
+frontend/public/models/
 .tmp-test/
-.tmp-*.log

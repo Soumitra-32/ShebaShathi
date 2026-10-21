@@ -12,7 +12,7 @@
 3. **Verify-before-trust.** Draft or `[UNVERIFIED]` content MUST be checked against the relevant issuing authority before being hardcoded. Record the check in `data/VERIFICATION_LOG.md` (date, service, URL, what was checked). Never present unverified requirements, fees, or deadlines as fact.
 4. **Bangla first.** Default UI language is Bangla (`bn`), with English (`en`) toggle. All user-facing AI output defaults to plain, conversational Bangla.
 5. **Deterministic where possible.** Fees, checklists, eligibility, and service routing rules are computed by code/configuration, NOT by the LLM. ML may classify intent and explain retrieved material; it must not invent requirements or make identity decisions.
-6. **Privacy by default.** Never request or store NID/BRN/passport/licence numbers, document images, account credentials, or OTPs. Any cross-document comparison must run in the browser and discard entered values when the page is closed. Do not log PII or send it to the LLM, vector store, analytics, or backend.
+6. **Privacy by default.** Never request or store NID/BRN/passport/licence numbers, document images, account credentials, or OTPs. Any cross-document comparison, complaint drafting, OCR, or speech recognition must run in the browser and discard entered values when the page is closed. Do not log PII or send it to the LLM, vector store, analytics, or backend.
 7. **Ship a working demo early.** Preserve the working e-Passport product; then add one complete guide at a time: Birth Registration → NID → cross-document consistency helper → Driving Licence → optional Death Registration. Each phase ends in a runnable state.
 8. **Never fabricate statistics** in the UI or pitch. Pitch stats are `[UNVERIFIED]` until sourced (see §12).
 9. **Keep `ml_core/` untouched** unless the user explicitly changes that constraint.
@@ -371,8 +371,8 @@ Rules:
 - PDF checklist must render Bangla glyphs correctly (test!).
 - A visible service label must remain present throughout a guide and copilot session.
 - State clearly when a workflow opens an official portal; do not imitate government sign-in, payment, or verification screens.
-- Do not offer upload controls for NID, birth, passport, or licence documents.
-- Browser-only field comparison must not write to localStorage, URL parameters, backend requests, logs, or analytics.
+- Do not offer upload controls for NID, birth, passport, or licence documents **to any server**. Local-only, in-memory document handling is allowed under the rules in `docs/PRIVACY.md`: the file is read by a browser-side library, never transmitted, never persisted, and the extracted text is shown to the user for confirmation. Any request to send such content to a backend, cloud OCR service, or external LLM stays out of scope.
+- Browser-only field comparison, OCR, speech recognition and complaint drafting must not write to localStorage, URL parameters, backend requests, logs, or analytics.
 
 ---
 
@@ -440,6 +440,16 @@ Rules:
 - [x] P9-1 Review capacity and user demand before adding the guide.
 - [x] P9-2 Verify new registration, correction, reprint, cancellation, and verification/status guidance from official sources.
 - **Accept:** Same evidence, privacy, bilingual, and regression criteria as prior guides. Do not start if existing guide refreshes are overdue.
+
+### Phase 10 — Local-First Sensitive Workflows (2026-10-20)
+- [x] P10-1 Move GRS complaint drafting into the browser (deterministic templates, no LLM, no server round trip) and keep `/api/grs/draft` unchanged for API callers.
+- [x] P10-2 Add local voice input for the complaint description: self-hosted Whisper (ONNX/WASM) with explicit permission, unsupported-browser, model-missing and recognition-error states; no cloud speech fallback.
+- [x] P10-3 Add up to two optional supporting files to the complaint form with type/size/magic-byte validation, local OCR and a user review step.
+- [x] P10-4 Add missing-detail detection with category-specific follow-up questions, and a deterministic Bengali/English draft that marks unknown facts as placeholders.
+- [x] P10-5 Extend `/identity-check` with local document upload, a document-type selector, a comparison-field selector, local extraction (PDF text layer, then local OCR for scans), editable values and per-field statuses.
+- [x] P10-6 Turn `/redflag` into a service-aware fee checker: mandatory service selection, service-specific forms, official component breakdown, difference against the claimed amount, and a verified fee catalog in `data/fee_schedules.json`.
+- [x] P10-7 Add security headers (CSP and friends), restrict the API cache to GET responses, add local asset and model hosting, and document the data flows in `docs/PRIVACY.md`.
+- **Accept:** No complaint text, attachment, OCR output, transcript, extracted identity value or claimed fee amount is transmitted; all three workflows work end to end; every enabled fee rule traces to a dated official source; tests, lint, type check and production build pass.
 
 ### Ongoing — Source Refresh and Regression
 - [ ] Review source-dated service rules on a planned cadence and after official notices or user reports.

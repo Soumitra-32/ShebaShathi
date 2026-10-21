@@ -1,3 +1,5 @@
+import type { FeeCatalog } from "./fees";
+
 /**
  * API client for ShebaShathi BD backend.
  */
@@ -40,6 +42,8 @@ export interface CopilotResponse {
   grounded: boolean;
   retrieved_chunks?: { id: string; score: number; section: string }[];
   generation_mode?: "api" | "extractive" | "unavailable";
+  llm_provider?: string;
+  llm_model?: string | null;
 }
 
 export interface RedFlagResponse {
@@ -178,10 +182,15 @@ export interface ServiceChecklistResponse {
 }
 
 /**
- * Fetch wrapper with error handling
- */
-async function fetchWrapper<T>(url: string, options?: RequestInit, cacheable = false): Promise<T> {
-  const cacheKey = `shebashathi:${url}:${options?.body || ""}`;
+ * Fetch wrapper with error handling.
+ *
+ * Only GET responses are cached in localStorage, and the cache key never
+ * contains a request body, so no user input is ever written to the browser
+ * storage.
+ */async function fetchWrapper<T>(url: string, options?: RequestInit, cacheable = false): Promise<T> {
+  const method = (options?.method ?? "GET").toUpperCase();
+  const canCache = cacheable && method === "GET";
+  const cacheKey = `shebashathi:${method}:${url}`;
   const readCache = (): T | null => {
     if (typeof window === "undefined") return null;
     try {
@@ -198,12 +207,12 @@ async function fetchWrapper<T>(url: string, options?: RequestInit, cacheable = f
       const message = data.error?.message || data.detail?.error?.message || `HTTP ${res.status}`;
       throw new Error(message);
     }
-    if (cacheable && typeof window !== "undefined") {
+    if (canCache && typeof window !== "undefined") {
       try { window.localStorage.setItem(cacheKey, JSON.stringify(data)); } catch { /* Storage can be disabled or full. */ }
     }
     return data as T;
   } catch (error) {
-    if (error instanceof TypeError && cacheable && typeof window !== "undefined") {
+    if (error instanceof TypeError && canCache && typeof window !== "undefined") {
       const cached = readCache();
       if (cached && typeof cached === "object") return { ...cached, offline_fallback: true } as T;
     }
@@ -231,6 +240,17 @@ export async function calculateFees(
     method: "POST",
     body: JSON.stringify({ pages, validity_years: validityYears, delivery }),
   }, true);
+}
+
+/**
+ * Load the verified, public fee schedule catalog.
+ *
+ * The catalog contains only labels, amounts, official source URLs and
+ * verification dates. The comparison itself happens in the browser, so the
+ * claimed amount is never sent anywhere.
+ */
+export async function getFeeSchedules(): Promise<FeeCatalog> {
+  return fetchWrapper<FeeCatalog>(`${API_URL}/api/fee-schedules`, undefined, true);
 }
 
 /**

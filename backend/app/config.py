@@ -23,9 +23,13 @@ class Settings(BaseModel):
     cors_origins: list[str] = [origin.strip() for origin in os.environ.get("CORS_ORIGINS", "http://localhost:3000").split(",") if origin.strip()]
 
     # Optional OpenAI-compatible generation API. Empty key means extractive RAG only.
+    # OpenRouter: LLM_API_BASE=https://openrouter.ai/api/v1
     llm_model: str = os.environ.get("LLM_MODEL", "gpt-4o-mini")
     llm_api_base: str = os.environ.get("LLM_API_BASE", "https://api.openai.com/v1")
     llm_api_key: str = os.environ.get("LLM_API_KEY", "")
+    # Optional OpenRouter attribution headers (shown in the provider dashboard).
+    llm_app_title: str = os.environ.get("LLM_APP_TITLE", "")
+    llm_http_referer: str = os.environ.get("LLM_HTTP_REFERER", "")
 
     # RAG
     chroma_persist_dir: str = os.environ.get("CHROMA_PERSIST_DIR", str(PROJECT_ROOT / ".chroma"))

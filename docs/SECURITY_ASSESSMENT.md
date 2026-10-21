@@ -69,6 +69,19 @@ Treat browser input, retrieved text, scraped or manually copied source files, LL
 - Keep complaint details in the user request only; do not persist them. Avoid logging request bodies, prompts, generated complaint text, or personal profile fields.
 - If future requirements genuinely need new data collection, stop and document purpose, minimum fields, retention, access, deletion, and threat controls before implementation.
 
+#### 3.1.1 Local-only document, voice and complaint processing (added 2026-10-20)
+
+The complaint drafter, the document comparison tool and the voice input read sensitive content **inside the browser**. That work is allowed only while every control below holds:
+
+1. **No transmission.** Document bytes, OCR output, speech audio, speech transcripts, complaint drafts and extracted identity values must never be sent to the backend, an LLM, a cloud OCR service, analytics or any third party. The only permitted requests are public, non-sensitive assets (the verified fee catalog, the self-hosted OCR/speech models).
+2. **No persistence.** No document, extracted value, transcript or draft may be written to localStorage, sessionStorage, IndexedDB, cookies, service-worker caches or the server. Object URLs and workers must be released when a file is removed, a workflow is reset, or the page is left.
+3. **Self-hosted models.** OCR (Tesseract) and speech recognition (Whisper/ONNX Runtime Web) must run from assets served by this project. A model that is merely open source is not private if it is fetched from a third-party host at runtime.
+4. **No silent cloud fallback.** If a local model is missing or a browser cannot run it, the UI must say so and keep the manual input path. Falling back to a hosted speech/OCR/LLM service is not allowed.
+5. **Validation before decoding.** Untrusted files are checked by size, declared type and leading bytes (magic numbers); malformed or oversized files are rejected before any library parses them.
+6. **Untrusted output.** OCR and speech output is rendered as text only, never as HTML, and is presented as unconfirmed until the user reviews it.
+7. **Honest wording.** The UI must not claim the document is genuine, the identity verified, or the processing "completely private/offline" beyond what was verified. Browser-local processing protects against this application uploading data; it does not protect against a compromised device, a malicious extension, or malicious application code.
+8. **Documentation.** `docs/PRIVACY.md` records the data flows, the remaining external requests and the known limitations.
+
 ### 3.2 Frontend and browser security
 
 - Render user and model text as text. Do not use unsafe HTML rendering (`dangerouslySetInnerHTML`) for user, model, or retrieved content. If rich text becomes necessary, use a maintained sanitizer with a narrow allowlist.

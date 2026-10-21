@@ -92,6 +92,8 @@ class CopilotAnswer(BaseModel):
     grounded: bool
     retrieved_chunks: List[RetrievedChunk] = Field(default_factory=list)
     generation_mode: str = "extractive"
+    llm_provider: str = "none"
+    llm_model: Optional[str] = None
 
 
 class CopilotAskRequest(BaseModel):
