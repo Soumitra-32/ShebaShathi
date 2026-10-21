@@ -1,35 +1,39 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 import { ArrowUpRight, ClipboardCheck, HelpCircle, FileText, Landmark, ClipboardList, ShieldCheck, Wallet } from "lucide-react";
 
 const tools = [
-  { href: "/services", title: "সেবা নির্দেশিকা", description: "জন্ম নিবন্ধন, NID, ই-পাসপোর্ট ও ড্রাইভিং লাইসেন্সের নথি ও ধাপ দেখুন।", icon: Landmark },
-  { href: "/wizard", title: "পাসপোর্ট প্রস্তুতি", description: "আপনার আবেদন অনুযায়ী ফি ও প্রয়োজনীয় নথির তালিকা তৈরি করুন।", icon: ClipboardCheck },
-  { href: "/fees", title: "ফি ক্যালকুলেটর", description: "পৃষ্ঠা, মেয়াদ ও বিতরণ পদ্ধতি অনুযায়ী সরকারি ফি দেখুন।", icon: Wallet },
-  { href: "/copilot", title: "তথ্য সহায়ক", description: "যাচাই করা সরকারি উৎস থেকে যেকোনো সেবা সম্পর্কে উত্তর খুঁজুন।", icon: HelpCircle },
-  { href: "/redflag", title: "ফি যাচাই", description: "আপনাকে বলা অঙ্কটি প্রকাশিত সরকারি ফির সঙ্গে তুলনা করুন।", icon: ShieldCheck },
-  { href: "/identity-check", title: "তথ্য মিল যাচাই", description: "শুধু আপনার ব্রাউজারে নাম ও তারিখের ভিন্নতা দেখুন; কোনো তথ্য পাঠানো হয় না।", icon: ClipboardList },
-  { href: "/grs", title: "অভিযোগের খসড়া", description: "আপনার দেওয়া তথ্য দিয়ে একটি নিরপেক্ষ খসড়া তৈরি করুন।", icon: FileText },
+  { href: "/services", titleKey: "home.tools_services", descriptionKey: "home.tools_services_desc", icon: Landmark },
+  { href: "/wizard", titleKey: "home.tools_wizard", descriptionKey: "home.tools_wizard_desc", icon: ClipboardCheck },
+  { href: "/redflag", titleKey: "home.tools_fees", descriptionKey: "home.tools_fees_desc", icon: Wallet },
+  { href: "/copilot", titleKey: "home.tools_copilot", descriptionKey: "home.tools_copilot_desc", icon: HelpCircle },
+  { href: "/redflag", titleKey: "home.tools_redflag", descriptionKey: "home.tools_redflag_desc", icon: ShieldCheck },
+  { href: "/identity-check", titleKey: "home.tools_identity", descriptionKey: "home.tools_identity_desc", icon: ClipboardList },
+  { href: "/grs", titleKey: "home.tools_grs", descriptionKey: "home.tools_grs_desc", icon: FileText },
 ];
 
 export default function HomePage() {
+  const { t, i18n } = useTranslation("translation");
+  const currentLang = i18n.language;
+
   return <main>
     <section className="hero-wrap">
       <div className="hero-content">
-        <p className="eyebrow">বাংলাদেশ নাগরিক সেবা সহায়তা</p>
-        <h1>সরকারি সেবার প্রস্তুতি,<br /><span>এবার আরও সহজ।</span></h1>
-        <p className="hero-copy">জন্ম নিবন্ধন, NID, পাসপোর্ট ও ড্রাইভিং লাইসেন্সের প্রয়োজনীয় নথি এবং পরবর্তী ধাপ—সহজ বাংলায়, যাচাই করা সরকারি সূত্রসহ এক জায়গায় জানুন।</p>
-        <div className="hero-actions"><Link href="/services" className="primary-link">সেবা খুঁজুন <ArrowUpRight size={18} /></Link><span>বিনামূল্যে · কোনো অ্যাকাউন্ট লাগবে না</span></div>
-        <div className="hero-note"><ShieldCheck size={18} /><span>সরকারি উৎসের তথ্য · যাচাইয়ের তারিখসহ</span></div>
+        <p className="eyebrow">{t("home.eyebrow")}</p>
+        <h1 dangerouslySetInnerHTML={{ __html: t("home.title") }} />
+        <p className="hero-copy">{t("home.copy")}</p>
+        <div className="hero-actions"><Link href="/services" className="primary-link">{t("home.cta")} <ArrowUpRight size={18} /></Link><span>{t("home.cta_sub")}</span></div>
+        <div className="hero-note"><ShieldCheck size={18} /><span>{t("home.note")}</span></div>
       </div>
       <div className="hero-art" aria-hidden="true"><div className="art-orbit orbit-one"/><div className="art-orbit orbit-two"/><div className="passport-card"><span>বাংলাদেশ</span><b>পাসপোর্ট</b><div className="passport-seal">✳</div><small>E-PASSPORT</small></div><div className="art-dot dot-one"/><div className="art-dot dot-two"/></div>
     </section>
     <section className="tools-section">
-      <div className="section-heading"><div><p className="eyebrow">আপনার প্রয়োজনের জন্য</p><h2>সহায়ক টুলগুলো</h2></div><p>প্রতিটি টুল আলাদাভাবে ব্যবহার করতে পারেন।</p></div>
-      <div className="tool-grid">{tools.map(({ href, title, description, icon: Icon }, index) => <Link key={href} href={href} className="tool-card" style={{ animationDelay: `${index * 65}ms` }}><span className="tool-icon"><Icon size={21} strokeWidth={1.8} /></span><span className="tool-arrow"><ArrowUpRight size={17} /></span><h3>{title}</h3><p>{description}</p></Link>)}</div>
+      <div className="section-heading"><div><p className="eyebrow">{t("home.tools_eyebrow")}</p><h2>{t("home.tools_title")}</h2></div><p>{t("home.tools_sub")}</p></div>
+      <div className="tool-grid">{tools.map(({ href, titleKey, descriptionKey, icon: Icon }, index) => <Link key={href} href={href} className="tool-card" style={{ animationDelay: `${index * 65}ms` }}><span className="tool-icon"><Icon size={21} strokeWidth={1.8} /></span><span className="tool-arrow"><ArrowUpRight size={17} /></span><h3>{t(titleKey)}</h3><p>{t(descriptionKey)}</p></Link>)}</div>
     </section>
-    <footer className="home-footer">ShebaShathi BD একটি স্বাধীন নাগরিক সহায়তা টুল, সরকারি ওয়েবসাইট নয়। আবেদন করার আগে সর্বশেষ তথ্য সরকারি পোর্টালে যাচাই করুন।</footer>
+    <footer className="home-footer">{t("common.disclaimer")}</footer>
     <style jsx>{`
       .hero-wrap { position: relative; display: flex; min-height: 430px; overflow: hidden; align-items: center; justify-content: space-between; gap: 2rem; padding: 4.4rem max(1.25rem, calc((100vw - 1080px) / 2)); background: radial-gradient(ellipse at 82% 40%, #dceee3 0%, transparent 35%), linear-gradient(115deg,#fbfdfb 5%,#edf5ef 100%); }
       .hero-content { position: relative; z-index: 1; max-width: 610px; animation: arrive .55s ease both; }

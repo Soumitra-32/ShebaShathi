@@ -1,10 +1,12 @@
 /**
- * i18n configuration for Next.js
+ * i18n configuration for ShebaShathi BD.
+ *
+ * One translation instance shared across the whole app. The active language
+ * is driven by the shared persisted language state (see lib/language.ts); this
+ * module only registers the resource bundles and the currency formatter.
  */
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 i18n
   .use(initReactI18next)
@@ -27,8 +29,8 @@ i18n
           return new Intl.NumberFormat(lang === "bn" ? "bn-BD" : "en-US", {
             style: "currency",
             currency: "BDT",
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
           }).format(value);
         }
         return value;

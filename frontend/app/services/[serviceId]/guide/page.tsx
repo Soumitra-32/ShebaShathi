@@ -3,40 +3,13 @@
 import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from "../../../../lib/language";
 import { getService, getServiceChecklist, reviewCopy, ReviewStatus, ServiceChecklistResponse, ServiceDetail, ServiceQuestion } from "../../../../lib/api";
-
-type Lang = "bn" | "en";
-
-const copy = {
-  bn: {
-    back: "← সেবার বিস্তারিত", language: "English", loading: "তথ্য আনা হচ্ছে…", error: "তথ্য আনা যায়নি। আবার চেষ্টা করুন।",
-    taskLabel: "কোন কাজটি করবেন", create: "তালিকা তৈরি করুন", creating: "তৈরি হচ্ছে…",
-    answerFirst: "প্রয়োজনীয় উত্তরগুলো দিন।", result: "আপনার প্রস্তুতির তালিকা", docs: "প্রয়োজনীয় নথি",
-    steps: "পরবর্তী ধাপ", warnings: "মনে রাখুন", official: "সরকারি লিংক", pdf: "PDF ডাউনলোড / প্রিন্ট",
-    source: "উৎস ও যাচাইয়ের তারিখ", required: "প্রয়োজনীয়", optional: "প্রযোজ্য হলে", none: "এই কাজের জন্য কোনো নির্দিষ্ট নথি নেই—নিচের ধাপ ও সরকারি লিংক অনুসরণ করুন।",
-    fallback: "যাচাই করা উৎসে এই তথ্য পাওয়া যায়নি; সরকারি পোর্টালে দেখুন।",
-    boundary: "এটি তথ্যমূলক নির্দেশিকা মাত্র। আবেদন, পেমেন্ট ও চূড়ান্ত যাচাই সংশ্লিষ্ট সরকারি পোর্টালে করুন।",
-    privacy: "এই টুল কোনো পরিচয় নম্বর, নথির ছবি বা OTP চায় না।", reset: "নতুন করে",
-    disclaimer: "ShebaShathi BD একটি স্বাধীন নাগরিক সহায়তা টুল, কোনো সরকারি ওয়েবসাইট নয়।",
-    yes: "হ্যাঁ", no: "না",
-  },
-  en: {
-    back: "← Service details", language: "বাংলা", loading: "Loading…", error: "Could not load the information. Please try again.",
-    taskLabel: "What do you want to do", create: "Create my checklist", creating: "Preparing…",
-    answerFirst: "Please answer the required questions.", result: "Your preparation checklist", docs: "Documents",
-    steps: "Next steps", warnings: "Please note", official: "Official links", pdf: "Download / print PDF",
-    source: "Source and verification date", required: "Required", optional: "If applicable", none: "No specific documents are listed for this task—follow the steps and official links below.",
-    fallback: "This could not be found in verified sources; check the official portal.",
-    boundary: "This is an information guide only. Complete applications, payments, and final checks on the relevant official portal.",
-    privacy: "This tool never asks for identity numbers, document images, or OTPs.", reset: "Start over",
-    disclaimer: "ShebaShathi BD is an independent citizen-help tool, not a government website.",
-    yes: "Yes", no: "No",
-  },
-};
 
 function QuestionField({ question, lang, value, onChange }: {
   question: ServiceQuestion;
-  lang: Lang;
+  lang: string;
   value: string | boolean;
   onChange: (value: string | boolean) => void;
 }) {
@@ -64,12 +37,14 @@ function QuestionField({ question, lang, value, onChange }: {
 }
 
 function GuideContent() {
+  const { t, i18n } = useTranslation("translation");
+  const { lang } = useLanguage();
+  const currentLang = i18n.language;
   const params = useParams<{ serviceId: string }>();
   const search = useSearchParams();
   const serviceId = params?.serviceId ?? "";
   const initialTask = search.get("task") ?? "";
 
-  const [lang, setLang] = useState<Lang>("bn");
   const [service, setService] = useState<ServiceDetail | null>(null);
   const [taskId, setTaskId] = useState(initialTask);
   const [answers, setAnswers] = useState<Record<string, string | boolean>>({});
@@ -78,7 +53,6 @@ function GuideContent() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const t = copy[lang];
 
   useEffect(() => {
     let active = true;
@@ -88,13 +62,13 @@ function GuideContent() {
         const data = await getService(serviceId);
         if (active) setService(data);
       } catch {
-        if (active) setError(t.error);
+        if (active) setError(t("service_guide.error"));
       } finally {
         if (active) setLoading(false);
       }
     })();
     return () => { active = false; };
-  }, [serviceId, t.error]);
+  }, [serviceId, t("service_guide.error")]);
 
   const task = useMemo(() => {
     if (!service) return null;
@@ -117,7 +91,7 @@ function GuideContent() {
       const value = answers[question.field];
       const missing = value === undefined || value === "";
       if (missing) {
-        if (question.required) { setError(t.answerFirst); setSubmitting(false); return; }
+        if (question.required) { setError(t("service_guide.answerFirst")); setSubmitting(false); return; }
         continue;
       }
       if (question.type === "number") payload[question.field] = Number(value);
@@ -125,65 +99,73 @@ function GuideContent() {
       else payload[question.field] = String(value);
     }
     try {
-      setChecklist(await getServiceChecklist(serviceId, task.id, payload, lang));
+      setChecklist(await getServiceChecklist(serviceId, task.id, payload, currentLang as "bn" | "en"));
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : t.error);
+      setError(reason instanceof Error ? reason.message : t("service_guide.error"));
     } finally {
       setSubmitting(false);
     }
   }
 
-  const serviceName = service ? (lang === "bn" ? service.service_name_bn : service.service_name_en) : "";
+  const serviceName = service ? (currentLang === "bn" ? service.service_name_bn : service.service_name_en) : "";
 
   return <main className="min-h-screen bg-slate-50 px-4 py-8 sm:py-10">
     <div className="mx-auto max-w-3xl">
       <div className="mb-6 flex items-center justify-between gap-4 print:hidden">
-        <Link href={`/services/${serviceId}`} className="text-sm font-medium text-indigo-800 underline">{t.back}</Link>
-        <button type="button" onClick={() => setLang(lang === "bn" ? "en" : "bn")} className="min-h-11 rounded-lg border border-slate-300 bg-white px-4 font-medium text-slate-800">{t.language}</button>
+        <Link href={`/services/${serviceId}`} className="text-sm font-medium text-indigo-800 underline">{t("service_guide.back")}</Link>
+        <button
+          type="button"
+          onClick={() => {
+            // Language is handled by the global switcher in the header.
+          }}
+          className="min-h-11 rounded-lg border border-slate-300 bg-white px-4 font-medium text-slate-800 hidden"
+        >
+          {currentLang === "bn" ? t("common.language_en") : t("common.language_bn")}
+        </button>
       </div>
 
       {service && <p className="mb-4 text-sm font-semibold text-indigo-700">ShebaShathi BD · {serviceName}</p>}
-      {service && service.review_status && service.review_status !== "fresh" && <p role="status" className={`mb-4 inline-flex w-fit rounded-full px-3 py-1 text-xs font-semibold ${service.review_status === "stale" ? "bg-red-100 text-red-800" : "bg-amber-100 text-amber-900"}`}>{reviewCopy[lang][service.review_status as ReviewStatus]}</p>}
+      {service && service.review_status && service.review_status !== "fresh" && <p role="status" className={`mb-4 inline-flex w-fit rounded-full px-3 py-1 text-xs font-semibold ${service.review_status === "stale" ? "bg-red-100 text-red-800" : "bg-amber-100 text-amber-900"}`}>{reviewCopy[currentLang as "bn" | "en"][service.review_status as ReviewStatus]}</p>}
 
-      {loading && <p role="status" className="rounded-xl border border-slate-200 bg-white p-6 text-center text-slate-500">{t.loading}</p>}
+      {loading && <p role="status" className="rounded-xl border border-slate-200 bg-white p-6 text-center text-slate-500">{t("service_guide.loading")}</p>}
       {error && <p role="alert" className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-800">{error}</p>}
 
       {service && task && <>
         <form onSubmit={submit} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7 print:hidden">
-          <label htmlFor="task-select" className="block text-sm font-semibold text-slate-800">{t.taskLabel}
+          <label htmlFor="task-select" className="block text-sm font-semibold text-slate-800">{t("service_guide.taskLabel")}
             <select id="task-select" value={task.id} onChange={event => setTaskId(event.target.value)} className="mt-2 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3 text-base font-normal">
-              {service.tasks.map(item => <option key={item.id} value={item.id}>{lang === "bn" ? item.label_bn : item.label_en}</option>)}
+              {service.tasks.map(item => <option key={item.id} value={item.id}>{currentLang === "bn" ? item.label_bn : item.label_en}</option>)}
             </select>
           </label>
 
           {task.questions.length > 0 && <div className="mt-5 space-y-3">
-            {task.questions.map(question => <QuestionField key={question.field} question={question} lang={lang} value={answers[question.field] ?? (question.type === "boolean" ? false : "")} onChange={value => setAnswers(previous => ({ ...previous, [question.field]: value }))} />)}
+            {task.questions.map(question => <QuestionField key={question.field} question={question} lang={currentLang} value={answers[question.field] ?? (question.type === "boolean" ? false : "")} onChange={value => setAnswers(previous => ({ ...previous, [question.field]: value }))} />)}
           </div>}
 
-          <p className="mt-5 rounded-lg bg-emerald-50 p-3 text-xs text-emerald-900">{t.privacy}</p>
-          <button type="submit" disabled={submitting} className="mt-4 min-h-12 w-full rounded-lg bg-indigo-700 px-5 py-3 font-semibold text-white disabled:opacity-60">{submitting ? t.creating : t.create}</button>
+          <p className="mt-5 rounded-lg bg-emerald-50 p-3 text-xs text-emerald-900">{t("service_guide.privacy")}</p>
+          <button type="submit" disabled={submitting} className="mt-4 min-h-12 w-full rounded-lg bg-indigo-700 px-5 py-3 font-semibold text-white disabled:opacity-60">{submitting ? t("service_guide.creating") : t("service_guide.create")}</button>
         </form>
 
         {checklist && <section id="print-checklist" className="mt-8 space-y-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <p className="text-sm font-semibold text-indigo-700">ShebaShathi BD · {serviceName}</p>
-              <h2 className="mt-1 text-2xl font-bold text-slate-900">{t.result}</h2>
-              <p className="mt-1 text-sm text-slate-600">{lang === "bn" ? checklist.task_label_bn : checklist.task_label_en}</p>
+              <h2 className="mt-1 text-2xl font-bold text-slate-900">{t("service_guide.result")}</h2>
+              <p className="mt-1 text-sm text-slate-600">{currentLang === "bn" ? checklist.task_label_bn : checklist.task_label_en}</p>
             </div>
-            <button type="button" onClick={() => window.print()} className="min-h-11 rounded-lg border border-indigo-700 px-4 py-2 font-semibold text-indigo-800 print:hidden">{t.pdf}</button>
+            <button type="button" onClick={() => window.print()} className="min-h-11 rounded-lg border border-indigo-700 px-4 py-2 font-semibold text-indigo-800 print:hidden">{t("service_guide.pdf")}</button>
           </div>
 
-          {checklist.fallback_used && <p role="status" className="rounded-lg bg-amber-50 p-3 text-sm text-amber-900">{t.fallback}</p>}
+          {checklist.fallback_used && <p role="status" className="rounded-lg bg-amber-50 p-3 text-sm text-amber-900">{t("service_guide.fallback")}</p>}
 
           <section>
-            <h3 className="mb-3 text-lg font-bold text-slate-900">{t.docs}</h3>
-            {checklist.documents.length === 0 ? <p className="rounded-lg border border-slate-200 p-3 text-sm text-slate-600">{t.none}</p> : <ul className="space-y-3">
+            <h3 className="mb-3 text-lg font-bold text-slate-900">{t("service_guide.docs")}</h3>
+            {checklist.documents.length === 0 ? <p className="rounded-lg border border-slate-200 p-3 text-sm text-slate-600">{t("service_guide.none")}</p> : <ul className="space-y-3">
               {checklist.documents.map(doc => <li key={doc.id} className="flex gap-3 rounded-lg border border-slate-200 p-3">
-                <input aria-label={`${lang === "bn" ? doc.label_bn : doc.label_en} ${lang === "bn" ? "সম্পন্ন" : "completed"}`} type="checkbox" checked={checkedDocs.has(doc.id)} onChange={event => setCheckedDocs(previous => { const next = new Set(previous); if (event.target.checked) next.add(doc.id); else next.delete(doc.id); return next; })} className="mt-0.5 h-5 w-5 shrink-0 rounded border-slate-400 accent-emerald-700" />
+                <input aria-label={`${currentLang === "bn" ? doc.label_bn : doc.label_en} ${currentLang === "bn" ? "সম্পন্ন" : "completed"}`} type="checkbox" checked={checkedDocs.has(doc.id)} onChange={event => setCheckedDocs(previous => { const next = new Set(previous); if (event.target.checked) next.add(doc.id); else next.delete(doc.id); return next; })} className="mt-0.5 h-5 w-5 shrink-0 rounded border-slate-400 accent-emerald-700" />
                 <div className={checkedDocs.has(doc.id) ? "opacity-60" : ""}>
-                  <p className={`font-semibold text-slate-900 ${checkedDocs.has(doc.id) ? "line-through" : ""}`}>{lang === "bn" ? doc.label_bn : doc.label_en} <span className="text-xs font-normal text-slate-500">{doc.required ? t.required : t.optional}</span></p>
-                  <p className="mt-1 text-sm text-slate-600">{lang === "bn" ? doc.notes_bn : doc.notes_en}</p>
+                  <p className={`font-semibold text-slate-900 ${checkedDocs.has(doc.id) ? "line-through" : ""}`}>{currentLang === "bn" ? doc.label_bn : doc.label_en} <span className="text-xs font-normal text-slate-500">{doc.required ? t("service_guide.required") : t("service_guide.optional")}</span></p>
+                  <p className="mt-1 text-sm text-slate-600">{currentLang === "bn" ? doc.notes_bn : doc.notes_en}</p>
                   <a className="mt-1 inline-block text-xs text-indigo-700 underline" href={doc.source_url} target="_blank" rel="noopener noreferrer">{doc.source_url} · {doc.last_verified}</a>
                 </div>
               </li>)}
@@ -191,25 +173,25 @@ function GuideContent() {
           </section>
 
           <section>
-            <h3 className="mb-2 text-lg font-bold text-slate-900">{t.steps}</h3>
+            <h3 className="mb-2 text-lg font-bold text-slate-900">{t("service_guide.steps")}</h3>
             <ol className="list-inside list-decimal space-y-2 text-slate-700">{checklist.steps.map((step, index) => <li key={index}>{step}</li>)}</ol>
           </section>
 
           {checklist.official_links.length > 0 && <section>
-            <h3 className="mb-2 text-lg font-bold text-slate-900">{t.official}</h3>
-            <ul className="space-y-1">{checklist.official_links.map(link => <li key={link.url}><a className="text-indigo-800 underline" href={link.url} target="_blank" rel="noopener noreferrer">{lang === "bn" ? link.label_bn : link.label_en}</a></li>)}</ul>
+            <h3 className="mb-2 text-lg font-bold text-slate-900">{t("service_overview.official")}</h3>
+            <ul className="space-y-1">{checklist.official_links.map(link => <li key={link.url}><a className="text-indigo-800 underline" href={link.url} target="_blank" rel="noopener noreferrer">{currentLang === "bn" ? link.label_bn : link.label_en}</a></li>)}</ul>
           </section>}
 
           {checklist.warnings.length > 0 && <section className="rounded-lg bg-amber-50 p-4">
-            <h3 className="font-bold text-amber-900">{t.warnings}</h3>
+            <h3 className="font-bold text-amber-900">{t("service_guide.warnings")}</h3>
             <ul className="mt-1 list-inside list-disc text-sm text-amber-900">{checklist.warnings.map((warning, index) => <li key={index}>{warning}</li>)}</ul>
           </section>}
 
-          <p className="text-xs text-slate-500">{t.source}: <a className="underline" href={checklist.source_url} target="_blank" rel="noopener noreferrer">{checklist.source_url}</a> · {checklist.last_verified}</p>
+          <p className="text-xs text-slate-500">{t("service_guide.source")}: <a className="underline" href={checklist.source_url} target="_blank" rel="noopener noreferrer">{checklist.source_url}</a> · {checklist.last_verified}</p>
           <footer className="border-t border-slate-200 pt-4 text-xs text-slate-500">
-            <p>{t.boundary}</p>
-            <p className="mt-1">{t.disclaimer}</p>
-            <button type="button" onClick={() => { setChecklist(null); setCheckedDocs(new Set()); }} className="mt-2 text-indigo-800 underline print:hidden">{t.reset}</button>
+            <p>{t("service_guide.boundary")}</p>
+            <p className="mt-1">{t("service_guide.disclaimer")}</p>
+            <button type="button" onClick={() => { setChecklist(null); setCheckedDocs(new Set()); }} className="mt-2 text-indigo-800 underline print:hidden">{t("service_guide.reset")}</button>
           </footer>
         </section>}
       </>}
