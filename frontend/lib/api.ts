@@ -41,9 +41,10 @@ export interface CopilotResponse {
   citations: Citation[];
   grounded: boolean;
   retrieved_chunks?: { id: string; score: number; section: string }[];
-  generation_mode?: "api" | "extractive" | "unavailable";
+  generation_mode?: "api" | "extractive" | "unavailable" | "deterministic";
   llm_provider?: string;
   llm_model?: string | null;
+  safety_blocked?: boolean;
 }
 
 export interface RedFlagResponse {
@@ -181,6 +182,83 @@ export interface ServiceChecklistResponse {
   fallback_used: boolean;
 }
 
+export interface IntakeOption {
+  value: string;
+  label_bn: string;
+  label_en: string;
+}
+
+export interface IntakeQuestion {
+  field: string;
+  type: "number" | "select" | "boolean";
+  required: boolean;
+  min?: number | null;
+  max?: number | null;
+  label_bn: string;
+  label_en: string;
+  options: IntakeOption[];
+}
+
+export interface IntakeResponse {
+  blocked: boolean;
+  generation_mode: "api" | "rules" | "confirmed" | "blocked";
+  fallback_used: boolean;
+  confidence: number;
+  service_id?: string | null;
+  service_name_bn?: string | null;
+  service_name_en?: string | null;
+  task_id?: string | null;
+  task_label_bn?: string | null;
+  task_label_en?: string | null;
+  answers: Record<string, string | number | boolean>;
+  missing_fields: string[];
+  questions: IntakeQuestion[];
+  service_options: IntakeOption[];
+  task_options: IntakeOption[];
+  message_bn: string;
+  message_en: string;
+  message: string;
+}
+
+/**
+ * Map a free-text situation to a service/task and the missing questions.
+ * The optional service/task ids are an explicit user confirmation, not a
+ * bypass: the backend validates them against the enabled catalog.
+ */
+export async function postIntake(
+  text: string,
+  language: "bn" | "en" = "bn",
+  serviceId?: string,
+  taskId?: string
+): Promise<IntakeResponse> {
+  return fetchWrapper<IntakeResponse>(`${API_URL}/api/intake`, {
+    method: "POST",
+    body: JSON.stringify({
+      text,
+      language,
+      service_id: serviceId ?? null,
+      task_id: taskId ?? null,
+    }),
+  });
+}
+
+/**
+ * Error returned by the backend, with the HTTP status and machine-readable
+ * code so a caller can show a localized, specific message (for example the
+ * identity-data rejection) instead of a generic failure.
+ */
+export class ApiError extends Error {
+  status: number;
+  code?: string;
+
+  constructor(message: string, status: number, code?: string) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+    this.code = code;
+  }
+}
+
 /**
  * Fetch wrapper with error handling.
  *
@@ -205,7 +283,8 @@ export interface ServiceChecklistResponse {
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
       const message = data.error?.message || data.detail?.error?.message || `HTTP ${res.status}`;
-      throw new Error(message);
+      const code = data.error?.code || data.detail?.error?.code;
+      throw new ApiError(message, res.status, code);
     }
     if (canCache && typeof window !== "undefined") {
       try { window.localStorage.setItem(cacheKey, JSON.stringify(data)); } catch { /* Storage can be disabled or full. */ }
