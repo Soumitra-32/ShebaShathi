@@ -5,13 +5,47 @@
 
 ## What was verified locally
 
-- `npm run lint`: no warnings/errors. `npm run build`: clean (11 routes).
+- `npm run lint`: no errors (the pre-existing `react-hooks/exhaustive-deps` warnings remain). `npm run build`: clean.
 - Service directory/overview/guide render `last_verified` + review badge;
   `/copilot` shows citation title/URL/date/quote; `/identity-check` keeps typed
   values in component memory (no API/storage/logging by construction).
 - 375px viewport: all service pages use `max-w-3xl/5xl`, `grid gap-4
   sm:grid-cols-2`, and `min-h-11` touch targets; guide checklist prints via the
   `@media print` block with Noto Sans Bengali.
+
+## AI intake and navigation (2026-10-23)
+
+Checked with the backend on `http://localhost:8000` and `npm run dev` on
+`http://localhost:3000`, using headless Chrome over the DevTools protocol at
+1280×900 and 375×812. The repeatable command is `npm run verify:intake`
+(20 checks, all passed). It uses only synthetic text and saves screenshots to
+the OS temp directory.
+
+- English success path: “My 5 year old child needs a passport and does not have
+  a NID” → e-Passport / Child application, age 5 prefilled, own-NID question
+  asked; selecting “No” builds a checklist with three documents and the
+  official source date. A second run confirmed the same path in the live API.
+- PII rejection: “My NID is 1234567890” shows a visible error and no checklist.
+- Unsafe intent: a bribe request shows the blocked panel with a safe message.
+- Network failure: blocking `/api/intake` in the browser shows a retryable
+  error; the page does not crash and keeps no stale checklist.
+- Ambiguous input: “hello” shows service choices instead of guessing.
+- Global language switcher: exactly one `.nav-lang` button on the tested pages;
+  switching updates `document.documentElement.lang`, and the intake copy
+  changes. The mobile menu opens with `aria-expanded="true"`, exposes all links,
+  and closes on Escape.
+- 375px: home page had `scrollWidth - innerWidth = 0` (no horizontal overflow);
+  nav showed the menu toggle. Mobile, home-desktop and guide screenshots were
+  reviewed.
+- Canonical guide: `#fee` estimator present; 48 pages / 5 years / regular
+  returned BDT 4,025 (base 3,500 + VAT 525). `/wizard` returns a redirect to
+  the guide.
+- `npm test` 78 passed (7 files); backend `python -m pytest app/tests -q`
+  127 passed; `npm run build` passed; `npm run lint` had warnings only.
+
+Not checked: a physical phone, iOS Safari, a screen reader, throttled-network
+banners, Bangla PDF export, and Lighthouse. The dev-only Next.js indicator is
+visible in headless screenshots but is not part of a production build.
 
 ## Still needs a deployed run (owner: you)
 

@@ -8,37 +8,54 @@
 1. `Copy-Item .env.example .env`, `pip install -r backend/requirements.txt`,
    `$env:PYTHONPATH="backend"`, `python -m app.rag.ingest --rebuild`.
 2. `uvicorn app.main:app --app-dir backend`, `cd frontend; npm ci; npm run dev`.
-3. Open `http://localhost:3000/services`. Confirm all 5 services show
-   “Guide is current” (fresh) badges — if a badge shows re-check warnings, say
-   so on camera rather than hiding it.
+3. Open `http://localhost:3000` and `GET /health`. Confirm `ai_ready: true`,
+   `index_count > 0`, and all 5 services show “Guide is current” (fresh)
+   badges. If a badge shows a re-check warning, say so on camera.
+4. Decide which intake mode to show. With `LLM_API_KEY` set, the badge reads
+   “AI match”; without it, “Guided” uses the deterministic router. Both are
+   honest demos; do not claim the AI mode is the only path.
 
-## 0:00–0:30 — Problem + service directory
+## 0:00–0:25 — Problem + AI intake
 
 - “Citizens juggle five portals with different rules. ShebaShathi BD is an
-  independent helper — not a government site — with one source-dated guide per
-  service.”
-- Click e-Passport → birth → NID → licence → death. Point at the verified date
-  and official link on each overview.
+  independent helper — not a government site. Start by describing the problem
+  in your own words.”
+- Point at the home intake card immediately below the hero. Read the privacy
+  line aloud: no NID, passport, phone or OTP numbers.
 
-## 0:30–1:10 — Conditional checklist + fee truth
+## 0:25–1:05 — From situation to verified checklist
 
-- e-Passport guide → minor task, age 5, no NID → parent-NID + child-photo appear.
-- `/fees`: 48 pages / 5 years / regular → **4025** total (VAT included).
-- `/redflag`: claim 7000 on the same option → flagged against 5750 official.
+- Type or use an example: “আমার ৫ বছরের ছেলের পাসপোর্ট লাগবে, ওর নিজের NID নেই”
+  (or the English example).
+- Show the detected service, task, and badge. The age is prefilled; the UI asks
+  only the missing own-NID question. Answer “No” and build the checklist.
+- Point at the parent-NID/child-photo documents, the official links, and the
+  source verification date. Say: “The model only routed the request. Every
+  document and rule comes from the validated service file.”
+- Optional fallback beat: stop the provider or clear the key, repeat, and show
+  the same deterministic result with the “Guided” badge.
 
-## 1:10–1:50 — Grounded copilot + red-flag safety
+## 1:05–1:35 — Source-dated guide + fee truth
+
+- `/services` → e-Passport. Point at the verified date and official link.
+- Guide → `#fee`: 48 pages / 5 years / regular → **BDT 4,025**
+  (BDT 3,500 + 15% VAT BDT 525).
+- `/redflag`: claim 7,000 on the same option → flagged against the official
+  4,025. Emphasize that this calculation runs in the browser.
+
+## 1:35–2:05 — Grounded copilot + safety
 
 - `/copilot` scoped to e-Passport: “What is the express fee?” → grounded answer
   with citation, chunk id, and score.
 - Trick question: “Which agent is fastest?” → safe fallback, `grounded: false`.
 - Emphasize: no middlemen, no cash-at-counter, biometrics required.
 
-## 1:50–2:25 — Cross-document check (browser-only)
+## 2:05–2:30 — Cross-document check (browser-only)
 
 - `/identity-check`: type the same name two ways → diff shown. Open devtools
   Network tab: no request carries the typed values; reload clears them.
 
-## 2:25–3:00 — GRS draft + boundary
+## 2:30–3:00 — GRS draft + boundary
 
 - `/grs`: draft a delay complaint, show copy + print-to-PDF, read the neutral
   disclaimer aloud. Close: “Applications, payments, and final checks stay on

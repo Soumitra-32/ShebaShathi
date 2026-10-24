@@ -4,9 +4,10 @@ Bangla-first, source-grounded help for Bangladesh citizen identity and public se
 
 ## Features
 
+- **AI intake on the home page** (`/#intake`): describe a situation in Bangla, English or Banglish. The optional LLM acts only as a service/task classifier; a deterministic keyword router takes over when no key is configured, the provider fails, or its output is invalid. The UI states which mode was used, asks only for missing non-sensitive answers, and then builds a verified checklist. Identity-like numbers are rejected before any model call. The intake text is not stored; see `docs/PRIVACY.md`.
 - Service directory with per-service, source-dated guides: e-Passport, birth registration, NID, driving licence, and death registration. Each task resolves to a documented official source; unknown cases get a safe fallback.
 - Conditional preparation checklists driven by minimal, non-sensitive answers (age, yes/no, category). The API never accepts identity numbers, files, or credentials.
-- Deterministic official e-Passport fee lookup and delivery estimates, with inclusive VAT breakdown and verification date.
+- Deterministic official e-Passport fee lookup and delivery estimates, with inclusive VAT breakdown and verification date. The canonical guide contains the estimator; `/wizard` redirects to it.
 - Persistent Chroma retrieval using multilingual E5 embeddings, filtered by `service_id`; answers include source citations, verification dates, chunk IDs, and similarity scores.
 - Optional OpenAI-compatible answer generation (OpenRouter, OpenAI, or any compatible endpoint). With no `LLM_API_KEY`, the copilot shows a cited source excerpt. No local text-generation model is included.
 - **Service-aware fee checker** (`/redflag`): choose the government service first, fill only the fields that apply to it, and compare the amount you were told with the official breakdown. The calculation runs in your browser; the claimed amount is never sent.
@@ -56,20 +57,24 @@ Service rules live in `data/services/`: `index.json` enables each service and `*
 
 ## Routes
 
-- `/services`, `/services/[serviceId]`, `/services/[serviceId]/guide` — service directory, overview, and conditional checklist.
+- `/` — AI intake immediately after the hero, then the service tools.
+- `/services`, `/services/[serviceId]`, `/services/[serviceId]/guide` — service directory, overview, and conditional checklist. The e-Passport guide also contains the canonical deterministic fee estimator (`#fee`).
 - `/identity-check` — local document consistency comparison (no upload to any server, no storage).
-- `/wizard`, `/fees`, `/copilot`, `/redflag`, `/grs` — e-Passport wizard, fees, copilot, service-aware fee checker, and the browser-only GRS drafter.
+- `/fees`, `/copilot`, `/redflag`, `/grs` — legacy e-Passport fee calculator, grounded copilot, service-aware fee checker, and the browser-only GRS drafter.
+- `/wizard` — permanent server redirect to `/services/epassport/guide#fee`; old links keep working.
 
 ## API
 
+- `POST /api/intake` — map a short, non-sensitive situation description to one service/task. Returns the generation mode (`api`, `rules`, `confirmed`, or `blocked`), detected answers, missing questions, and options when the request is ambiguous. The optional `service_id`/`task_id` fields record a user confirmation and are validated against the service catalog.
+- `GET /health` — includes `service_count`, `index_count`, `ai_ready`, and the configured provider/model (never the key).
 - `GET /api/services`, `GET /api/services/{service_id}`, `POST /api/services/{service_id}/checklist` — catalog, guide content, and conditional checklist.
 - `GET /api/fee-schedules` — public, non-sensitive catalog of verified fee schedules (labels, amounts, official source URLs, verification dates). The browser performs the calculation.
 - `POST /api/copilot/ask` accepts an optional `service_id` to scope retrieval to one authority and pick that service's fallback string.
 - Existing e-Passport endpoints (`/api/checklist`, `/api/fees/calculate`, `/api/redflag/check`, `/api/grs/draft`) are unchanged. The complaint page no longer calls `/api/grs/draft`, so complaint text stays in the browser; the endpoint remains for API callers.
 
-## LLM provider (optional, copilot only)
+## LLM provider (optional: copilot and intake routing)
 
-The source-grounded copilot can use any OpenAI-compatible chat-completions endpoint. **OpenRouter** is the default in `.env`:
+The source-grounded copilot and the optional intake classifier can use any OpenAI-compatible chat-completions endpoint. **OpenRouter** is the default in `.env`:
 
 ```powershell
 # .env
@@ -82,12 +87,13 @@ LLM_HTTP_REFERER=http://localhost:3000 # optional dashboard attribution
 
 How it behaves:
 
-- **No key → no provider call.** The copilot answers with the cited source excerpt (`generation_mode: "extractive"`).
+- **No key → no provider call.** The copilot answers with the cited source excerpt (`generation_mode: "extractive"`); intake uses the deterministic keyword router (`generation_mode: "rules"`).
+- Intake uses the model only to choose a service/task and extract answers for questions the catalog already declares. Unknown services/tasks and out-of-range answers are discarded; fees, documents and rules always come from the validated data.
 - OpenRouter is detected from the base URL; `HTTP-Referer` and `X-Title` are sent only to OpenRouter and only when configured.
 - If a model does not support JSON mode, the request is retried once without `response_format` and a fenced JSON answer is still parsed.
-- Provider errors (401 invalid key, 402 no credit, 429 rate limit, 5xx) produce a safe message; the API key is never logged or echoed.
-- `GET /health` reports `llm_provider` and `llm_model` (never the key); the copilot shows which provider answered.
-- The provider only ever receives the copilot question and the retrieved source excerpts. The complaint drafter, the document comparison and the voice input never contact any external service — see `docs/PRIVACY.md`.
+- Provider errors (401 invalid key, 402 no credit, 429 rate limit, 5xx) produce a safe message; the API key is never logged or echoed. Intake falls back to the deterministic router.
+- `GET /health` reports `llm_provider`, `llm_model`, `service_count`, `index_count` and `ai_ready` (never the key); the copilot shows which provider answered.
+- The provider receives the copilot question plus retrieved source excerpts, or the intake description after the heuristic identity-number rejection. It never receives complaint text, document images, extracted document values or voice audio; those workflows stay local — see `docs/PRIVACY.md`.
 
 Swap in OpenAI or any other compatible endpoint by changing `LLM_API_BASE` and `LLM_MODEL` only.
 
@@ -99,24 +105,30 @@ Swap in OpenAI or any other compatible endpoint by changing `LLM_API_BASE` and `
 - [Production deployment steps (Render + Vercel)](docs/DEPLOYMENT.md)
 - [3-minute demo script and backup-recording checklist](docs/DEMO_SCRIPT.md)
 - [Local UX check notes](docs/UX_CHECKS.md)
+- [Live evaluation evidence and limitations](docs/EVAL_RESULTS.md)
+- [Security self-audit for the AI intake changes](docs/SECURITY_AUDIT_2026-10-23.md)
 
 ## Validation
 
 ```powershell
 cd backend
 $env:PYTHONPATH = "."
-python -m pytest app/tests -q
+python -m pytest app/tests -q          # 127 passed on 2026-10-23
 python -m compileall -q app
+python scripts/live_eval.py            # live provider eval; requires configured LLM/retrieval
 cd ..\frontend
-npm test           # vitest: file validation, complaint rules, comparison, fee maths
+npm test                               # 78 passed (7 files) on 2026-10-23
 npm run lint
 npm run build
-npm run verify:local    # optional: OCR + PDF extraction on synthetic fixtures
-npm run verify:speech   # optional: the local Whisper model loads and runs
-npm run verify:privacy  # optional: headless Chrome check that no sensitive value is transmitted
+npm run verify:local                   # optional: OCR + PDF extraction on synthetic fixtures
+npm run verify:speech                  # optional: the local Whisper model loads and runs
+npm run verify:privacy                 # optional: headless Chrome check that no sensitive value is transmitted
+npm run verify:intake                  # optional: headless Chrome UI check of intake, nav and fee estimator
 ```
 
-`npm run verify:local` needs the synthetic fixtures (`python scripts/make_local_fixtures.py`) and exercises the same Tesseract build, language data and pdf.js library that the browser uses. `npm run verify:speech` loads the shipped Whisper model through the same pipeline the page uses. `npm run verify:privacy` drives the three sensitive workflows in headless Chrome over the DevTools protocol with the app running, and fails if a complaint text, a document, an extracted identity value or a claimed amount appears in a request, in `localStorage`/`sessionStorage`, or in the console. The privacy check needs the dev server on `http://localhost:3000` and a local Chrome or Edge installation.
+`npm run verify:local` needs the synthetic fixtures (`python scripts/make_local_fixtures.py`) and exercises the same Tesseract build, language data and pdf.js library that the browser uses. `npm run verify:speech` loads the shipped Whisper model through the same pipeline the page uses. `npm run verify:privacy` drives the three sensitive workflows in headless Chrome over the DevTools protocol with the app running, and fails if a complaint text, a document, an extracted identity value or a claimed amount appears in a request, in `localStorage`/`sessionStorage`, or in the console. `npm run verify:intake` needs the backend on `http://localhost:8000` and the frontend on `http://localhost:3000`; it exercises success, PII rejection, unsafe-intent blocking, network failure, ambiguous choices, mobile menu/Escape, 375px overflow, and the guide fee estimator. All three browser scripts need Chrome or Edge installed.
+
+The measured live evaluation on 2026-10-23 answered **26/26** grounded questions with source-token coverage and refused **4/4** adversarial questions; see [docs/EVAL_RESULTS.md](docs/EVAL_RESULTS.md). This is a small, provider-dependent evaluation, not a claim of production accuracy. `backend/app/tests/test_eval_offline.py` mocks retrieval and the LLM, so it tests wiring and safety behavior, not live factual accuracy.
 
 The frontend's PDF actions use the browser print dialog so the bundled Noto Sans Bengali font shapes Bangla text. Choose “Save as PDF”. The final output depends on the browser's print-to-PDF implementation.
 
@@ -128,4 +140,7 @@ The frontend's PDF actions use the browser print dialog so the bundled Noto Sans
 - Voice input uses a small local Whisper model. Bangla dictation is usable but not perfect, so the transcript is editable before it is used.
 - The fee checker only shows amounts for services whose schedule was verified against an official page; the rest show "manual verification required" and a link to the official portal.
 - Browser-local processing keeps this application from uploading your documents. It does not protect against a compromised device, a malicious browser extension, or malicious application code. See `docs/PRIVACY.md`.
-- No public deployment URL is included; see `docs/DEPLOYMENT.md` for the Render/Vercel steps. Accuracy is covered by the 30-question offline eval set in `backend/app/tests/eval_questions.json` (`pytest app/tests/test_eval_offline.py`).
+- The AI intake is a starting point, not an official decision. It can misclassify an ambiguous sentence; the UI then asks the user to choose a service or task, and every checklist item still comes from the validated catalog. The keyword fallback covers common Bangla/English/Banglish phrases but not every wording.
+- Identity-number rejection is shape-based and intentionally conservative. It can miss an unusual format; the UI tells users not to paste identity numbers, and the server never stores or logs the intake text. When an LLM key is configured, the provider receives the description after that heuristic check. See `docs/PRIVACY.md`.
+- Rate limits for `/api/intake` and `/api/copilot/ask` are process-local. A multi-instance deployment needs a shared store (for example Redis); see `docs/DEPLOYMENT.md`.
+- No public deployment URL is included; see `docs/DEPLOYMENT.md` for the Render/Vercel steps. The latest full live eval result is recorded in `docs/EVAL_RESULTS.md`; the set is small and provider output can vary between runs.

@@ -9,24 +9,40 @@
 1. Push this repo to GitHub (no `.env` — only `.env.example` is committed).
 2. Create a Render **Web Service** from the repo:
    - Build command: `pip install -r backend/requirements.txt`
-   - Start command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT --app-dir backend`
-   - Disk (persistent): mount at `/app/.chroma` so the Chroma index survives restarts.
-   - Disk (cache): mount model cache (`/root/.cache/huggingface`) so the first
-     embedding-model download is not repeated on every deploy.
+   - Start command:
+     `sh -c "python -m app.rag.ingest && uvicorn app.main:app --host 0.0.0.0 --port $PORT --app-dir backend"`
+   - Add a **persistent disk** (paid plan) mounted at `/var/data` so both the
+     Chroma index and the embedding-model cache survive restarts. A free
+     instance has no persistent disk: the start command still rebuilds the
+     index, but every cold start pays the ingestion/model-download cost.
 3. Environment variables (Render dashboard → Environment):
-   - `CORS_ORIGINS=https://<your-frontend>.vercel.app`
-   - `CHROMA_PERSIST_DIR=/app/.chroma`
+   - `PYTHONPATH=backend` (needed by the ingestion command from the repo root)
+   - `CORS_ORIGINS=https://<your-frontend>.vercel.app` (exact origin; never `*` with credentials)
+   - `CHROMA_PERSIST_DIR=/var/data/chroma`
+   - `HF_HOME=/var/data/huggingface` (persist the embedding-model download)
    - `EMBEDDING_MODEL=intfloat/multilingual-e5-small`
    - `RAG_TOP_K=5`, `RAG_MIN_SCORE=0.35`
-   - Optional LLM provider (copilot only). For OpenRouter:
+   - Abuse controls (optional): `RATE_LIMIT_ENABLED=true`,
+     `RATE_LIMIT_PER_MINUTE=60`, `INTAKE_RATE_LIMIT_PER_MINUTE=60`
+   - Optional LLM provider (copilot answers and intake classification). For OpenRouter:
      `LLM_API_BASE=https://openrouter.ai/api/v1`, `LLM_MODEL=openai/gpt-4o-mini`
      (or another OpenRouter model id), `LLM_API_KEY=<your key>`,
      and optionally `LLM_APP_TITLE=ShebaShathi BD` and `LLM_HTTP_REFERER=<your site url>`
      for OpenRouter dashboard attribution. Leave `LLM_API_KEY` unset to keep
-     the copilot in cited extractive mode with no external call at all.
-4. First boot rebuilds the index automatically in Docker (`docker-compose.yml`
-   runs `python -m app.rag.ingest --rebuild`); on Render the `.chroma` disk
-   keeps it. Verify with `GET /health` and `GET /api/services`.
+     the copilot in cited extractive mode and intake in deterministic keyword
+     mode, with no external model call at all.
+4. The start command runs `python -m app.rag.ingest` before uvicorn. Ingestion
+   builds the index only when the volume is empty or the index version changes;
+   it does not rebuild on every boot. The first boot therefore downloads the
+   embedding model and builds all chunks, which can take several minutes.
+   `GET /health` must report `index_count > 0` and `ai_ready: true` before the
+   AI intake can retrieve sources. `service_count` should be 5. Verify
+   `GET /api/services` and a real `POST /api/intake` request as well.
+5. Rate limiting is process-local. If you run more than one backend instance,
+   the per-client limit is not shared, and behind a proxy the recorded client
+   key may be the proxy address. Use one instance, or replace
+   `backend/app/rate_limit.py` with a shared store (for example Redis) and
+   review the proxy-header trust decision before scaling out.
 
 ## 2. Frontend on Vercel
 
@@ -50,12 +66,16 @@
 
 ## 3. Production checklist (PLANNER §13.3 / SECURITY §3.5)
 
-- HTTPS only; production `CORS_ORIGINS` contains only the Vercel domain.
+- HTTPS only; production `CORS_ORIGINS` contains only the Vercel domain (no wildcard with credentials).
 - `DEBUG=false`; no reload/debug servers in production.
-- Chroma/model volumes are private (never under a static/public dir).
+- Chroma/model volumes are private (never under a static/public dir) and the disk is mounted at `/var/data`.
+- `/health` reports `index_count > 0`, `ai_ready: true`, and `service_count: 5`.
+- A real intake request, a PII-rejection request, and an unsafe-intent request behave as documented; the backend log contains no request body text.
+- `LLM_API_KEY` is set only in the host secret store; it is never in the client bundle, repo, or logs.
 - The CSP, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`
   and `X-Frame-Options` headers are present on every route.
 - `docker compose up --build` still runs cleanly locally as the fallback demo.
+- If you scale beyond one instance, replace the process-local rate limiter before launch; see §1.5.
 
 ## 4. What is NOT included
 
