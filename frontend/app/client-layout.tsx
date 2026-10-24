@@ -2,19 +2,39 @@
 
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Menu, X } from "lucide-react";
 import { LanguageProvider, useLanguage } from "../lib/language";
 import "../lib/i18n";
 
-/** Client-side nav with the global language switcher. */
+/** Client-side nav with one global language switcher and a collapsible menu. */
 function SiteNav() {
-  const { t } = useTranslation("translation");
+  const { t, i18n } = useTranslation("translation");
   const { lang, setLang } = useLanguage();
   const currentLang = lang;
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // The shared language context is the single source of truth. Keep the
+  // i18next instance in step so every `t()` call re-renders with the same
+  // language as the context-driven labels.
+  useEffect(() => {
+    if (i18n.resolvedLanguage !== lang) {
+      void i18n.changeLanguage(lang);
+    }
+  }, [i18n, lang]);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [menuOpen]);
 
   const navItems = [
+    { href: "/#intake", key: "nav.intake" },
     { href: "/services", key: "nav.services" },
-    { href: "/wizard", key: "nav.wizard" },
     { href: "/redflag", key: "nav.fees" },
     { href: "/copilot", key: "nav.copilot" },
     { href: "/identity-check", key: "nav.identity-check" },
@@ -22,27 +42,42 @@ function SiteNav() {
   ];
 
   return (
-    <nav aria-label="প্রধান নেভিগেশন" className="site-nav print:hidden">
-      <Link href="/" className="site-brand">
+    <nav aria-label={t("nav.label")} className="site-nav print:hidden">
+      <Link href="/" className="site-brand" onClick={() => setMenuOpen(false)}>
         <span className="brand-mark" aria-hidden="true">শ</span>
         <span>ShebaShathi <span className="brand-bd">BD</span></span>
       </Link>
-      <div className="site-links">
-        {navItems.map((item) => (
-          <Link key={item.href} href={item.href} className="nav-link">
-            {t(item.key)}
-          </Link>
-        ))}
-      </div>
       <div className="nav-controls">
         <button
           type="button"
           onClick={() => setLang(currentLang === "bn" ? "en" : "bn")}
           aria-label={currentLang === "bn" ? "অন্যান্য ভাষায় যান" : "Switch language"}
-          className="min-h-11 shrink-0 rounded-lg border border-slate-300 bg-white px-4 font-medium text-slate-800"
+          className="nav-lang"
         >
           {currentLang === "bn" ? t("common.language_en") : t("common.language_bn")}
         </button>
+        <button
+          type="button"
+          className="nav-menu-toggle"
+          onClick={() => setMenuOpen((open) => !open)}
+          aria-expanded={menuOpen}
+          aria-controls="site-menu"
+          aria-label={menuOpen ? t("nav.close_menu") : t("nav.menu")}
+        >
+          {menuOpen ? <X size={20} aria-hidden="true" /> : <Menu size={20} aria-hidden="true" />}
+        </button>
+      </div>
+      <div id="site-menu" className={`site-links ${menuOpen ? "is-open" : ""}`}>
+        {navItems.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className="nav-link"
+            onClick={() => setMenuOpen(false)}
+          >
+            {t(item.key)}
+          </Link>
+        ))}
       </div>
     </nav>
   );
