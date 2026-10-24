@@ -25,6 +25,7 @@ import {
   transcribeLocally,
 } from "../../lib/local/speech";
 import { Mic, MicOff, StopCircle, AlertCircle, Loader2 } from "lucide-react";
+import { useLanguage } from "../../lib/language";
 
 type Lang = "bn" | "en";
 
@@ -180,7 +181,7 @@ interface Attachment extends ValidatedFile {
 }
 
 export default function GRSPage() {
-  const [lang, setLang] = useState<Lang>("bn");
+  const { lang } = useLanguage();
   const t = copy[lang];
 
   const [incidentDate, setIncidentDate] = useState("");
@@ -438,18 +439,11 @@ export default function GRSPage() {
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-8">
       <div className="mx-auto max-w-4xl">
-        <header className="mb-6 flex items-start justify-between gap-4 print:hidden">
+        <header className="mb-6 print:hidden">
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-slate-900">{t.title}</h1>
             <p className="mt-2 text-slate-600">{t.intro}</p>
           </div>
-          <button
-            type="button"
-            onClick={() => setLang(lang === "bn" ? "en" : "bn")}
-            className="min-h-11 shrink-0 rounded-lg border border-slate-300 bg-white px-4 font-medium text-slate-800"
-          >
-            {lang === "bn" ? "English" : "বাংলা"}
-          </button>
         </header>
 
         <section className="mb-5 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900 print:hidden">
@@ -778,7 +772,7 @@ export default function GRSPage() {
                     <a
                       href={draft.portalUrl}
                       target="_blank"
-                      rel="noreferrer"
+                      rel="noopener noreferrer"
                       className="inline-flex min-h-11 items-center rounded-lg border border-slate-300 px-4 py-2 font-medium"
                     >
                       {t.portal}

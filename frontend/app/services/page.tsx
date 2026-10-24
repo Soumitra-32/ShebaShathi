@@ -7,9 +7,9 @@ import { getServices, ServiceCatalog, reviewCopy, ReviewStatus } from "../../lib
 import { useLanguage } from "../../lib/language";
 
 export default function ServicesPage() {
-  const { t, i18n } = useTranslation("translation");
+  const { t } = useTranslation("translation");
   const { lang } = useLanguage();
-  const currentLang = i18n.language;
+  const currentLang = lang;
   const [catalog, setCatalog] = useState<ServiceCatalog | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -52,21 +52,12 @@ export default function ServicesPage() {
 
   return <main className="min-h-screen bg-slate-50 px-4 py-8 sm:py-10">
     <div className="mx-auto max-w-5xl">
-      <header className="mb-6 flex items-start justify-between gap-4">
+      <header className="mb-6">
         <div>
           <p className="text-sm font-semibold text-indigo-700">ShebaShathi BD</p>
           <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-900">{t("services.title")}</h1>
           <p className="mt-2 max-w-2xl text-slate-600">{t("services.intro")}</p>
         </div>
-        <button
-          type="button"
-          onClick={() => {
-            // Language is handled by the global switcher in the header.
-          }}
-          className="min-h-11 shrink-0 rounded-lg border border-slate-300 bg-white px-4 font-medium text-slate-800 hidden"
-        >
-          {currentLang === "bn" ? t("common.language_en") : t("common.language_bn")}
-        </button>
       </header>
 
       {loading && <p role="status" className="rounded-xl border border-slate-200 bg-white p-6 text-center text-slate-500">{t("services.loading")}</p>}

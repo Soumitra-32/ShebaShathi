@@ -16,9 +16,9 @@ import { useLanguage } from "../../lib/language";
 type Lang = "bn" | "en";
 
 export default function FeeCheckPage() {
-  const { t, i18n } = useTranslation("translation");
-  const { lang, setLang } = useLanguage();
-  const currentLang = i18n.language;
+  const { t } = useTranslation("translation");
+  const { lang } = useLanguage();
+  const currentLang = lang;
   const [catalog, setCatalog] = useState<FeeCatalog | null>(null);
   const [offline, setOffline] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -90,18 +90,11 @@ export default function FeeCheckPage() {
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-8">
       <div className="mx-auto max-w-3xl">
-        <header className="mb-6 flex items-start justify-between gap-4">
+        <header className="mb-6">
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-slate-900">{t("fees.title")}</h1>
             <p className="mt-2 text-slate-600">{t("fees.intro")}</p>
           </div>
-          <button
-            type="button"
-            onClick={() => setLang(currentLang === "bn" ? "en" : "bn")}
-            className="min-h-11 shrink-0 rounded-lg border border-slate-300 bg-white px-4 font-medium text-slate-800"
-          >
-            {currentLang === "bn" ? t("common.language_en") : t("common.language_bn")}
-          </button>
         </header>
 
         <section className="mb-5 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
@@ -178,7 +171,7 @@ export default function FeeCheckPage() {
                 <a
                   href={service.source_url}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className="mt-3 inline-block font-medium underline"
                 >
                   {t("fees.officialLink")}
@@ -318,7 +311,7 @@ export default function FeeCheckPage() {
 
                 <p className="mt-4 text-xs text-slate-600">
                   {t("fees.source")}:{" "}
-                  <a href={calculation.service?.source_url} target="_blank" rel="noreferrer" className="underline">
+                  <a href={calculation.service?.source_url} target="_blank" rel="noopener noreferrer" className="underline">
                     {calculation.service?.source_url}
                   </a>{" "}
                   · {t("fees.verified")}: {calculation.service?.last_verified}

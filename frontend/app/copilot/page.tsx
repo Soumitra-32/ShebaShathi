@@ -61,9 +61,9 @@ const officialLinks = {
 };
 
 export default function CopilotPage() {
-  const { t, i18n } = useTranslation("translation");
+  const { t } = useTranslation("translation");
   const { lang } = useLanguage();
-  const currentLang = i18n.language;
+  const currentLang = lang;
   const links = currentLang === "bn" ? officialLinks.bn : officialLinks.en;
   const [services, setServices] = useState<ServiceSummary[]>([]);
   const [serviceId, setServiceId] = useState("");
@@ -96,7 +96,8 @@ export default function CopilotPage() {
   }
 
   return <main className="min-h-screen bg-slate-50 px-4 py-8"><div className="mx-auto max-w-6xl">
-    <header className="mb-6 flex items-start justify-between gap-4"><div><h1 className="text-3xl font-bold text-slate-900">{t("copilot.title")}</h1><p className="mt-2 max-w-2xl text-slate-600">{t("copilot.intro")}</p></div></header>
+    <header className="mb-6"><div><h1 className="text-3xl font-bold text-slate-900">{t("copilot.title")}</h1><p className="mt-2 max-w-2xl text-slate-600">{t("copilot.intro")}</p></div>
+    </header>
 
     <div className="grid gap-6 lg:grid-cols-3">
       <div className="lg:col-span-2">

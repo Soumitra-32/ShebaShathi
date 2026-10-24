@@ -10,9 +10,9 @@ import { getService, reviewCopy, ReviewStatus, ServiceDetail } from "../../../li
 export default function ServiceOverviewPage() {
   const params = useParams<{ serviceId: string }>();
   const serviceId = params?.serviceId ?? "";
-  const { t, i18n } = useTranslation("translation");
+  const { t } = useTranslation("translation");
   const { lang } = useLanguage();
-  const currentLang = i18n.language;
+  const currentLang = lang;
   const [service, setService] = useState<ServiceDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -35,17 +35,8 @@ export default function ServiceOverviewPage() {
 
   return <main className="min-h-screen bg-slate-50 px-4 py-8 sm:py-10">
     <div className="mx-auto max-w-3xl">
-      <div className="mb-6 flex items-center justify-between gap-4">
+      <div className="mb-6">
         <Link href="/services" className="text-sm font-medium text-indigo-800 underline">{t("service_overview.back")}</Link>
-        <button
-          type="button"
-          onClick={() => {
-            // Language is handled by the global switcher in the header.
-          }}
-          className="min-h-11 rounded-lg border border-slate-300 bg-white px-4 font-medium text-slate-800 hidden"
-        >
-          {currentLang === "bn" ? t("common.language_en") : t("common.language_bn")}
-        </button>
       </div>
 
       {loading && <p role="status" className="rounded-xl border border-slate-200 bg-white p-6 text-center text-slate-500">{t("service_overview.loading")}</p>}

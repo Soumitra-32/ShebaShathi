@@ -1,11 +1,12 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "../../../../lib/language";
 import { getService, getServiceChecklist, reviewCopy, ReviewStatus, ServiceChecklistResponse, ServiceDetail, ServiceQuestion } from "../../../../lib/api";
+import FeeEstimator from "../../../../components/fee-estimator";
 
 function QuestionField({ question, lang, value, onChange }: {
   question: ServiceQuestion;
@@ -37,9 +38,9 @@ function QuestionField({ question, lang, value, onChange }: {
 }
 
 function GuideContent() {
-  const { t, i18n } = useTranslation("translation");
+  const { t } = useTranslation("translation");
   const { lang } = useLanguage();
-  const currentLang = i18n.language;
+  const currentLang = lang;
   const params = useParams<{ serviceId: string }>();
   const search = useSearchParams();
   const serviceId = params?.serviceId ?? "";
@@ -53,6 +54,8 @@ function GuideContent() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const checklistRequest = useRef(0);
+  const checklistLanguage = useRef<"bn" | "en" | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -76,6 +79,8 @@ function GuideContent() {
   }, [service, taskId]);
 
   useEffect(() => {
+    checklistRequest.current += 1;
+    checklistLanguage.current = null;
     setAnswers({});
     setChecklist(null);
     setCheckedDocs(new Set());
@@ -99,7 +104,13 @@ function GuideContent() {
       else payload[question.field] = String(value);
     }
     try {
-      setChecklist(await getServiceChecklist(serviceId, task.id, payload, currentLang as "bn" | "en"));
+      const requestId = ++checklistRequest.current;
+      const requestLanguage = currentLang as "bn" | "en";
+      const next = await getServiceChecklist(serviceId, task.id, payload, requestLanguage);
+      if (checklistRequest.current === requestId) {
+        setChecklist(next);
+        checklistLanguage.current = requestLanguage;
+      }
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : t("service_guide.error"));
     } finally {
@@ -109,19 +120,42 @@ function GuideContent() {
 
   const serviceName = service ? (currentLang === "bn" ? service.service_name_bn : service.service_name_en) : "";
 
+  // Checklist steps and warnings come from the backend in the requested
+  // language. Refresh them when the user switches language after generating a
+  // checklist so the result does not keep the previous language.
+  useEffect(() => {
+    if (!checklist || !task) return;
+    if (checklistLanguage.current === currentLang) return;
+    let active = true;
+    const requestId = ++checklistRequest.current;
+    const requestTaskId = task.id;
+    const requestLanguage = currentLang as "bn" | "en";
+    const payload: Record<string, string | number | boolean> = {};
+    for (const question of task.questions) {
+      const value = answers[question.field];
+      if (value === undefined || value === "") continue;
+      if (question.type === "number") payload[question.field] = Number(value);
+      else if (question.type === "boolean") payload[question.field] = value === true;
+      else payload[question.field] = String(value);
+    }
+    getServiceChecklist(serviceId, requestTaskId, payload, requestLanguage)
+      .then((next) => {
+        if (active && checklistRequest.current === requestId) {
+          setChecklist(next);
+          checklistLanguage.current = requestLanguage;
+        }
+      })
+      .catch(() => { /* Keep the existing checklist if the refresh fails. */ });
+    return () => { active = false; };
+    // Re-run when the checklist first appears or the language changes; the
+    // language ref stops this from looping after a successful refresh.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentLang, checklist]);
+
   return <main className="min-h-screen bg-slate-50 px-4 py-8 sm:py-10">
     <div className="mx-auto max-w-3xl">
-      <div className="mb-6 flex items-center justify-between gap-4 print:hidden">
+      <div className="mb-6 print:hidden">
         <Link href={`/services/${serviceId}`} className="text-sm font-medium text-indigo-800 underline">{t("service_guide.back")}</Link>
-        <button
-          type="button"
-          onClick={() => {
-            // Language is handled by the global switcher in the header.
-          }}
-          className="min-h-11 rounded-lg border border-slate-300 bg-white px-4 font-medium text-slate-800 hidden"
-        >
-          {currentLang === "bn" ? t("common.language_en") : t("common.language_bn")}
-        </button>
       </div>
 
       {service && <p className="mb-4 text-sm font-semibold text-indigo-700">ShebaShathi BD · {serviceName}</p>}
@@ -195,6 +229,8 @@ function GuideContent() {
           </footer>
         </section>}
       </>}
+
+      {serviceId === "epassport" && service ? <FeeEstimator /> : null}
 
       <style jsx global>{`@media print { body { background: white !important; color: black !important; } main { min-height: 0 !important; padding: 0 !important; } #print-checklist { margin: 0 !important; border: 0 !important; box-shadow: none !important; } #print-checklist a { color: black !important; } @page { margin: 16mm; } }`}</style>
     </div>

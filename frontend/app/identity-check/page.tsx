@@ -11,6 +11,7 @@ import {
 import { FileKind, formatBytes, releasePreviewUrl, validateFiles } from "../../lib/local/files";
 import { extractDocumentText } from "../../lib/local/extract";
 import { suggestFields } from "../../lib/local/extract-fields";
+import { useLanguage } from "../../lib/language";
 
 type Lang = "bn" | "en";
 type DocType = "birth" | "nid" | "passport" | "other";
@@ -153,7 +154,7 @@ const emptyValues = (): Record<FieldKey, string> => ({ name: "", dob: "", father
 const emptyConfirmed = (): Record<FieldKey, boolean> => ({ name: false, dob: false, father: false, mother: false });
 
 export default function IdentityCheckPage() {
-  const [lang, setLang] = useState<Lang>("bn");
+  const { lang } = useLanguage();
   const t = copy[lang];
   const [documents, setDocuments] = useState<ComparisonDoc[]>([]);
   const [selectedFields, setSelectedFields] = useState<FieldKey[]>([...FIELD_KEYS]);
@@ -325,19 +326,12 @@ export default function IdentityCheckPage() {
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-8 sm:py-10">
       <div className="mx-auto max-w-5xl">
-        <header className="mb-6 flex items-start justify-between gap-4">
+        <header className="mb-6">
           <div>
             <p className="text-sm font-semibold text-emerald-700">{t.eyebrow}</p>
             <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-900">{t.title}</h1>
             <p className="mt-2 max-w-2xl text-slate-600">{t.intro}</p>
           </div>
-          <button
-            type="button"
-            onClick={() => setLang(lang === "bn" ? "en" : "bn")}
-            className="min-h-11 shrink-0 rounded-lg border border-slate-300 bg-white px-4 font-medium text-slate-800"
-          >
-            {t.language}
-          </button>
         </header>
 
         <section className="mb-5 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
