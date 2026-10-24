@@ -94,6 +94,7 @@ class CopilotAnswer(BaseModel):
     generation_mode: str = "extractive"
     llm_provider: str = "none"
     llm_model: Optional[str] = None
+    safety_blocked: bool = False
 
 
 class CopilotAskRequest(BaseModel):
@@ -221,3 +222,67 @@ class ServiceChecklistResponse(BaseModel):
     review_status: str = "unknown"
     review_after_days: int = 180
     fallback_used: bool
+
+
+class IntakeRequest(BaseModel):
+    """Free-text intake.
+
+    The text is untrusted input and is never stored. The endpoint rejects
+    identity-like numbers before any model call; ``extra="forbid"`` stops
+    callers from smuggling a profile or hidden prompt field into the request.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    text: str = Field(..., min_length=2, max_length=1000)
+    language: Literal["bn", "en"] = "bn"
+    # A user may confirm or correct the AI's service/task choice. Overrides are
+    # validated against the enabled catalog; they never bypass the catalog.
+    service_id: Optional[str] = Field(default=None, max_length=40)
+    task_id: Optional[str] = Field(default=None, max_length=60)
+
+    @field_validator("text")
+    @classmethod
+    def require_non_whitespace(cls, value: str) -> str:
+        cleaned = value.strip()
+        if not cleaned:
+            raise ValueError("Describe what you need in a few words.")
+        return cleaned
+
+
+class IntakeOption(BaseModel):
+    value: str
+    label_bn: str
+    label_en: str
+
+
+class IntakeQuestion(BaseModel):
+    field: str
+    type: Literal["number", "select", "boolean"]
+    required: bool = False
+    min: Optional[float] = None
+    max: Optional[float] = None
+    label_bn: str
+    label_en: str
+    options: List[IntakeOption] = Field(default_factory=list)
+
+
+class IntakeResponse(BaseModel):
+    blocked: bool = False
+    generation_mode: str = "rules"
+    fallback_used: bool = False
+    confidence: float = 0.0
+    service_id: Optional[str] = None
+    service_name_bn: Optional[str] = None
+    service_name_en: Optional[str] = None
+    task_id: Optional[str] = None
+    task_label_bn: Optional[str] = None
+    task_label_en: Optional[str] = None
+    answers: Dict[str, Any] = Field(default_factory=dict)
+    missing_fields: List[str] = Field(default_factory=list)
+    questions: List[IntakeQuestion] = Field(default_factory=list)
+    service_options: List[IntakeOption] = Field(default_factory=list)
+    task_options: List[IntakeOption] = Field(default_factory=list)
+    message_bn: str = ""
+    message_en: str = ""
+    message: str = ""

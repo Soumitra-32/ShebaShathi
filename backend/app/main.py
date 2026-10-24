@@ -30,6 +30,7 @@ from .schemas import (
     RedFlagCheckRequest, RedFlagCheckResponse,
     GRSDraftRequest, GRSDraftResponse,
     ServiceChecklistRequest, ServiceChecklistResponse,
+    IntakeRequest, IntakeResponse,
 )
 from .engine import fees as fees_engine
 from .engine import checklist as checklist_engine
@@ -38,6 +39,12 @@ from .engine import fee_schedules as fee_schedule_engine
 from .drafter import grs as grs_drafter
 from .services import engine as service_engine
 from .services import loader as service_loader
+from .intake import engine as intake_engine
+from .privacy import contains_identity_number
+from .rag import guard as rag_guard
+from .rag import fee_answer as rag_fee_answer
+from .rag import photo_answer as rag_photo_answer
+from .rate_limit import SlidingWindowLimiter, enforce as enforce_rate_limit
 
 app = FastAPI(
     title="ShebaShathi BD API",
@@ -70,7 +77,42 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Costly endpoints get a per-client sliding window. The limiter is
+# process-local; see docs/DEPLOYMENT.md for the multi-instance caveat.
+copilot_limiter = SlidingWindowLimiter(
+    settings.rate_limit_per_minute, enabled=settings.rate_limit_enabled
+)
+intake_limiter = SlidingWindowLimiter(
+    settings.intake_rate_limit_per_minute, enabled=settings.rate_limit_enabled
+)
+
 # =========================================================================
+
+@app.post("/api/intake", response_model=IntakeResponse, tags=["AI Intake"])
+async def intake(req: IntakeRequest, request: Request):
+    """Map a free-text situation to one service/task and ask for missing answers.
+
+    The response is a routing result, not an official decision. Every document,
+    step, fee and eligibility rule still comes from the validated service data.
+    Identity-like numbers are rejected before any model call.
+    """
+    enforce_rate_limit(intake_limiter, request)
+    if contains_identity_number(req.text):
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": {
+                    "code": "IDENTITY_DATA_REJECTED",
+                    "message": "Remove ID, passport, phone or OTP numbers. Describe only the service and your situation.",
+                }
+            },
+        )
+    return intake_engine.route(
+        req.text,
+        req.language,
+        service_id=req.service_id,
+        task_id=req.task_id,
+    )
 
 @app.post("/api/checklist", response_model=ChecklistResponse, tags=["Checklist"])
 async def get_checklist(req: ChecklistRequest):
@@ -114,14 +156,55 @@ async def service_checklist(service_id: str, req: ServiceChecklistRequest):
         raise HTTPException(status_code=500, detail={"error": {"code": "INTERNAL_ERROR", "message": "The checklist could not be generated."}})
 
 @app.post("/api/copilot/ask", response_model=CopilotAskResponse, tags=["RAG Copilot"])
-async def copilot_ask(req: CopilotAskRequest):
+async def copilot_ask(req: CopilotAskRequest, request: Request):
     """
     Question-answering with RAG retrieval and citation.
 
     A ``service_id`` scopes retrieval to one authority and selects that
     service's configured fallback string. Without it, the legacy e-Passport
     context is used unchanged.
+
+    Safety order: rate limit, identity-number rejection, deterministic
+    unsafe-intent guard, then retrieval/generation. A blocked request never
+    reaches the embedding model or the LLM.
     """
+    enforce_rate_limit(copilot_limiter, request)
+    if contains_identity_number(req.question):
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": {
+                    "code": "IDENTITY_DATA_REJECTED",
+                    "message": "Remove ID, passport, phone or OTP numbers from the question.",
+                }
+            },
+        )
+    unsafe_category = rag_guard.classify(req.question)
+    if unsafe_category:
+        return CopilotAskResponse(
+            answer=rag_guard.safety_message(unsafe_category, req.language),
+            citations=[],
+            grounded=False,
+            retrieved_chunks=[],
+            generation_mode="safety",
+            llm_provider="none",
+            llm_model=None,
+            safety_blocked=True,
+        )
+    # Verified fee amounts are deterministic. The LLM never chooses between
+    # regular, express and super-express tiers.
+    try:
+        deterministic_fee = rag_fee_answer.answer(req.question, req.service_id, req.language)
+    except Exception:
+        deterministic_fee = None
+    if deterministic_fee is not None:
+        return CopilotAskResponse(**deterministic_fee)
+    try:
+        deterministic_photo = rag_photo_answer.answer(req.question, req.service_id, req.language)
+    except Exception:
+        deterministic_photo = None
+    if deterministic_photo is not None:
+        return CopilotAskResponse(**deterministic_photo)
     try:
         from .rag import generator as rag_gen
         from .rag import verifier as rag_ver
@@ -241,12 +324,17 @@ async def health():
     with fees_path.open("r", encoding="utf-8") as source:
         data_last_verified = json.load(source).get("last_verified")
     from . import llm
+    from .rag.retriever import collection_count
     provider = llm.describe_provider()
+    index_count = collection_count()
     return {
         "status": "ok",
         "data_last_verified": data_last_verified,
         "llm_provider": provider["provider"],
         "llm_model": provider["model"],
+        "service_count": len(service_loader.list_services()),
+        "index_count": index_count,
+        "ai_ready": index_count > 0,
     }
 
 @app.get("/api/fee-schedules", tags=["Fees"])

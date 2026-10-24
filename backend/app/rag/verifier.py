@@ -5,7 +5,12 @@ _BN_DIGITS = str.maketrans("০১২৩৪৫৬৭৮৯", "0123456789")
 
 
 def _numbers(text: str) -> set[str]:
-    tokens = re.findall(r"[0-9০-৯]+(?:[,.][0-9০-৯]+)*", text.translate(_BN_DIGITS))
+    normalized = text.translate(_BN_DIGITS)
+    # Numbered-list markers are formatting, not factual claims. Without this,
+    # a correct five-item answer is rejected because "1." and "2." are not in
+    # the cited source text.
+    normalized = re.sub(r"(^|[;؛:\n।])\s*\d{1,3}[.)।]\s*", r"\1 ", normalized)
+    tokens = re.findall(r"[0-9০-৯]+(?:[,.][0-9০-৯]+)*", normalized)
     return {re.sub(r"[,.]", "", token) for token in tokens}
 
 

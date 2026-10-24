@@ -58,8 +58,10 @@ def test_answer_items_ground_with_mocked_retrieval(monkeypatch):
         assert response.status_code == 200
         body = response.json()
         assert body["grounded"] is True, item["id"]
+        normalised_answer = body["answer"].translate(str.maketrans("০১২৩৪৫৬৭৮৯", "0123456789"))
         for token in item["must_contain"]:
-            assert token in body["answer"], item["id"]
+            aliases = {"fee": ("fee", "ফি")}.get(token, (token,))
+            assert any(alias in normalised_answer for alias in aliases), item["id"]
     assert set(seen_service) >= {"epassport", "nid"}
 
 

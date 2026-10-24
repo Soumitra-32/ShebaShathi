@@ -9,9 +9,10 @@ variables:
     LLM_MODEL      the provider model id, e.g. anthropic/claude-3.5-sonnet
 
 No key means no LLM call at all: the copilot keeps its cited extractive
-answer. This adapter is used only by the source-grounded copilot; the
-complaint drafter, the document comparison and the voice input never reach
-any external service.
+answer and intake uses its deterministic router. This adapter is used by the
+source-grounded copilot and the optional intake classifier; the complaint
+drafter, the document comparison and the voice input never reach any external
+service.
 """
 import json
 import os

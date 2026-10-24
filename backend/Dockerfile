@@ -9,4 +9,7 @@ COPY data /app/data
 COPY corpus /app/corpus
 ENV PYTHONPATH=/app/backend
 EXPOSE 8000
-CMD ["sh", "-c", "python -m app.rag.ingest --rebuild && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
+# Build the index only when the persistent volume is empty (or when the index
+# version changes). Use `python -m app.rag.ingest --rebuild` after editing
+# corpus or service data.
+CMD ["sh", "-c", "python -m app.rag.ingest && uvicorn app.main:app --host 0.0.0.0 --port 8000"]

@@ -82,3 +82,39 @@ def test_verifier_rejects_url_not_present_in_cited_source():
     result = verifier.verify(answer)
     assert result["grounded"] is False
     assert "unsupported URL" in result["issues"]
+
+
+def test_list_markers_are_formatting_not_numeric_claims():
+    chunk = _chunk(text="NID and BRC are accepted.")
+    answer = {
+        "answer": "১. NID\n২. BRC",
+        "used_chunk_ids": ["chunk-1"],
+        "retrieved_chunks": [chunk],
+    }
+    result = verifier.verify(answer)
+    assert result["grounded"] is True
+    assert "unsupported numeric claims" not in result["issues"]
+
+
+def test_unsupported_number_is_still_rejected_after_list_marker_cleanup():
+    chunk = _chunk(text="NID and BRC are accepted.")
+    answer = {
+        "answer": "1. NID\n2. BRC\n3. 9999 taka",
+        "used_chunk_ids": ["chunk-1"],
+        "retrieved_chunks": [chunk],
+    }
+    result = verifier.verify(answer)
+    assert result["grounded"] is False
+    assert "unsupported numeric claims" in result["issues"]
+
+
+def test_inline_bangla_list_markers_are_formatting():
+    chunk = _chunk(text="NID and BRC are accepted.")
+    answer = {
+        "answer": "প্রয়োজনীয় কাগজ: ১. NID; ২. BRC।",
+        "used_chunk_ids": ["chunk-1"],
+        "retrieved_chunks": [chunk],
+    }
+    result = verifier.verify(answer)
+    assert result["grounded"] is True
+    assert "unsupported numeric claims" not in result["issues"]
