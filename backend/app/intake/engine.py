@@ -278,8 +278,19 @@ _NEGATIVE_NID_RE = re.compile(
 )
 
 
-def _rule_route(text: str) -> tuple[str | None, str | None, dict[str, Any], float]:
-    # "NID নেই" is an answer to the minor question, not a request for the NID
+def detect_service(text: str) -> str | None:
+    """Return the single service clearly named in ``text``, else ``None``.
+
+    Used by the conversational copilot to scope retrieval to one authority.
+    Ambiguous text (two matching services at the same score) deliberately
+    returns ``None`` so the caller can search without a wrong boundary.
+    """
+    service_text = _NEGATIVE_NID_RE.sub(" ", text)
+    service_id, _ = _best_service(_fold(service_text))
+    return service_id
+
+
+def _rule_route(text: str) -> tuple[str | None, str | None, dict[str, Any], float]:    # "NID নেই" is an answer to the minor question, not a request for the NID
     # service. Remove those answer phrases only for service routing so a child
     # passport request is not misrouted to the NID guide.
     service_text = _NEGATIVE_NID_RE.sub(" ", text)

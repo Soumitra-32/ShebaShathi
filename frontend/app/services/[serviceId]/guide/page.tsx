@@ -6,7 +6,9 @@ import { useParams, useSearchParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "../../../../lib/language";
 import { getService, getServiceChecklist, reviewCopy, ReviewStatus, ServiceChecklistResponse, ServiceDetail, ServiceQuestion } from "../../../../lib/api";
+import { shareText } from "../../../../lib/share";
 import FeeEstimator from "../../../../components/fee-estimator";
+import FraudShield from "../../../../components/fraud-shield";
 
 function QuestionField({ question, lang, value, onChange }: {
   question: ServiceQuestion;
@@ -54,6 +56,7 @@ function GuideContent() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [shareNote, setShareNote] = useState("");
   const checklistRequest = useRef(0);
   const checklistLanguage = useRef<"bn" | "en" | null>(null);
 
@@ -119,6 +122,21 @@ function GuideContent() {
   }
 
   const serviceName = service ? (currentLang === "bn" ? service.service_name_bn : service.service_name_en) : "";
+
+  async function shareChecklist() {
+    if (!checklist || !service) return;
+    const shareUrl = checklist.official_links[0]?.url ?? checklist.source_url;
+    const outcome = await shareText(t("status_guide.shareTitle"), [
+      serviceName,
+      currentLang === "bn" ? checklist.task_label_bn : checklist.task_label_en,
+      `${currentLang === "bn" ? "সরকারি লিংক" : "Official link"}: ${shareUrl}`,
+      `${t("status_guide.verified")}: ${checklist.last_verified} (${checklist.source_url})`,
+    ]);
+    setShareNote(outcome === "shared" ? t("status_guide.shared")
+      : outcome === "copied" ? t("status_guide.copied")
+      : outcome === "cancelled" ? ""
+      : t("status_guide.shareUnsupported"));
+  }
 
   // Checklist steps and warnings come from the backend in the requested
   // language. Refresh them when the user switches language after generating a
@@ -187,7 +205,11 @@ function GuideContent() {
               <h2 className="mt-1 text-2xl font-bold text-slate-900">{t("service_guide.result")}</h2>
               <p className="mt-1 text-sm text-slate-600">{currentLang === "bn" ? checklist.task_label_bn : checklist.task_label_en}</p>
             </div>
-            <button type="button" onClick={() => window.print()} className="min-h-11 rounded-lg border border-indigo-700 px-4 py-2 font-semibold text-indigo-800 print:hidden">{t("service_guide.pdf")}</button>
+            <div className="flex flex-col items-end gap-2">
+              <button type="button" onClick={() => window.print()} className="min-h-11 rounded-lg border border-indigo-700 px-4 py-2 font-semibold text-indigo-800 print:hidden">{t("service_guide.pdf")}</button>
+              <button type="button" onClick={shareChecklist} className="min-h-11 rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 print:hidden">{t("status_guide.share")}</button>
+              {shareNote && <p role="status" className="max-w-[16rem] text-right text-xs text-emerald-800 print:hidden">{shareNote}</p>}
+            </div>
           </div>
 
           {checklist.fallback_used && <p role="status" className="rounded-lg bg-amber-50 p-3 text-sm text-amber-900">{t("service_guide.fallback")}</p>}
@@ -230,6 +252,7 @@ function GuideContent() {
         </section>}
       </>}
 
+      {serviceId === "epassport" && <FraudShield serviceId={serviceId} />}
       {serviceId === "epassport" && service ? <FeeEstimator /> : null}
 
       <style jsx global>{`@media print { body { background: white !important; color: black !important; } main { min-height: 0 !important; padding: 0 !important; } #print-checklist { margin: 0 !important; border: 0 !important; box-shadow: none !important; } #print-checklist a { color: black !important; } @page { margin: 16mm; } }`}</style>

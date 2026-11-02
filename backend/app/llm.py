@@ -21,7 +21,7 @@ from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 DEFAULT_BASE_URL = "https://api.openai.com/v1"
-DEFAULT_MODEL = "gpt-4o-mini"
+DEFAULT_MODEL = "anthropic/claude-sonnet-4.6"
 REQUEST_TIMEOUT_SECONDS = 45
 MAX_ERROR_LENGTH = 240
 
@@ -42,6 +42,28 @@ def api_key() -> str:
 
 def model_id() -> str:
     return (os.environ.get("LLM_MODEL", "") or DEFAULT_MODEL).strip()
+
+
+def fallback_models() -> list[str]:
+    """Optional comma-separated model ids tried when the primary is unusable.
+
+    This keeps the assistant working if a stronger primary model is
+    temporarily rate-limited or the account cannot access it. Fallbacks are
+    opt-in through ``LLM_MODEL_FALLBACKS`` so existing deployments keep their
+    single-model behaviour and tests stay deterministic.
+    """
+    raw = (os.environ.get("LLM_MODEL_FALLBACKS", "") or "").strip()
+    if not raw:
+        return []
+    seen = {model_id()}
+    models: list[str] = []
+    for item in raw.split(","):
+        model = item.strip()
+        if model and model not in seen:
+            seen.add(model)
+            models.append(model)
+    return models
+
 
 
 def app_title() -> str:
@@ -177,17 +199,53 @@ def _parse_json(content: str) -> dict:
     return parsed
 
 
-def completion(messages, temperature: float = 0.0, max_tokens: int = 800) -> dict:
+def completion(messages, temperature: float = 0.0, max_tokens: int = 800,
+               model: str | None = None) -> dict:
     """Send a chat completion and return ``{"content": str, "usage": dict}``.
 
     Raises ``LLMProviderError`` with a user-safe message when the provider
-    fails. Never raises an error that contains the API key.
+    fails. Never raises an error that contains the API key. When
+    ``LLM_MODEL_FALLBACKS`` is configured, availability/model errors are
+    retried with the next model; the response reports the model that answered.
     """
     if not is_configured():
         raise LLMProviderError("No language-model provider is configured.")
 
+    candidates = [model or model_id(), *fallback_models()]
+    last_error: LLMProviderError | None = None
+    for index, candidate in enumerate(candidates):
+        try:
+            return _completion_once(messages, temperature, max_tokens, candidate)
+        except LLMProviderError as error:
+            last_error = error
+            if index == len(candidates) - 1 or not _can_fallback(error):
+                raise
+    raise last_error or LLMProviderError("The language-model provider returned no answer.")
+
+
+def _can_fallback(error: LLMProviderError) -> bool:
+    text = str(error).lower()
+    return any(
+        hint in text
+        for hint in (
+            "not found",
+            "rate-limiting",
+            "no credit",
+            "not available right now",
+            "took too long",
+            "could not be reached",
+            "unreadable response",
+            "no answer",
+            "empty answer",
+            "valid json",
+            "rejected the request",
+        )
+    )
+
+
+def _completion_once(messages, temperature: float, max_tokens: int, model: str) -> dict:
     payload = {
-        "model": model_id(),
+        "model": model,
         "messages": messages,
         "temperature": temperature,
         "max_tokens": max_tokens,
@@ -207,4 +265,5 @@ def completion(messages, temperature: float = 0.0, max_tokens: int = 800) -> dic
     # Return normalised JSON so the caller can parse it without extra handling.
     response["content"] = json.dumps(parsed, ensure_ascii=False)
     response["parsed"] = parsed
+    response["model"] = model
     return response

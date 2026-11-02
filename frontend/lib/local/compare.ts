@@ -186,7 +186,7 @@ function differingDocs(values: ComparedValue[], keys: string[]): string[] {
  */
 export function compareFields(
   fields: FieldKey[],
-  valuesByField: Record<FieldKey, ComparedValue[]>
+  valuesByField: Partial<Record<FieldKey, ComparedValue[]>>
 ): FieldComparison[] {
   return fields.map((field) => {
     const values = valuesByField[field] ?? [];

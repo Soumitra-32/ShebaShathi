@@ -7,6 +7,7 @@ import { useLanguage } from "../lib/language";
 import { ArrowUpRight, ClipboardCheck, HelpCircle, FileText, Landmark, ClipboardList, ShieldCheck, Fingerprint, UserRound, CarFront, HeartPulse, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import catalog from "../public/services/catalog.json";
 import IntakeCard from "../components/intake-card";
+import BuildathonBadge from "../components/buildathon-badge";
 
 const services = catalog.services.filter((service) => service.enabled);
 const serviceIcons = [Fingerprint, UserRound, Landmark, CarFront, HeartPulse];
@@ -36,6 +37,7 @@ export default function HomePage() {
   return <main>
     <section className="hero-wrap">
       <div className="hero-content">
+        <BuildathonBadge variant="hero" />
         <p className="eyebrow">{t("home.eyebrow")}</p>
         <h1>{t("home.title_line1")}<br /><span>{t("home.title_line2")}</span></h1>
         <p className="hero-copy">{t("home.copy")}</p>

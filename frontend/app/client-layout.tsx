@@ -3,9 +3,12 @@
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, MessageCircle } from "lucide-react";
 import { LanguageProvider, useLanguage } from "../lib/language";
+import { warmupBackend } from "../lib/api";
 import "../lib/i18n";
+import ChatModal from "../components/ChatModal";
+import BuildathonBadge from "../components/buildathon-badge";
 
 /** Client-side nav with one global language switcher and a collapsible menu. */
 function SiteNav() {
@@ -14,15 +17,14 @@ function SiteNav() {
   const currentLang = lang;
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // The shared language context is the single source of truth. Keep the
-  // i18next instance in step so every `t()` call re-renders with the same
-  // language as the context-driven labels.
+  // sync i18n language
   useEffect(() => {
     if (i18n.resolvedLanguage !== lang) {
       void i18n.changeLanguage(lang);
     }
   }, [i18n, lang]);
 
+  // close on Escape
   useEffect(() => {
     if (!menuOpen) return;
     const onKeyDown = (event: KeyboardEvent) => {
@@ -35,6 +37,7 @@ function SiteNav() {
   const navItems = [
     { href: "/#intake", key: "nav.intake" },
     { href: "/services", key: "nav.services" },
+    { href: "/services/epassport/status", key: "nav.status" },
     { href: "/redflag", key: "nav.fees" },
     { href: "/copilot", key: "nav.copilot" },
     { href: "/identity-check", key: "nav.identity-check" },
@@ -47,6 +50,7 @@ function SiteNav() {
         <span className="brand-mark" aria-hidden="true">শ</span>
         <span>ShebaShathi <span className="brand-bd">BD</span></span>
       </Link>
+      <BuildathonBadge variant="nav" />
       <div className="nav-controls">
         <button
           type="button"
@@ -69,12 +73,7 @@ function SiteNav() {
       </div>
       <div id="site-menu" className={`site-links ${menuOpen ? "is-open" : ""}`}>
         {navItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className="nav-link"
-            onClick={() => setMenuOpen(false)}
-          >
+          <Link key={item.href} href={item.href} className="nav-link" onClick={() => setMenuOpen(false)}>
             {t(item.key)}
           </Link>
         ))}
@@ -84,10 +83,24 @@ function SiteNav() {
 }
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
+  const [chatOpen, setChatOpen] = useState(false);
+  // Wake the free-tier backend while the visitor browses (no user data sent).
+  useEffect(() => {
+    warmupBackend();
+  }, []);
   return (
     <LanguageProvider>
       <SiteNav />
       {children}
+      {/* Floating chat button */}
+      <button
+        onClick={() => setChatOpen(true)}
+        className="fixed bottom-4 right-4 bg-blue-600 text-white rounded-full p-3 shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        aria-label="Open chat"
+      >
+        <MessageCircle size={24} aria-hidden="true" />
+      </button>
+      <ChatModal open={chatOpen} onClose={() => setChatOpen(false)} />
     </LanguageProvider>
   );
 }

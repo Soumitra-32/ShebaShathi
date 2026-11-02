@@ -5,6 +5,29 @@ import type { FeeCatalog } from "./fees";
  */
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
+/**
+ * Free-tier hosts (Render) spin the backend down after 15 idle minutes and
+ * need about a minute to wake. Pinging `/health` on page load keeps the
+ * first real question fast. One ping per page load, no retries, and a
+ * failure is ignored: this is only a wake-up call, nothing is sent.
+ * The request carries no user data and no cookies are needed.
+ */
+let warmupStarted = false;
+export function warmupBackend(): void {
+  if (warmupStarted || typeof window === "undefined") return;
+  warmupStarted = true;
+  const run = () => {
+    void fetch(`${API_URL}/health`, { cache: "no-store", signal: AbortSignal.timeout(90_000) })
+      .catch(() => undefined);
+  };
+  const idleWindow = window as Window & { requestIdleCallback?: (cb: () => void) => number };
+  if (typeof idleWindow.requestIdleCallback === "function") {
+    idleWindow.requestIdleCallback!(run);
+  } else {
+    setTimeout(run, 800);
+  }
+}
+
 export interface FeeResponse {
   base: number;
   vat: number;
@@ -41,11 +64,34 @@ export interface CopilotResponse {
   citations: Citation[];
   grounded: boolean;
   retrieved_chunks?: { id: string; score: number; section: string }[];
-  generation_mode?: "api" | "extractive" | "unavailable" | "deterministic";
+  generation_mode?: "api" | "extractive" | "unavailable" | "deterministic" | "safety";
   llm_provider?: string;
   llm_model?: string | null;
   safety_blocked?: boolean;
 }
+
+export interface ChatTurn {
+  role: "user" | "assistant";
+  content: string;
+}
+
+export interface CopilotChatResponse extends CopilotResponse {
+  service_id?: string | null;
+  service_name_bn?: string | null;
+  service_name_en?: string | null;
+  suggested_questions?: string[];
+}
+
+export interface CaseBriefResponse {
+  brief: string;
+  grounded: boolean;
+  generation_mode: "api" | "extractive";
+  llm_provider: string;
+  llm_model?: string | null;
+  source_url: string;
+  last_verified: string;
+}
+
 
 export interface RedFlagResponse {
   official_total: number;
@@ -150,6 +196,62 @@ export interface ServiceDocument {
 }
 
 export type ReviewStatus = "fresh" | "due_soon" | "stale" | "unknown";
+
+export interface GuidanceItem {
+  id: string;
+  text_bn: string;
+  text_en: string;
+  source_url: string;
+  last_verified: string;
+}
+
+export interface GuidanceStatus {
+  id: string;
+  label: string;
+  meaning_bn: string;
+  meaning_en: string;
+  action_bn: string;
+  action_en: string;
+  text_bn: string;
+  text_en: string;
+  source_url: string;
+  last_verified: string;
+}
+
+export interface StatusGuide {
+  guide_id: string;
+  service_id: string;
+  title_bn: string;
+  title_en: string;
+  subtitle_bn: string;
+  subtitle_en: string;
+  source_url: string;
+  last_verified: string;
+  fallback_bn: string;
+  fallback_en: string;
+  how_to_check: {
+    title_bn: string;
+    title_en: string;
+    text_bn: string;
+    text_en: string;
+    official_links: OfficialLink[];
+  };
+  statuses: GuidanceStatus[];
+  tips: GuidanceItem[];
+  diaspora: {
+    title_bn: string;
+    title_en: string;
+    items: GuidanceItem[];
+    official_links: OfficialLink[];
+  };
+  fraud_warnings: GuidanceItem[];
+  freshness: {
+    status: ReviewStatus;
+    days_since_verified: number | null;
+    review_after_days: number;
+  };
+  offline_fallback?: boolean;
+}
 
 export const reviewCopy: Record<"bn" | "en", Record<ReviewStatus, string>> = {
   bn: {
@@ -360,6 +462,45 @@ export async function askCopilot(
 }
 
 /**
+ * One turn of the multi-turn, citation-grounded assistant.
+ * The browser holds the history; the server stores nothing.
+ */
+export async function askCopilotChat(
+  question: string,
+  history: ChatTurn[],
+  language: "bn" | "en" = "bn",
+  serviceId?: string
+): Promise<CopilotChatResponse> {
+  return fetchWrapper<CopilotChatResponse>(`${API_URL}/api/copilot/chat`, {
+    method: "POST",
+    body: JSON.stringify({
+      question,
+      history: history.slice(-8),
+      language,
+      service_id: serviceId || null,
+    }),
+  });
+}
+
+/**
+ * Explain a deterministic checklist in plain language. Only the minimal
+ * answers already used to build the checklist are sent; no user text or
+ * identity number is included.
+ */
+export async function getCaseBrief(
+  serviceId: string,
+  task: string,
+  answers: Record<string, string | number | boolean>,
+  language: "bn" | "en" = "bn"
+): Promise<CaseBriefResponse> {
+  return fetchWrapper<CaseBriefResponse>(
+    `${API_URL}/api/services/${encodeURIComponent(serviceId)}/checklist/brief`,
+    { method: "POST", body: JSON.stringify({ task, answers, language }) }
+  );
+}
+
+
+/**
  * List enabled services and supported tasks (public, cacheable guide metadata).
  */
 export async function getServices(): Promise<ServiceCatalog> {
@@ -371,6 +512,17 @@ export async function getServices(): Promise<ServiceCatalog> {
  */
 export async function getService(serviceId: string): Promise<ServiceDetail> {
   return fetchWrapper<ServiceDetail>(`${API_URL}/api/services/${encodeURIComponent(serviceId)}`, undefined, true);
+}
+
+/**
+ * Load one service's validated status guide (public, source-dated content).
+ */
+export async function getStatusGuide(serviceId: string): Promise<StatusGuide> {
+  return fetchWrapper<StatusGuide>(
+    `${API_URL}/api/services/${encodeURIComponent(serviceId)}/status-guide`,
+    undefined,
+    true
+  );
 }
 
 /**

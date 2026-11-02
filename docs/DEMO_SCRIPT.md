@@ -21,7 +21,8 @@
   independent helper — not a government site. Start by describing the problem
   in your own words.”
 - Point at the home intake card immediately below the hero. Read the privacy
-  line aloud: no NID, passport, phone or OTP numbers.
+  line aloud: no NID, passport, phone or OTP numbers. Mention the visible
+  “Built for AIgnite 2026” sticker in the navbar.
 
 ## 0:25–1:05 — From situation to verified checklist
 
@@ -43,19 +44,26 @@
 - `/redflag`: claim 7,000 on the same option → flagged against the official
   4,025. Emphasize that this calculation runs in the browser.
 
-## 1:35–2:05 — Grounded copilot + safety
+## 1:35–2:10 — Grounded copilot, follow-up, AI brief
 
 - `/copilot` scoped to e-Passport: “What is the express fee?” → grounded answer
   with citation, chunk id, and score.
+- Ask a follow-up without repeating the service: “আর নথি কী কী লাগবে?” (or
+  “And which documents?”). Show that the service context is kept and the answer
+  is still cited.
+- Build a checklist, then press **AI case brief** on the intake card. Show the
+  plain-language brief and its verified source. Say: “Every fee, document and
+  step still comes from the checklist; the model only explains it, and an
+  unsupported number makes the deterministic summary come back.”
 - Trick question: “Which agent is fastest?” → safe fallback, `grounded: false`.
 - Emphasize: no middlemen, no cash-at-counter, biometrics required.
 
-## 2:05–2:30 — Cross-document check (browser-only)
+## 2:10–2:35 — Cross-document check (browser-only)
 
 - `/identity-check`: type the same name two ways → diff shown. Open devtools
   Network tab: no request carries the typed values; reload clears them.
 
-## 2:30–3:00 — GRS draft + boundary
+## 2:35–3:00 — GRS draft + boundary
 
 - `/grs`: draft a delay complaint, show copy + print-to-PDF, read the neutral
   disclaimer aloud. Close: “Applications, payments, and final checks stay on

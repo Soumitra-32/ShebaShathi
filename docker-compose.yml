@@ -8,11 +8,10 @@ services:
     env_file:
       - .env
     environment:
-      CHROMA_PERSIST_DIR: /app/.chroma
+      # The embedding model and the RAG index are baked into the image by the
+      # Dockerfile (ONNX int8 + ingest at build). Mounting a volume over
+      # /app/.chroma would shadow the baked index and break the numpy store.
       CORS_ORIGINS: http://localhost:3000
-    volumes:
-      - chroma_data:/app/.chroma
-      - model_cache:/root/.cache/huggingface
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
       interval: 20s

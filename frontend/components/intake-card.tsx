@@ -18,9 +18,11 @@ import {
 } from "lucide-react";
 import {
   ApiError,
+  getCaseBrief,
   getServiceChecklist,
   postIntake,
   reviewCopy,
+  type CaseBriefResponse,
   type IntakeQuestion,
   type IntakeResponse,
   type ServiceChecklistResponse,
@@ -192,6 +194,9 @@ export default function IntakeCard() {
   const [error, setError] = useState<ErrorState | null>(null);
   const [showValidation, setShowValidation] = useState(false);
   const [buildLoading, setBuildLoading] = useState(false);
+  const [brief, setBrief] = useState<CaseBriefResponse | null>(null);
+  const [briefLoading, setBriefLoading] = useState(false);
+  const [briefError, setBriefError] = useState(false);
 
   const loading = phase === "loading" || buildLoading;
   const resultMessage = result ? localized(result.message_bn, result.message_en, lang) : "";
@@ -254,6 +259,8 @@ export default function IntakeCard() {
     const seq = ++requestSeq.current;
     setBuildLoading(true);
     setError(null);
+    setBrief(null);
+    setBriefError(false);
     try {
       const data = await getServiceChecklist(result.service_id, result.task_id, answers, lang);
       if (seq !== requestSeq.current) return;
@@ -276,8 +283,25 @@ export default function IntakeCard() {
     setError(null);
     setShowValidation(false);
     setBuildLoading(false);
+    setBrief(null);
+    setBriefError(false);
+    setBriefLoading(false);
     setPhase("idle");
     window.setTimeout(() => textareaRef.current?.focus(), 0);
+  }
+
+  async function loadBrief() {
+    if (!result?.service_id || !result.task_id || briefLoading) return;
+    setBriefLoading(true);
+    setBriefError(false);
+    try {
+      const data = await getCaseBrief(result.service_id, result.task_id, answers, lang);
+      setBrief(data);
+    } catch {
+      setBriefError(true);
+    } finally {
+      setBriefLoading(false);
+    }
   }
 
   function changeText(value: string) {
@@ -289,6 +313,9 @@ export default function IntakeCard() {
     setChecklist(null);
     setShowValidation(false);
     setBuildLoading(false);
+    setBrief(null);
+    setBriefError(false);
+    setBriefLoading(false);
     setPhase("idle");
   }
 
@@ -651,6 +678,48 @@ export default function IntakeCard() {
                   </section>
                 ) : null}
 
+                <section className="intake-block intake-brief">
+                  {!brief ? (
+                    <>
+                      <button
+                        type="button"
+                        className="intake-secondary intake-brief-button"
+                        onClick={() => void loadBrief()}
+                        disabled={briefLoading}
+                      >
+                        {briefLoading ? (
+                          <Loader2 className="intake-spin" size={17} aria-hidden="true" />
+                        ) : (
+                          <Sparkles size={17} aria-hidden="true" />
+                        )}
+                        {briefLoading ? t("intake.ai_brief_loading") : t("intake.ai_brief")}
+                      </button>
+                      {briefError ? (
+                        <p className="intake-field-error" role="alert">
+                          {t("intake.ai_brief_error")}{" "}
+                          <button type="button" className="intake-inline-button" onClick={() => void loadBrief()}>
+                            {t("intake.ai_brief_retry")}
+                          </button>
+                        </p>
+                      ) : null}
+                    </>
+                  ) : (
+                    <div className="intake-brief-card" aria-live="polite">
+                      <h4><Sparkles size={17} aria-hidden="true" /> {t("intake.ai_brief_title")}</h4>
+                      <p className="intake-brief-text">{brief.brief}</p>
+                      <p className="intake-brief-note">
+                        <ShieldCheck size={15} aria-hidden="true" />
+                        <span>
+                          {t("intake.ai_brief_note")}
+                          {brief.generation_mode === "api" && brief.llm_model
+                            ? ` · ${t("copilot.answeredBy")}: ${brief.llm_provider} · ${brief.llm_model}`
+                            : ""}
+                        </span>
+                      </p>
+                    </div>
+                  )}
+                </section>
+
                 {checklist.official_links.length > 0 ? (
                   <section className="intake-block">
                     <h4><ExternalLink size={17} aria-hidden="true" /> {t("intake.official")}</h4>
@@ -781,6 +850,13 @@ export default function IntakeCard() {
         .intake-warnings { border: 1px solid #efd9a7; border-radius: 11px; padding: .65rem .75rem; background: #fffaf0; }
         .intake-warnings h4 { margin-top: 0; color: #76520d; }
         .intake-warnings ul { color: #6e5319; }
+        .intake-brief-button { border-color: #c9d9ef; color: #2b5380; background: #f5f9ff; }
+        .intake-brief-button:hover:not(:disabled) { border-color: #9bb8e0; background: #eef4fc; }
+        .intake-brief-card { border: 1px solid #c9d9ef; border-radius: 13px; padding: .9rem 1rem; background: linear-gradient(135deg, #f7faff, #eef4fc); }
+        .intake-brief-card h4 { margin: 0 0 .45rem; color: #274a76; }
+        .intake-brief-text { margin: 0; color: #2f4359; font-size: .9rem; line-height: 1.85; white-space: pre-wrap; }
+        .intake-brief-note { display: flex; align-items: flex-start; gap: .4rem; margin: .7rem 0 0; color: #5a6f86; font-size: .76rem; line-height: 1.6; }
+        .intake-brief-note svg { flex: 0 0 auto; margin-top: .08rem; color: #2b5380; }
         .intake-links { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: .35rem; }
         .intake-links a { display: inline-flex; align-items: center; gap: .3rem; border: 1px solid #cfe4d6; border-radius: 8px; padding: .42rem .6rem; color: #206b48; background: #fff; font-size: .8rem; font-weight: 700; text-decoration: none; }
         .intake-links a:hover { background: #eef8f1; }

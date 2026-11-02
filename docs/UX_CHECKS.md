@@ -43,11 +43,59 @@ the OS temp directory.
 - `npm test` 78 passed (7 files); backend `python -m pytest app/tests -q`
   127 passed; `npm run build` passed; `npm run lint` had warnings only.
 
+## Status guide and fraud shield (2026-11-01)
+
+Same setup and command (`npm run verify:intake`, now **27 checks, all
+passed**). New assertions added to the earlier list:
+
+- `/services/epassport/status` renders the verified guide: the SB-clearance
+  status string with the SB/CSB/DSB explanation, the "Hello SB" follow-up
+  action, the official helpline (16445 / 09666716445), the Special Branch source
+  URL with its 2026 verification date, and the High Commission fraud warning.
+- The status guide page contains **zero identity inputs** (no Application ID or
+  date-of-birth field); it explains statuses and points to the official status
+  page instead of collecting anything.
+- The canonical guide renders the fraud-shield card next to the fee estimator
+  (no agency is ever authorized; official-service notice with source links).
+- Share/print: the status guide and checklist carry share buttons whose text is
+  built only from public verified content, with print styles on both pages.
+- Frontend `npm test` 90 passed (10 files); backend suite 141 passed; `npm run
+  lint` warnings only (7 pre-existing); `npm run build` passed (11 routes).
+
 Not checked: a physical phone, iOS Safari, a screen reader, throttled-network
 banners, Bangla PDF export, and Lighthouse. The dev-only Next.js indicator is
 visible in headless screenshots but is not part of a production build.
 
-## Still needs a deployed run (owner: you)
+## Multi-turn copilot, AI brief, and sticker (2026-11-02)
+
+Verified locally with the backend on `http://127.0.0.1:8000` and scripted HTTP
+calls (no desktop browser was connected, so no new screenshots were captured):
+
+- `GET /health` → `ai_ready: true`, 5 services, 137 indexed chunks, provider
+  `openrouter`, model `anthropic/claude-sonnet-4.6`.
+- `POST /api/copilot/chat` with “পাসপোর্ট হারিয়ে গেলে কী করব?” returned a
+  grounded Bangla answer, three citations, `generation_mode: api`, and the
+  Claude model id.
+- A follow-up with browser-held history and an explicit service scope returned a
+  grounded deterministic fee answer instead of losing the service context.
+- `POST /api/services/epassport/checklist/brief` returned a grounded Bangla AI
+  brief (`generation_mode: api`). When the provider was temporarily
+  unaffordable, the same endpoint returned the deterministic brief with
+  `grounded: true` and `generation_mode: extractive` instead of an error.
+- `POST /api/copilot/chat` rejects an identity-like number with
+  `422 IDENTITY_DATA_REJECTED` before retrieval or any model call (unit test).
+- Markdown formatting from a model is stripped by the shared plain-text
+  sanitizer; the UI renders answers with `whitespace-pre-wrap`.
+- Sticker assets exist at `frontend/public/built-for-aignite-2026.png` and
+  `frontend/public/built-for-aignite-2026-nav.jpg`; the navbar badge renders on
+  every page and the hero badge on `/`.
+
+Checks run: backend `pytest` 150 passed; frontend `npm test`, `npx tsc --noEmit`,
+`npm run lint` (warnings only) and `npm run build` (see the final report for the
+exact run). Not checked: a real mobile device, screen reader, live browser
+screenshots after the last CSS change, and the deployed URL.
+
+
 
 - Lighthouse mobile ≥ 80 (performance/accessibility) on the public URL.
 - Throttled-network pass: confirm the cached-data banner appears and no stale

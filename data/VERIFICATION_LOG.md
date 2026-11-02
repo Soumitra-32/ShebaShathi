@@ -58,3 +58,21 @@ Service contract files under `data/services/` were authored from these official 
 - No blanket claim is made that cash is never accepted, that attestation is never needed, or that every applicant needs the same documents.
 - Fee amounts cover applications inside Bangladesh as shown on the linked fee page. Mission fees are not included.
 - The fee catalog deliberately contains no amount that was not read on an official page. Services marked "manual verification required" show the official portal instead of a number.
+
+## Status guide & fraud-shield checks (2026-11-01)
+
+Status meanings, diaspora guidance and fraud warnings for the new status guide (data/guidance/epassport.json) were checked on 2026-11-01. Facts not listed here were not recorded.
+
+| Date checked | Item | Official source | Result recorded |
+|---|---|---|---|
+| 2026-11-01 | Official status meanings: "Pending for SB Police Clearance" = investigation at SB/CSB/DSB; verification runs at both permanent and current addresses; contact that address's SB/CSB/DSB office or the "Hello SB" app. "Enrolment in process", "Backend verification", "Pending for final approval", "Pending in print queue", "Sent for rework" = follow up with the concerned passport office. | https://specialbranch.gov.bd/nodes/view/22 (FAQ 6, 12) | Encoded in data/guidance/epassport.json statuses; also exposed as deterministic copilot answers via pp/rag/status_answer.py. |
+| 2026-11-01 | Status page inputs: Application ID from the delivery slip or the Online Registration ID (OID), plus date of birth | https://www.epassport.gov.bd/authorization/application-status | Encoded in the guide's how_to_check section; the app deliberately collects no ID itself. |
+| 2026-11-01 | Police verification is triggered by changed basic information (name, parents' names, date of birth, birthplace, gender, permanent address); no change from a previous passport generally means no verification | https://specialbranch.gov.bd/nodes/view/22 (FAQ 3) | Encoded as guide tip sb_verification_trigger. |
+| 2026-11-01 | Permanent address must be the real permanent address (rented/previous/sold/government residences not acceptable) | https://specialbranch.gov.bd/nodes/view/22 (FAQ 5) | Encoded as guide tip permanent_address_rule. |
+| 2026-11-01 | Super-express: only existing-passport holders with no information change; accepted only at Dhaka passport offices | https://specialbranch.gov.bd/nodes/view/22 (FAQ 4) | Encoded as guide tip super_express_restriction. |
+| 2026-11-01 | Post-passport police clearance certificate via https://pcc.police.gov.bd | https://specialbranch.gov.bd/nodes/view/22 (FAQ 11) | Encoded as guide tip police_clearance_certificate. |
+| 2026-11-01 | Passport helpline: 16445 (inside Bangladesh), 09666716445 (from abroad); same number serves foreign nationals for visa information | https://dip.gov.bd/ (announcement dated 2023-03-22; mirrored on regional passport office sites) | Encoded as guide tip passport_hotline and fraud-shield line helpline_and_status_only. |
+| 2026-11-01 | Diaspora: applications from missions need no verification without changed information; with changes the file goes online to SB/CSB/DSB, and after 15 days moves as a hard-copy letter to SB Dhaka; memo number fixes follow-up. Missing Bangladesh contact numbers cause delays. Dual citizens must state the foreign and previous Bangladeshi passport numbers. | https://specialbranch.gov.bd/nodes/view/22 (FAQ 10, 14, 15) | Encoded in the guide's diaspora section. |
+| 2026-11-01 | No agency is ever authorized to process or manage e-Passport applications or appointments; paying any agency to "expedite" an appointment is fraud (Bangladesh High Commission, London, public notice) | https://bhclondon.org.uk/uploads/file/2025/03/d2069c7e6ff118395f7444e95b17c207.pdf | Encoded as fraud warnings 
+o_agency_auth and diaspora item ppointment_fraud_notice. |
+| 2026-11-01 | Government fee is the only fee; compare demands against the verified fee schedule | https://www.epassport.gov.bd/instructions/passport-fees (previously verified 2026-10-15, unchanged) | Encoded as fraud warning official_fee_only; points at the existing red-flag tool. |

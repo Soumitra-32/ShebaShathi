@@ -2,7 +2,7 @@
 import json
 
 from .. import llm
-from .prompts import SYSTEM_PROMPT
+from .prompts import SYSTEM_PROMPT, plain_text
 from .retriever import retrieve
 
 
@@ -39,10 +39,11 @@ def generate(question: str, profile=None, language: str = "bn", docs: list[dict]
             if parsed is None:
                 parsed = json.loads(response["content"])
             if isinstance(parsed.get("answer"), str) and isinstance(parsed.get("used_chunk_ids"), list):
+                parsed["answer"] = plain_text(parsed["answer"])
                 generated = parsed
                 mode = "api"
                 provider = llm.provider_name()
-                model = llm.model_id()
+                model = response.get("model") or llm.model_id()
         except Exception:
             # The source-grounded extractive path remains available if the optional API fails.
             generated = None

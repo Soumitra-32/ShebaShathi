@@ -6,9 +6,13 @@ from typing import Any
 from ..config import PROJECT_ROOT, settings
 
 # The shared multilingual embedder lives in the single retained ml_core package.
+# ml_core imports sentence-transformers lazily, so this import stays cheap in
+# the ONNX-only production image; the torch path only loads on demand.
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 from ml_core.ml.embeddings.embedder import LocalEmbedder
+
+from .onnx_embedder import OnnxEmbedder
 
 COLLECTION_NAME = "sources"
 _SECTION_HINTS = {
@@ -34,6 +38,14 @@ def infer_section(question: str) -> str | None:
 
 @lru_cache(maxsize=1)
 def _embedder():
+    """Return the configured embedder without importing torch eagerly.
+
+    ``EMBEDDING_BACKEND=onnx`` keeps PyTorch out of the process entirely so the
+    RAG endpoint fits a 512 MB free container. The default ``torch`` path
+    preserves the original local/evaluation behaviour.
+    """
+    if settings.embedding_backend == "onnx":
+        return OnnxEmbedder.get_instance()
     try:
         return LocalEmbedder.get_instance(settings.embedding_model)
     except TypeError:
@@ -49,6 +61,9 @@ def embed_query(text: str):
 
 @lru_cache(maxsize=1)
 def _collection():
+    if settings.vector_store == "numpy":
+        from .vector_store import get_store
+        return get_store()
     import chromadb
     client = chromadb.PersistentClient(path=settings.chroma_persist_dir)
     return client.get_collection(COLLECTION_NAME)
@@ -129,3 +144,6 @@ def reset_clients() -> None:
     """Test hook to clear cached Chroma/model clients."""
     _collection.cache_clear()
     _embedder.cache_clear()
+    from .vector_store import reset_store
+    reset_store()
+    OnnxEmbedder.reset()

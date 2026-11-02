@@ -1,0 +1,36 @@
+# Render Blueprint for the ShebaShathi BD backend.
+# Create the service from the Render dashboard with "New -> Blueprint" and
+# Render reads this file. The only manual input is CORS_ORIGINS: the exact
+# Vercel frontend origin (never a wildcard; cookies/credentials are in play).
+services:
+  - type: web
+    name: shebashathi-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./
+    plan: free
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: CORS_ORIGINS
+        sync: false
+      - key: EMBEDDING_BACKEND
+        value: onnx
+      - key: VECTOR_STORE
+        value: numpy
+      - key: ONNX_MODEL_DIR
+        value: /app/models/e5-small-onnx
+      - key: CHROMA_PERSIST_DIR
+        value: /app/.chroma
+      - key: PYTHONPATH
+        value: /app/backend
+      - key: RATE_LIMIT_ENABLED
+        value: "true"
+      - key: RATE_LIMIT_PER_MINUTE
+        value: "60"
+      - key: INTAKE_RATE_LIMIT_PER_MINUTE
+        value: "60"
+      # LLM_API_KEY is intentionally not set here. Without it the copilot
+      # stays in cited extractive mode and intake in deterministic keyword
+      # mode: no external model call at all. To enable it later, set
+      # LLM_API_KEY in the Render dashboard secret store, never in git.

@@ -33,9 +33,20 @@ body {
 .nav-lang { min-height: 44px; border: 1px solid #cfdcd4; border-radius: 10px; padding: 0 .9rem; color: #284a39; background: #fff; font-size: .86rem; font-weight: 650; cursor: pointer; }
 .nav-lang:hover, .nav-lang:focus-visible { background: #edf5ef; }
 .nav-menu-toggle { display: none; width: 44px; height: 44px; place-items: center; border: 1px solid #cfdcd4; border-radius: 10px; color: #284a39; background: #fff; cursor: pointer; }
+/* Official buildathon sticker (required branding, visible near the top). */
+.buildathon-badge { display: inline-flex; align-items: center; max-width: 100%; border-radius: 10px; background: #fff; line-height: 0; }
+.buildathon-nav { order: 2; flex: 0 1 auto; padding: .16rem .22rem; border: 1px solid #e6e3ef; box-shadow: 0 2px 8px #2d1b4e14; }
+.buildathon-hero { margin: 0 0 1rem; padding: .3rem .38rem; border: 1px solid #e6e3ef; box-shadow: 0 8px 24px #2d1b4e17; }
+.buildathon-sticker { display: block; width: auto; height: auto; border-radius: 8px; }
+.buildathon-nav .buildathon-sticker { height: 36px; }
+.buildathon-hero .buildathon-sticker { height: clamp(54px, 8vw, 78px); }
 button, input, select, textarea { font: inherit; }
 button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
 :focus-visible { outline: 3px solid #69aa89; outline-offset: 2px; }
+
+@media (max-width: 1150px) {
+  .buildathon-nav .buildathon-sticker { height: 32px; }
+}
 
 @media (max-width: 900px) {
   .site-nav { align-items: center; padding: .6rem 1rem; }
@@ -48,6 +59,8 @@ button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
 @media (max-width: 480px) {
   .site-nav { padding: .55rem .8rem; }
   .site-brand { gap: .5rem; font-size: .95rem; }
+  .buildathon-nav { padding: .1rem .16rem; }
+  .buildathon-nav .buildathon-sticker { height: 26px; }
   .nav-lang { padding: 0 .7rem; font-size: .8rem; }
 }
 

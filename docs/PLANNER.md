@@ -451,7 +451,15 @@ Rules:
 - [x] P10-7 Add security headers (CSP and friends), restrict the API cache to GET responses, add local asset and model hosting, and document the data flows in `docs/PRIVACY.md`.
 - **Accept:** No complaint text, attachment, OCR output, transcript, extracted identity value or claimed fee amount is transmitted; all three workflows work end to end; every enabled fee rule traces to a dated official source; tests, lint, type check and production build pass.
 
-### Ongoing — Source Refresh and Regression
+### Phase 11 — Buildathon AI Experience (2026-11-02)
+- [x] P11-1 Show the official “Built for AIgnite 2026” sticker in the sticky navbar on every page and in the homepage hero.
+- [x] P11-2 Add `POST /api/copilot/chat`: deterministic tools first, service auto-detection across the conversation, retrieval scoped to that service, verifier-gated generation, and a cited extractive fallback. History is browser-held; the server stores nothing.
+- [x] P11-3 Add `POST /api/services/{id}/checklist/brief`: explain the already-verified checklist only; reject unsupported numbers and return the deterministic summary.
+- [x] P11-4 Default to `anthropic/claude-sonnet-4.6` with optional `LLM_MODEL_FALLBACKS`; report the model that actually answered instead of the configured default.
+- [x] P11-5 Add a plain-text sanitizer for model output, bilingual UI copy, citations, suggestions, and provider/model display in `/copilot`, the floating assistant and the checklist card.
+- **Accept:** Every generated answer passes the verifier or falls back to cited/deterministic text; no identity data reaches the model; `ml_core/` untouched; tests, type check, lint and build pass.
+
+
 - [ ] Review source-dated service rules on a planned cadence and after official notices or user reports.
 - [x] Record each changed rule and its authority in `data/VERIFICATION_LOG.md`.
 - [ ] Flag stale guides in the UI; do not silently promote stale snapshots to current requirements.

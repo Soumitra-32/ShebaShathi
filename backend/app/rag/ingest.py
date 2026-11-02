@@ -336,6 +336,41 @@ def load_all_documents() -> list[dict]:
     return docs
 
 
+def export_numpy_index(collection=None, export_dir: str | None = None) -> int:
+    """Write the exact ``index.npz`` the low-memory vector store serves from.
+
+    Runs automatically after every rebuild and also after a no-op boot of a
+    missing export, so the ``.chroma`` directory is always servable through
+    ``VECTOR_STORE=numpy`` without a second embedding pass.
+    """
+    import json as _json
+
+    import numpy as np
+
+    target = Path(export_dir or settings.chroma_persist_dir)
+    if collection is None:
+        import chromadb
+
+        collection = chromadb.PersistentClient(path=str(target)).get_collection(COLLECTION_NAME)
+    data = collection.get(include=["documents", "metadatas", "embeddings"])
+    if not data.get("ids"):
+        raise RuntimeError("Cannot export an empty index")
+    embeddings = np.asarray(data["embeddings"], dtype=np.float32)
+    np.savez_compressed(
+        target / "index.npz",
+        ids=np.array(data["ids"], dtype=np.str_),
+        embeddings=embeddings,
+    )
+    chunks = [
+        {"text": document, "metadata": metadata}
+        for document, metadata in zip(data["documents"], data["metadatas"])
+    ]
+    (target / "chunks.json").write_text(
+        _json.dumps(chunks, ensure_ascii=False), encoding="utf-8"
+    )
+    return len(data["ids"])
+
+
 def build_index(rebuild: bool = False) -> int:
     import chromadb
 
@@ -352,6 +387,9 @@ def build_index(rebuild: bool = False) -> int:
         and (collection.metadata or {}).get("index_version") == INDEX_VERSION
     )
     if collection is not None and version_matches and not rebuild and collection.count():
+        export_path = Path(settings.chroma_persist_dir) / "index.npz"
+        if not export_path.exists():
+            export_numpy_index(collection)
         return collection.count()
 
     if collection is not None:
@@ -374,6 +412,7 @@ def build_index(rebuild: bool = False) -> int:
             metadatas=[item["metadata"] for item in batch],
             embeddings=vectors,
         )
+    export_numpy_index(collection)
     return collection.count()
 
 

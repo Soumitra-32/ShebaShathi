@@ -340,6 +340,36 @@ async function run() {
       deviceScaleFactor: 1,
       mobile: false,
     });
+
+    // Status guide: verified meanings, official actions only, zero identity input.
+    await navigate(session, "http://localhost:3000/services/epassport/status");
+    await waitFor(session, "!!document.querySelector('#print-status-guide h1')", "status guide");
+    text = await bodyText(session);
+    check(
+      "status guide explains SB clearance status",
+      text.includes("Pending for SB Police Clearance") && text.includes("SB/CSB/DSB")
+    );
+    check(
+      "status guide gives official follow-up action",
+      text.includes("Hello SB")
+    );
+    check(
+      "status guide never asks for an Application ID or DOB field",
+      (await evaluate(session, "document.querySelectorAll('#print-status-guide input').length")) === 0
+    );
+    check(
+      "status guide cites the official source with a verification date",
+      text.includes("specialbranch.gov.bd/nodes/view/22") && /2026/.test(text)
+    );
+    check(
+      "status guide shows the fraud warning",
+      /No agency or agent is ever authorized/i.test(text)
+    );
+    check(
+      "status guide lists the official helpline",
+      text.includes("16445") && text.includes("09666716445")
+    );
+
     await navigate(session, "http://localhost:3000/services/epassport/guide?task=minor#fee");
     await waitFor(session, "!!document.querySelector('#fee')", "fee estimator");
     check(
@@ -354,6 +384,13 @@ async function run() {
     );
     text = await evaluate(session, "document.querySelector('#fee [role=status]').innerText");
     check("fee estimator returns official total", /4,025|৪,০২৫/.test(text), text.slice(0, 120));
+    check(
+      "guide places the fraud shield beside the fee estimator",
+      (await evaluate(
+        session,
+        "(() => { const card = document.querySelector('[aria-labelledby=\"fraud-shield-title\"]'); return !!card && /is ever authorized/i.test(card.innerText); })()"
+      )) === true
+    );
     const desktopShot = await session.send("Page.captureScreenshot", { format: "png", fromSurface: true });
     await writeFile(
       join(tmpdir(), "sheba-guide-desktop.png"),

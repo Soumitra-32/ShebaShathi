@@ -7,6 +7,8 @@ __pycache__/
 .cache/
 .model_cache/
 frontend/node_modules/
+node_modules/
+*.tsbuildinfo
 frontend/.next/
 frontend/out/
 frontend/public/tessdata/
@@ -15,3 +17,4 @@ frontend/public/ort/
 frontend/public/pdf/
 frontend/public/models/
 .tmp-test/
+backend/models/

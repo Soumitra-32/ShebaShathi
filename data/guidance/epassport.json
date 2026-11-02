@@ -1,0 +1,182 @@
+{
+  "guide_id": "epassport_application_status",
+  "service_id": "epassport",
+  "title_bn": "আবেদন স্ট্যাটাস গাইড",
+  "title_en": "Application status guide",
+  "subtitle_bn": "সরকারি স্ট্যাটাস অর্থ ব্যবহারকারী ভাষায় বুঝিয়ে দেওয়া হলো। এখানে আবেদন আইডি, জন্মতারিখ বা অন্য কোনো তথ্য দেওয়ার দরকার নেই।",
+  "subtitle_en": "What each official status string means in plain language. You never need to enter your Application ID, date of birth or other details here.",
+  "source_url": "https://specialbranch.gov.bd/nodes/view/22",
+  "last_verified": "2026-11-01",
+  "fallback_bn": "এই সুনির্দিষ্ট তথ্যটি যাচাই করা সরকারি উৎসে পাওয়া যায়নি। অনুগ্রহ করে সরকারি হেল্পলাইন ১৬৪৪৫ বা epassport.gov.bd দেখুন।",
+  "fallback_en": "The available official sources do not specify this. Please call the official helpline 16445 or check epassport.gov.bd.",
+  "how_to_check": {
+    "title_bn": "স্ট্যাটাস কোথায় ও কীভাবে দেখবেন",
+    "title_en": "Where and how to check your status",
+    "text_bn": "সরকারি স্ট্যাটাস পেজে পাসপোর্ট অফিস থেকে পাওয়া ডেলিভারি স্লিপের অ্যাপলিকেশন আইডি অথবা অনলাইন আবেদনের Online Registration ID (OID) দিয়ে, জন্মতারিখসহ স্ট্যাটাস দেখা যায়। এই সাইটে দয়া করে কোনো আইডি বা জন্মতারিখ না দিয়ে সরাসরি সরকারি পেজে স্বয়ং চেক করুন।",
+    "text_en": "On the official status page you enter the Application ID from the delivery slip (issued by the Passport Office) or the Online Registration ID (OID) from your online application, together with your date of birth. Please do not enter any ID or date of birth in this site; check the live status yourself on the official page.",
+    "official_links": [
+      {"label_bn": "সরকারি স্ট্যাটাস পেজ (epassport.gov.bd)", "label_en": "Official status page (epassport.gov.bd)", "url": "https://www.epassport.gov.bd/authorization/application-status"},
+      {"label_bn": "সরকারি ই-পাসপোর্ট পোর্টাল", "label_en": "Official e-Passport portal", "url": "https://www.epassport.gov.bd/"}
+    ]
+  },
+  "statuses": [
+    {
+      "id": "pending_sb_police_clearance",
+      "label": "Pending for SB Police Clearance",
+      "meaning_bn": "আবেদনটি সংশ্লিষ্ট এসবি (SB/CSB/DSB) পুলিশ ইউনিটে তদন্তাধীন। আবেদনের স্থায়ী ও বর্তমান—উভয় ঠিকানায় পুলিশ ভেরিফিকেশন সম্পন্ন না হওয়া পর্যন্ত স্ট্যাটাস এভাবেই দেখা যায়।",
+      "meaning_en": "The application is under investigation at the relevant Special Branch (SB/CSB/DSB) police unit. The status stays like this until police verification is complete at both the permanent and the current address.",
+      "action_bn": "যে ঠিকানায় ভেরিফিকেশন হয়নি, সেই ঠিকানার সংশ্লিষ্ট SB/CSB/DSB অফিসে যোগাযোগ করুন অথবা \"Hello SB\" অ্যাপের মাধ্যমে ভেরিফিকেশন সংক্রান্ত তথ্য জানুন।",
+      "action_en": "Contact the SB/CSB/DSB office for the address where verification is incomplete, or use the \"Hello SB\" app to get verification-related information.",
+      "source_url": "https://specialbranch.gov.bd/nodes/view/22",
+      "last_verified": "2026-11-01"
+    },
+    {
+      "id": "enrolment_in_process",
+      "label": "Enrolment in process",
+      "meaning_bn": "পোর্টালে দেখানো এই অবস্থা বায়োমেট্রিক এনরোলমেন্ট চলমান থাকার পর্যায়। এসবি পুলিশের সরকারি FAQ অনুযায়ী এই ধাপগুলোর আবেদন সংশ্লিষ্ট পাসপোর্ট অফিসের মাধ্যমে অনুসরণ করতে হয়।",
+      "meaning_en": "This portal status is the biometric enrolment stage. According to the official Special Branch FAQ, applications at this stage are followed up through the concerned passport office.",
+      "action_bn": "সংশ্লিষ্ট পাসপোর্ট অফিসে যোগাযোগ করুন।",
+      "action_en": "Contact the concerned passport office.",
+      "source_url": "https://specialbranch.gov.bd/nodes/view/22",
+      "last_verified": "2026-11-01"
+    },
+    {
+      "id": "backend_verification",
+      "label": "Backend verification",
+      "meaning_bn": "পোর্টালে দেখানো এই অবস্থা আবেদন প্রক্রিয়াকরণের ব্যাক-এন্ড যাচাই পর্যায়। এসবি পুলিশের সরকারি FAQ অনুযায়ী এই ধাপের আবেদন সংশ্লিষ্ট পাসপোর্ট অফিসের মাধ্যমে অনুসরণ করতে হয়।",
+      "meaning_en": "This portal status is the backend verification stage of application processing. According to the official Special Branch FAQ, applications at this stage are followed up through the concerned passport office.",
+      "action_bn": "সংশ্লিষ্ট পাসপোর্ট অফিসে যোগাযোগ করুন।",
+      "action_en": "Contact the concerned passport office.",
+      "source_url": "https://specialbranch.gov.bd/nodes/view/22",
+      "last_verified": "2026-11-01"
+    },
+    {
+      "id": "pending_final_approval",
+      "label": "Pending for final approval",
+      "meaning_bn": "পোর্টালে দেখানো এই অবস্থা সর্বশেষ অনুমোদনের অপেক্ষা পর্যায়। এসবি পুলিশের সরকারি FAQ অনুযায়ী এই ধাপের আবেদন সংশ্লিষ্ট পাসপোর্ট অফিসের মাধ্যমে অনুসরণ করতে হয়।",
+      "meaning_en": "This portal status is the final-approval pending stage. According to the official Special Branch FAQ, applications at this stage are followed up through the concerned passport office.",
+      "action_bn": "সংশ্লিষ্ট পাসপোর্ট অফিসে যোগাযোগ করুন।",
+      "action_en": "Contact the concerned passport office.",
+      "source_url": "https://specialbranch.gov.bd/nodes/view/22",
+      "last_verified": "2026-11-01"
+    },
+    {
+      "id": "pending_print_queue",
+      "label": "Pending in print queue",
+      "meaning_bn": "পোর্টালে দেখানো এই অবস্থা মুদ্রণ-ক্রমে অপেক্ষা পর্যায়। এসবি পুলিশের সরকারি FAQ অনুযায়ী এই ধাপের আবেদন সংশ্লিষ্ট পাসপোর্ট অফিসের মাধ্যমে অনুসরণ করতে হয়।",
+      "meaning_en": "This portal status is the pending-in-print-queue stage. According to the official Special Branch FAQ, applications at this stage are followed up through the concerned passport office.",
+      "action_bn": "সংশ্লিষ্ট পাসপোর্ট অফিসে যোগাযোগ করুন।",
+      "action_en": "Contact the concerned passport office.",
+      "source_url": "https://specialbranch.gov.bd/nodes/view/22",
+      "last_verified": "2026-11-01"
+    },
+    {
+      "id": "sent_for_rework",
+      "label": "Sent for rework",
+      "meaning_bn": "পোর্টালে দেখানো এই অবস্থা আবেদন সংশোধনী পর্যায়। এসবি পুলিশের সরকারি FAQ অনুযায়ী এই ধাপের আবেদন সংশ্লিষ্ট পাসপোর্ট অফিসের মাধ্যমে অনুসরণ করতে হয়।",
+      "meaning_en": "This portal status is the sent-for-rework stage. According to the official Special Branch FAQ, applications at this stage are followed up through the concerned passport office.",
+      "action_bn": "সংশ্লিষ্ট পাসপোর্ট অফিসে যোগাযোগ করুন।",
+      "action_en": "Contact the concerned passport office.",
+      "source_url": "https://specialbranch.gov.bd/nodes/view/22",
+      "last_verified": "2026-11-01"
+    }
+  ],
+  "tips": [
+    {
+      "id": "sb_verification_trigger",
+      "text_bn": "আগের পাসপোর্টের তথ্যের সঙ্গে মিল থাকলে পুলিশ ভেরিফিকেশন সাধারণত লাগে না; কিন্তু নাম, পিতা-মাতার নাম, জন্মতারিখ, জন্মস্থান, লিঙ্গ বা স্থায়ী ঠিকানা বদলে আবেদন করলে পাসপোর্ট অফিস থেকে তদন্তের জন্য SB/CSB/DSB-তে পাঠানো হয়।",
+      "text_en": "If the application matches the details of a previous passport, police verification is normally not needed. But changing basic information (name, parents' names, date of birth, birthplace, gender, or permanent address) sends the application from the passport office to SB/CSB/DSB for investigation.",
+      "source_url": "https://specialbranch.gov.bd/nodes/view/22",
+      "last_verified": "2026-11-01"
+    },
+    {
+      "id": "permanent_address_rule",
+      "text_bn": "আবেদনের মৌলিক তথ্য (নাম, পিতা-মাতার নাম, জন্মতারিখ, জন্মস্থান, লিঙ্গ) জাতীয় পরিচয়পত্রের সঙ্গে মিলতে হয়; তবে স্থায়ী ঠিকানা হিসেবে আপনার প্রকৃত স্থায়ী ঠিকানা দিতে হয়। ভাড়া বাসা, আগে ছিল এমন বা বিক্রি করা সম্পত্তি, সরকারি বাসভবনের ঠিকানা স্থায়ী ঠিকানা হিসেবে চলে না।",
+      "text_en": "The application's basic details (name, parents' names, date of birth, birthplace, gender) must match the National ID; but the permanent address must be your real permanent address. A rented house, a previous or sold property, or a government residence is not acceptable as a permanent address.",
+      "source_url": "https://specialbranch.gov.bd/nodes/view/22",
+      "last_verified": "2026-11-01"
+    },
+    {
+      "id": "super_express_restriction",
+      "text_bn": "সরকারি FAQ অনুযায়ী স্ট্যাটাস ব্যবস্থা না থাকায় বিশেষ এক্সপ্রেস (pre-police clearance) সুবিধা এখন কেবল তারা পাচ্ছেন যাদের পূর্বের পাসপোর্ট আছে এবং তথ্যের কোনো পরিবর্তন ছাড়া আবেদন করেন; এই আবেদন কেবল ঢাকার পাসপোর্ট অফিসে করা যায়।",
+      "text_en": "Per the official FAQ, the super-express (pre-police clearance) facility is currently available only to applicants who hold a previous passport and apply without any information changes; such applications are accepted only at Dhaka passport offices.",
+      "source_url": "https://specialbranch.gov.bd/nodes/view/22",
+      "last_verified": "2026-11-01"
+    },
+    {
+      "id": "passport_hotline",
+      "text_bn": "পাসপোর্ট সংক্রান্ত তথ্য ও পরামর্শের সরকারি হেল্পলাইন: দেশের ভেতর থেকে ১৬৪৪৫ এবং প্রবাস থেকে ০৯৬৬৬৭১৬৪৪৫। ইমিগ্রেশন ও পাসপোর্ট অধিদপ্তরের আনুষ্ঠানিক ঘোষণা অনুযায়ী বিদেশি নাগরিকরাও একই নম্বরে ভিসা সংক্রান্ত তথ্য পান।",
+      "text_en": "The official government helpline for passport information and advice is 16445 inside Bangladesh and 09666716445 from abroad. Per the official Department of Immigration and Passports announcement, foreign nationals also call the same number for visa information.",
+      "source_url": "https://dip.gov.bd/",
+      "last_verified": "2026-11-01"
+    },
+    {
+      "id": "police_clearance_certificate",
+      "text_bn": "পাসপোর্ট পাওয়ার পরে বিদেশযাত্রা বা অন্য কারণে পুলিশ ক্লিয়ারেন্স সনদ দরকার হলে সেটি pcc.police.gov.bd পোর্টালে প্রতিবার আবেদন করে নিতে হয়; পরবর্তী তথ্যের জন্য নিজ থানায় যোগাযোগ করতে হয়।",
+      "text_en": "For a police clearance certificate needed after you already hold a passport (for travel abroad or other reasons), apply each time on the pcc.police.gov.bd portal; for follow-up information, contact your local police station.",
+      "source_url": "https://specialbranch.gov.bd/nodes/view/22",
+      "last_verified": "2026-11-01"
+    }
+  ],
+  "diaspora": {
+    "title_bn": "প্রবাসী/মিশনের মাধ্যমে আবেদনকারীদের নির্দেশনা",
+    "title_en": "Guidance for expatriates and mission applicants",
+    "items": [
+      {
+        "id": "mrp_abroad_info_change",
+        "text_bn": "প্রবাসী অবস্থায় মিশনের মাধ্যমে আবেদনে তথ্যের কোনো পরিবর্তন (ঠিকানাসহ) না থাকলে পুলিশ ভেরিফিকেশন সাধারণত লাগে না। তথ্য বা ঠিকানা বদলালে তদন্তের জন্য সরাসরি অনলাইনে SB/CSB/DSB-তে পাঠানো হয়; নির্ধারিত ১৫ দিনের মধ্যে তদন্ত সম্ভব না হলে পাসপোর্ট অফিসের মাধ্যমে পুনরায় হার্ডকপি পত্রে SB (ঢাকা)-তে পাঠানো হয়। এই ক্ষেত্রে পাসপোর্ট অফিস থেকে স্মারক (memo) নম্বর নিয়ে SB, ঢাকায় যোগাযোগ করলে ভেরিফিকেশনের তথ্য পাওয়া যায়।",
+        "text_en": "For applications submitted from abroad through a mission, no police verification is normally needed when no information changes (including address). If information or address changes, the application goes online directly to SB/CSB/DSB for investigation; if verification cannot be completed within the allotted 15 days, the passport office re-submits it as a hard-copy letter to SB in Dhaka. In that case, taking the memo number from the passport office and contacting SB Dhaka yields verification information.",
+        "source_url": "https://specialbranch.gov.bd/nodes/view/22",
+        "last_verified": "2026-11-01"
+      },
+      {
+        "id": "contact_details_delay",
+        "text_bn": "বিদেশ থেকে আবেদন করলে অনেকে বাংলাদেশের কোনো যোগাযোগ নম্বর দেন না; সরকারি FAQ অনুযায়ী এতে তদন্ত কার্যে অহেতুক বিলম্ব ঘটে।",
+        "text_en": "Per the official FAQ, applicants applying from abroad often do not provide a Bangladesh contact number, which causes avoidable delays in the investigation.",
+        "source_url": "https://specialbranch.gov.bd/nodes/view/22",
+        "last_verified": "2026-11-01"
+      },
+      {
+        "id": "dual_citizenship_passport_number",
+        "text_bn": "অন্য দেশের নাগরিকত্ব নেওয়া ব্যক্তিদের পাসপোর্ট আবেদনে দ্বৈত নাগরিকত্বের বিষয়, বিদেশি পাসপোর্ট নম্বর এবং পূর্বের বাংলাদেশি পাসপোর্ট নম্বর উল্লেখ করা প্রয়োজন।",
+        "text_en": "Applicants who adopted another citizenship must state the dual-citizenship matter, the foreign passport number, and the previous Bangladeshi passport number in the application.",
+        "source_url": "https://specialbranch.gov.bd/nodes/view/22",
+        "last_verified": "2026-11-01"
+      },
+      {
+        "id": "appointment_fraud_notice",
+        "text_bn": "বাংলাদেশ হাইকমিশন, লন্ডনের সরকারি নোটিশ (২০২৫): ই-পাসপোর্টের আবেদন বা অ্যাপয়েন্টমেন্ট পরিচালনায় কোনো এজেন্সি কখনোই অনুমোদিত নয়। ওয়ার্কের জন্য অ্যাপয়েন্টমেন্ট তরান্বিত করার অজুহাতে কোনো এজেন্সি বা ব্যক্তিকে টাকা দিলে সেটি প্রতারণা; অ্যাপয়েন্টমেন্ট সর্বদা সরকারি চ্যানেলে নিজে করুন।",
+        "text_en": "Official public notice of the Bangladesh High Commission, London (2025): no agency, ever, is authorized to process or manage e-Passport applications or appointments. Paying any agency or individual who claims to expedite an appointment is fraud; always book appointments yourself through official channels.",
+        "source_url": "https://bhclondon.org.uk/uploads/file/2025/03/d2069c7e6ff118395f7444e95b17c207.pdf",
+        "last_verified": "2026-11-01"
+      }
+    ],
+    "official_links": [
+      {"label_bn": "সরকারি স্ট্যাটাস পেজ (epassport.gov.bd)", "label_en": "Official status page (epassport.gov.bd)", "url": "https://www.epassport.gov.bd/authorization/application-status"},
+      {"label_bn": "সরকারি ই-পাসপোর্ট পোর্টাল", "label_en": "Official e-Passport portal", "url": "https://www.epassport.gov.bd/"}
+    ]
+  },
+  "fraud_warnings": [
+    {
+      "id": "no_agency_auth",
+      "text_bn": "ই-পাসপোর্টের আবেদন, অ্যাপয়েন্টমেন্ট বা \"তারান্বিত করা\" সেবায় কোনো এজেন্সি/এজেন্ট কখনোই অনুমোদিত নয়। এই কথায় টাকা দেওয়া প্রতারণা — বাংলাদেশ হাইকমিশন, লন্ডনের সরকারি নোটিশ অনুযায়ী।",
+      "text_en": "No agency or agent is ever authorized for e-Passport applications, appointments, or \"expediting\" services. Paying for this is fraud, according to the official notice of the Bangladesh High Commission, London.",
+      "source_url": "https://bhclondon.org.uk/uploads/file/2025/03/d2069c7e6ff118395f7444e95b17c207.pdf",
+      "last_verified": "2026-11-01"
+    },
+    {
+      "id": "official_fee_only",
+      "text_bn": "সরকারি ফি-ই একমাত্র প্রযোজ্য ফি। যে পরিমাণ টাকা চাওয়া হয়, তা যাচাই করা ফি তালিকার সঙ্গে মিলিয়ে নিন — অতিরিক্ত টাকা কোথাও দেওয়ার কোনো সরকারি বিধান নেই।",
+      "text_en": "The government fee is the only fee that applies. Compare any amount you are asked to pay with the verified fee schedule; there is no government provision for paying anything extra.",
+      "source_url": "https://www.epassport.gov.bd/instructions/passport-fees",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "id": "helpline_and_status_only",
+      "text_bn": "তথ্য ও পরামর্শের সরকারি পথ: হেল্পলাইন ১৬৪৪৫ (প্রবাস থেকে ০৯৬৬৬৭১৬৪৪৫) এবং epassport.gov.bd পোর্টাল ও স্ট্যাটাস পেজ। এর বাইরে \"অফিস কানেকশানে সমাধান\" শুনলে সাবধান হোন।",
+      "text_en": "The official routes for information and advice are the helpline 16445 (09666716445 from abroad) and the epassport.gov.bd portal and status page. Be wary of anyone offering \"office connection\" fixes.",
+      "source_url": "https://dip.gov.bd/",
+      "last_verified": "2026-11-01"
+    }
+  ]
+}

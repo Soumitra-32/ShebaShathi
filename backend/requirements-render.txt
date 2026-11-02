@@ -1,0 +1,11 @@
+# Production requirements for low-memory containers (Render free = 512 MB).
+# No PyTorch: the embedder runs multilingual-e5-small via ONNX Runtime.
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+pydantic>=2.5.0
+python-multipart>=0.0.6
+chromadb>=0.5.0,<2
+numpy>=1.26.0
+onnxruntime>=1.17.0
+tokenizers>=0.15.0
+huggingface-hub>=0.23.0

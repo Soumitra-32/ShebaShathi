@@ -1,0 +1,31 @@
+# Keep the Docker build context small: only backend/, ml_core/, data/ and
+# corpus/ are copied, everything else must not reach the daemon.
+.git
+.gitignore
+.venv
+**/__pycache__
+**/*.py[cod]
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.chroma
+.cache
+.model_cache
+.tmp-test
+.env
+.env.example
+DECISIONS.md
+AGENTS.md
+ARCHITECTURE.md
+CONVENTIONS.md
+SECURITY_ASSESSMENT.md
+TASKS.md
+TESTING.md
+docs
+Dockerfile
+docker-compose.yml
+backend/.pytest_cache
+backend/app/tests
+backend/scripts/live_eval.py
+frontend
+node_modules

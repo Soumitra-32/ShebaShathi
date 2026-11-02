@@ -108,6 +108,54 @@ class CopilotAskResponse(CopilotAnswer):
     pass
 
 
+class ChatTurn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    role: Literal["user", "assistant"]
+    content: str = Field(..., min_length=1, max_length=1000)
+
+
+class CopilotChatRequest(BaseModel):
+    """One turn of the conversational assistant.
+
+    History is supplied by the browser and is never stored server-side.
+    Identity-like numbers are rejected before any model call.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    question: str = Field(..., min_length=2, max_length=1000)
+    history: List[ChatTurn] = Field(default_factory=list, max_length=8)
+    service_id: Optional[str] = Field(default=None, max_length=40)
+    language: Literal["bn", "en"] = "bn"
+    profile: Optional[ServiceProfile] = None
+
+    @field_validator("question")
+    @classmethod
+    def require_non_whitespace(cls, value: str) -> str:
+        cleaned = value.strip()
+        if not cleaned:
+            raise ValueError("Ask a question in a few words.")
+        return cleaned
+
+
+class CopilotChatResponse(CopilotAnswer):
+    service_id: Optional[str] = None
+    service_name_bn: Optional[str] = None
+    service_name_en: Optional[str] = None
+    suggested_questions: List[str] = Field(default_factory=list)
+
+
+class CaseBriefResponse(BaseModel):
+    brief: str
+    grounded: bool
+    generation_mode: str
+    llm_provider: str = "none"
+    llm_model: Optional[str] = None
+    source_url: str
+    last_verified: str
+
+
 class RedFlagCheckRequest(BaseModel):
     claimed_amount: float = Field(..., ge=0, allow_inf_nan=False)
     pages: Literal[48, 64] = 48

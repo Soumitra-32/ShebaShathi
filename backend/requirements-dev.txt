@@ -1,2 +1,6 @@
-﻿-r requirements.txt
+﻿# Merged with requirements.txt for local development and tests only.
+# The production image uses backend/requirements-render.txt, which has no
+# PyTorch: the E5 embedder runs through ONNX Runtime in production.
+-r requirements.txt
 pytest>=8.0.0
+sentence-transformers>=3.0.0

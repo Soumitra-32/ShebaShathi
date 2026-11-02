@@ -4,12 +4,23 @@ import {
   sniffKind,
   validateFile,
   validateFiles,
+  type FileRejection,
 } from "../lib/local/files";
 
 const PNG_BYTES = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 0]);
 const JPEG_BYTES = new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 0, 0, 0, 0, 0, 0, 0, 0]);
 const PDF_BYTES = new Uint8Array([0x25, 0x50, 0x44, 0x46, 0x2d, 0x31, 0x2e, 0x37]);
 const EXE_BYTES = new Uint8Array([0x4d, 0x5a, 0x90, 0x00, 0x03, 0x00, 0x00, 0x00]);
+
+/**
+ * With `strict: false` the `{ ok: true } | { ok: false }` discriminant does not
+ * narrow, so extracting the rejection after asserting failure needs one cast.
+ */
+function rejected(result: { ok: boolean; rejection?: FileRejection }): FileRejection {
+  expect(result.ok).toBe(false);
+  expect(result.rejection).toBeDefined();
+  return result.rejection as FileRejection;
+}
 
 const options = {
   maxFiles: 2,
@@ -45,36 +56,31 @@ describe("validateFile", () => {
   it("rejects a file whose real content is not an image or a pdf", async () => {
     const file = new File([EXE_BYTES], "tool.exe", { type: "application/octet-stream" });
     const result = await validateFile(file, options);
-    expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.rejection.reason).toBe("malformed");
+    expect(rejected(result).reason).toBe("malformed");
   });
 
   it("rejects a renamed executable that claims to be a png", async () => {
     const file = new File([EXE_BYTES], "photo.png", { type: "image/png" });
     const result = await validateFile(file, options);
-    expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.rejection.reason).toBe("malformed");
+    expect(rejected(result).reason).toBe("malformed");
   });
 
   it("rejects an oversized file", async () => {
     const file = new File([new Uint8Array(2048)], "big.png", { type: "image/png" });
     const result = await validateFile(file, options);
-    expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.rejection.reason).toBe("too_large");
+    expect(rejected(result).reason).toBe("too_large");
   });
 
   it("rejects an empty file", async () => {
     const file = new File([], "empty.png", { type: "image/png" });
     const result = await validateFile(file, options);
-    expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.rejection.reason).toBe("empty");
+    expect(rejected(result).reason).toBe("empty");
   });
 
   it("rejects a mime type that does not match the content", async () => {
     const file = new File([PNG_BYTES], "id.png", { type: "application/pdf" });
     const result = await validateFile(file, options);
-    expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.rejection.reason).toBe("unsupported_type");
+    expect(rejected(result).reason).toBe("unsupported_type");
   });
 });
 

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "../../../lib/language";
-import { getService, reviewCopy, ReviewStatus, ServiceDetail } from "../../../lib/api";
+import { getService, getStatusGuide, reviewCopy, ReviewStatus, ServiceDetail } from "../../../lib/api";
 
 export default function ServiceOverviewPage() {
   const params = useParams<{ serviceId: string }>();
@@ -14,6 +14,7 @@ export default function ServiceOverviewPage() {
   const { lang } = useLanguage();
   const currentLang = lang;
   const [service, setService] = useState<ServiceDetail | null>(null);
+  const [hasStatusGuide, setHasStatusGuide] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -32,6 +33,16 @@ export default function ServiceOverviewPage() {
     })();
     return () => { active = false; };
   }, [serviceId, t("service_overview.notFound"), t("service_overview.error")]);
+
+  // A status guide link is shown only when verified guidance actually exists.
+  useEffect(() => {
+    let active = true;
+    setHasStatusGuide(false);
+    getStatusGuide(serviceId)
+      .then(() => { if (active) setHasStatusGuide(true); })
+      .catch(() => { /* No guidance for this service: no link. */ });
+    return () => { active = false; };
+  }, [serviceId]);
 
   return <main className="min-h-screen bg-slate-50 px-4 py-8 sm:py-10">
     <div className="mx-auto max-w-3xl">
@@ -61,6 +72,12 @@ export default function ServiceOverviewPage() {
             </li>)}
           </ul>
         </section>
+
+        {hasStatusGuide && <section className="rounded-2xl border border-indigo-200 bg-indigo-50 p-5 shadow-sm sm:p-7">
+          <h2 className="text-lg font-bold text-slate-900">{t("status_guide.overviewTitle")}</h2>
+          <p className="mt-2 text-sm text-slate-700">{t("status_guide.overviewCopy")}</p>
+          <Link href={`/services/${service.service_id}/status`} className="mt-3 inline-flex min-h-12 items-center rounded-lg bg-indigo-700 px-5 font-medium text-white hover:bg-indigo-800">{t("status_guide.overviewLink")}</Link>
+        </section>}
 
         {service.official_links.length > 0 && <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
           <h2 className="text-lg font-bold text-slate-900">{t("service_overview.official")}</h2>

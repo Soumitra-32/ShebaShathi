@@ -3,6 +3,7 @@ ShebaShathi BD - Backend API
 FastAPI application for e-Passport services.
 """
 import asyncio
+import os
 import sys
 
 if sys.platform == "win32":
@@ -31,6 +32,7 @@ from .schemas import (
     GRSDraftRequest, GRSDraftResponse,
     ServiceChecklistRequest, ServiceChecklistResponse,
     IntakeRequest, IntakeResponse,
+    CopilotChatRequest, CopilotChatResponse, CaseBriefResponse,
 )
 from .engine import fees as fees_engine
 from .engine import checklist as checklist_engine
@@ -44,6 +46,10 @@ from .privacy import contains_identity_number
 from .rag import guard as rag_guard
 from .rag import fee_answer as rag_fee_answer
 from .rag import photo_answer as rag_photo_answer
+from .rag import status_answer as rag_status_answer
+from .guidance import get_guide as get_status_guide
+from .rag import chat as rag_chat
+from .rag import brief as rag_brief
 from .rate_limit import SlidingWindowLimiter, enforce as enforce_rate_limit
 
 app = FastAPI(
@@ -51,6 +57,30 @@ app = FastAPI(
     description="Bangladesh citizen-services helper - service guides and checklists, official fee calculator, RAG copilot, and GRS complaint drafter.",
     version="0.1.0",
 )
+
+
+@app.on_event("startup")
+async def warm_retrieval_index() -> None:
+    """Warm Chroma and the embedding model before accepting real questions.
+
+    The first embedding call can take tens of seconds on a cold machine (model
+    load and cache checks). The warmup deliberately runs on the startup event
+    loop instead of a background thread: the embedder and Chroma client are
+    cached, and reusing an instance created on another thread made retrieval
+    fail intermittently. Set ``WARM_RETRIEVAL=false`` to skip this and pay the
+    cold-start cost on the first question instead.
+    """
+    if (os.environ.get("WARM_RETRIEVAL", "true") or "").lower() in ("0", "false", "no"):
+        return
+
+    try:
+        from .rag.retriever import collection_count, retrieve
+
+        collection_count()
+        retrieve("passport application documents")
+    except Exception:  # noqa: BLE001 - warming must never block startup
+        pass
+
 
 
 @app.exception_handler(RequestValidationError)
@@ -143,6 +173,18 @@ async def service_overview(service_id: str):
     except KeyError:
         raise HTTPException(status_code=404, detail={"error": {"code": "SERVICE_NOT_FOUND", "message": "The requested service is not available."}})
 
+@app.get("/api/services/{service_id}/status-guide", tags=["Services"])
+async def service_status_guide(service_id: str):
+    """Deterministic status explanations, diaspora guidance and fraud warnings.
+
+    Public, non-sensitive content only: this endpoint collects no identifiers
+    and replaces no official status check.
+    """
+    try:
+        return get_status_guide(service_id)
+    except KeyError:
+        raise HTTPException(status_code=404, detail={"error": {"code": "GUIDANCE_NOT_FOUND", "message": "No verified status guide is available for this service."}})
+
 @app.post("/api/services/{service_id}/checklist", response_model=ServiceChecklistResponse, tags=["Services"])
 async def service_checklist(service_id: str, req: ServiceChecklistRequest):
     """Conditional checklist for one service task from minimal, non-sensitive answers."""
@@ -154,6 +196,65 @@ async def service_checklist(service_id: str, req: ServiceChecklistRequest):
         raise HTTPException(status_code=422, detail={"error": {"code": "VALIDATION_ERROR", "message": str(e)}})
     except Exception:
         raise HTTPException(status_code=500, detail={"error": {"code": "INTERNAL_ERROR", "message": "The checklist could not be generated."}})
+
+@app.post("/api/services/{service_id}/checklist/brief", response_model=CaseBriefResponse, tags=["AI Intake"])
+async def service_checklist_brief(service_id: str, req: ServiceChecklistRequest, request: Request):
+    """Explain a verified checklist in plain language.
+
+    The deterministic checklist is built first and is the model's only allowed
+    source. If generation fails or adds an unsupported fact, the deterministic
+    summary is returned. The request carries only minimal, non-sensitive
+    answers: no identity numbers, files or credentials are accepted.
+    """
+    enforce_rate_limit(copilot_limiter, request)
+    try:
+        checklist = service_engine.generate(service_id, req.task, req.answers, req.language)
+        service = service_loader.get_service(service_id)
+    except KeyError:
+        raise HTTPException(status_code=404, detail={"error": {"code": "SERVICE_NOT_FOUND", "message": "The requested service is not available."}})
+    except service_engine.ChecklistInputError as e:
+        raise HTTPException(status_code=422, detail={"error": {"code": "VALIDATION_ERROR", "message": str(e)}})
+    except Exception:
+        raise HTTPException(status_code=500, detail={"error": {"code": "INTERNAL_ERROR", "message": "The checklist could not be generated."}})
+    try:
+        result = rag_brief.generate(checklist, service, req.language)
+        return {**result, "source_url": checklist["source_url"], "last_verified": checklist["last_verified"]}
+    except Exception:
+        raise HTTPException(status_code=500, detail={"error": {"code": "INTERNAL_ERROR", "message": "The explanation could not be generated."}})
+
+@app.post("/api/copilot/chat", response_model=CopilotChatResponse, tags=["RAG Copilot"])
+async def copilot_chat(req: CopilotChatRequest, request: Request):
+    """Multi-turn, source-grounded chat with deterministic tools first.
+
+    The browser sends the recent conversation; nothing is stored server-side.
+    Identity-like numbers are rejected before any model or embedding call.
+    """
+    enforce_rate_limit(copilot_limiter, request)
+    user_texts = [req.question] + [turn.content for turn in req.history if turn.role == "user"]
+    if any(contains_identity_number(text) for text in user_texts):
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": {
+                    "code": "IDENTITY_DATA_REJECTED",
+                    "message": "Remove ID, passport, phone or OTP numbers from the chat.",
+                }
+            },
+        )
+    if req.service_id is not None:
+        try:
+            service_loader.get_service(req.service_id)
+        except KeyError:
+            raise HTTPException(status_code=404, detail={"error": {"code": "SERVICE_NOT_FOUND", "message": "The requested service is not available."}})
+    try:
+        return rag_chat.respond(
+            req.question,
+            [turn.model_dump() for turn in req.history],
+            req.language,
+            req.service_id,
+        )
+    except Exception:
+        raise HTTPException(status_code=500, detail={"error": {"code": "INTERNAL_ERROR", "message": "The assistant could not answer right now."}})
 
 @app.post("/api/copilot/ask", response_model=CopilotAskResponse, tags=["RAG Copilot"])
 async def copilot_ask(req: CopilotAskRequest, request: Request):
@@ -205,6 +306,12 @@ async def copilot_ask(req: CopilotAskRequest, request: Request):
         deterministic_photo = None
     if deterministic_photo is not None:
         return CopilotAskResponse(**deterministic_photo)
+    try:
+        deterministic_status = rag_status_answer.answer(req.question, req.service_id, req.language)
+    except Exception:
+        deterministic_status = None
+    if deterministic_status is not None:
+        return CopilotAskResponse(**deterministic_status)
     try:
         from .rag import generator as rag_gen
         from .rag import verifier as rag_ver

@@ -1,5 +1,24 @@
+import re
+
 FALLBACK_BN = "সরকারি তথ্যে এটি নির্দিষ্ট করা যায়নি। অনুগ্রহ করে সংশ্লিষ্ট সরকারি পোর্টালে যাচাই করুন।"
 FALLBACK_EN = "The available official sources do not specify this. Please check the relevant official portal."
+
+
+def plain_text(text: str) -> str:
+    """Strip light Markdown so chat/brief answers read cleanly as plain text.
+
+    The model is instructed not to emit Markdown, but providers occasionally
+    still add ``**bold**``, backticks or ``#`` headings. The UI renders answers
+    with ``whitespace-pre-wrap`` and no Markdown parser, so literal markers would
+    otherwise leak into the answer. Only formatting characters are removed; the
+    factual text and numbers are untouched.
+    """
+    text = re.sub(r"^\s{0,3}#{1,6}\s*", "", text, flags=re.MULTILINE)
+    text = re.sub(r"^\s*\*\s+", "• ", text, flags=re.MULTILINE)
+    text = re.sub(r"\*\*(.+?)\*\*", r"\1", text)
+    text = re.sub(r"__(.+?)__", r"\1", text)
+    text = re.sub(r"`([^`]+)`", r"\1", text)
+    return text.strip()
 
 SYSTEM_PROMPT = """You are ShebaShathi, an independent assistant that explains Bangladesh citizen identity and public-service procedures.
 Rules:
@@ -12,4 +31,6 @@ Rules:
 7. Never claim to authenticate a person or document, make a final legal or eligibility decision, submit an application, or access an official account.
 8. Never ask the user to provide identity numbers, OTPs, account credentials, or document images, and never repeat such values back if the user includes them.
 9. Every numeric claim in the answer must appear in a cited context excerpt.
-10. Do not refuse only because the user wrote a short noun phrase instead of a full question."""
+10. Do not refuse only because the user wrote a short noun phrase instead of a full question.
+11. Do not write URLs in the answer; the app shows the cited official links separately.
+12. Use plain text only: no Markdown symbols such as **, #, backticks or * bullets."""
