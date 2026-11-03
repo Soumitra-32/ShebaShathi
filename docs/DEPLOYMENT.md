@@ -58,6 +58,11 @@ the fp32 e5-small weights need roughly 1 GB, so production runs the same
      (about a minute on the free build pipeline) and bakes the index into
      `/app/.chroma`. After editing `corpus/` or `data/services`, rebuild the
      image — data changes never reach a running free service another way.
+   - `fetch_onnx_model.py` writes to `ONNX_MODEL_DIR` (the same variable the
+     embedder reads), so the downloaded model and the runtime path cannot
+     drift. The Dockerfile re-runs the script with `--check` before ingest;
+     if the path is ever wrong, the build fails with `INCOMPLETE: ...` instead
+     of failing at startup.
    - If you have a paid plan instead, keep the baked index on boot (the ingest
      module is a no-op when the index version matches) and revisit `VECTOR_STORE`.
 5. Free-plan behaviour to expect (document it for the judges, never pretend it

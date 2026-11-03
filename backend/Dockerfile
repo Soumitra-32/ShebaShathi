@@ -19,6 +19,10 @@ RUN pip install --no-cache-dir -r /app/backend/requirements-render.txt
 
 COPY backend/scripts/fetch_onnx_model.py /app/backend/scripts/fetch_onnx_model.py
 RUN python /app/backend/scripts/fetch_onnx_model.py
+# The script writes to ONNX_MODEL_DIR (set above), the same path the embedder
+# reads. Re-check it explicitly so a future path drift fails the build here
+# instead of at startup on a 512 MB instance.
+RUN python /app/backend/scripts/fetch_onnx_model.py --check
 
 COPY backend/app /app/backend/app
 COPY ml_core /app/ml_core

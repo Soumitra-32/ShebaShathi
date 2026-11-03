@@ -5,14 +5,18 @@ Downloads the int8 ONNX model and the standalone fast tokenizer from the
 ml_core (``intfloat/multilingual-e5-small``). Public repository; no token is
 needed and none is stored.
 
+The target defaults to ``ONNX_MODEL_DIR`` when that variable is set (the same
+setting the embedder reads), otherwise ``backend/models/e5-small-onnx``.
+
 Usage:
-    python backend/scripts/fetch_onnx_model.py            # into backend/models/e5-small-onnx
+    python backend/scripts/fetch_onnx_model.py            # into $ONNX_MODEL_DIR
     python backend/scripts/fetch_onnx_model.py --dir D:/x # custom target
     python backend/scripts/fetch_onnx_model.py --check    # verify only, no download
 """
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 from pathlib import Path
 
@@ -25,6 +29,17 @@ MIN_MODEL_BYTES = 100 * 1024 * 1024  # int8 export is ~118 MB
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_DIR = ROOT / "models" / "e5-small-onnx"
+
+
+def default_target(environ: dict[str, str] | None = None) -> Path:
+    """Directory the runtime will read, so the download lands where it is used.
+
+    ``ONNX_MODEL_DIR`` wins (the Dockerfile sets it to ``/app/models/...``);
+    unset falls back to the local development path.
+    """
+    environ = os.environ if environ is None else environ
+    configured = environ.get("ONNX_MODEL_DIR", "").strip()
+    return Path(configured).expanduser() if configured else DEFAULT_DIR
 
 
 def check(directory: Path) -> int:
@@ -41,11 +56,11 @@ def check(directory: Path) -> int:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--dir", default=str(DEFAULT_DIR), help="target directory")
+    parser.add_argument("--dir", default=None, help="target directory (default: $ONNX_MODEL_DIR or backend/models/e5-small-onnx)")
     parser.add_argument("--check", action="store_true", help="verify the files only")
     parser.add_argument("--force", action="store_true", help="re-download even if present")
     args = parser.parse_args()
-    target = Path(args.dir).expanduser()
+    target = Path(args.dir).expanduser() if args.dir else default_target()
 
     if args.check:
         return check(target)
