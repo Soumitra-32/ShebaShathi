@@ -10,7 +10,8 @@ import {
 } from "../../lib/api";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "../../lib/language";
-import { Bot, Loader2, RotateCcw, Send, ShieldCheck, Sparkles, User } from "lucide-react";
+import { Bot, ClipboardCheck, Loader2, RotateCcw, Send, ShieldCheck, Sparkles, User } from "lucide-react";
+import IntakeCard from "../../components/intake-card";
 
 type Lang = "bn" | "en";
 
@@ -115,6 +116,7 @@ export default function CopilotPage() {
   const [loading, setLoading] = useState(false);
   const [wakingUp, setWakingUp] = useState(false);
   const [error, setError] = useState("");
+  const [mode, setMode] = useState<"chat" | "intake">("chat");
   const nextId = useRef(1);
   const slowTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -141,6 +143,29 @@ export default function CopilotPage() {
   useEffect(() => () => {
     if (slowTimerRef.current) clearTimeout(slowTimerRef.current);
   }, []);
+
+  // Deep links such as /copilot#intake open the checklist preparation view.
+  useEffect(() => {
+    const syncFromHash = () => {
+      if (window.location.hash === "#intake") setMode("intake");
+    };
+    syncFromHash();
+    window.addEventListener("hashchange", syncFromHash);
+    return () => window.removeEventListener("hashchange", syncFromHash);
+  }, []);
+
+  // Bring the checklist panel into view when the intake tab is opened.
+  useEffect(() => {
+    if (mode !== "intake") return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    document.getElementById("intake")?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+  }, [mode]);
+
+  function changeMode(next: "chat" | "intake") {
+    setMode(next);
+    const url = next === "intake" ? "#intake" : `${window.location.pathname}${window.location.search}`;
+    window.history.replaceState(null, "", url);
+  }
 
   const selected = useMemo(
     () => services.find((service) => service.service_id === serviceId) ?? null,
@@ -207,7 +232,7 @@ export default function CopilotPage() {
             <h1 className="text-3xl font-bold text-slate-900">{t("copilot.title")}</h1>
             <p className="mt-2 max-w-2xl text-slate-600">{t("copilot.intro")}</p>
           </div>
-          {messages.length > 0 && (
+          {mode === "chat" && messages.length > 0 && (
             <button
               type="button"
               onClick={reset}
@@ -218,6 +243,38 @@ export default function CopilotPage() {
           )}
         </header>
 
+        <div
+          role="tablist"
+          aria-label={t("copilot.mode_label")}
+          className="mb-6 inline-flex w-full flex-wrap gap-1 rounded-xl border border-slate-200 bg-white p-1 shadow-sm sm:w-auto"
+        >
+          <button
+            type="button"
+            role="tab"
+            aria-selected={mode === "chat"}
+            onClick={() => changeMode("chat")}
+            className={`inline-flex min-h-10 flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition sm:flex-none ${
+              mode === "chat" ? "bg-indigo-700 text-white" : "text-slate-600 hover:bg-slate-100"
+            }`}
+          >
+            <Bot size={16} aria-hidden="true" /> {t("copilot.mode_chat")}
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={mode === "intake"}
+            onClick={() => changeMode("intake")}
+            className={`inline-flex min-h-10 flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition sm:flex-none ${
+              mode === "intake" ? "bg-indigo-700 text-white" : "text-slate-600 hover:bg-slate-100"
+            }`}
+          >
+            <ClipboardCheck size={16} aria-hidden="true" /> {t("copilot.mode_intake")}
+          </button>
+        </div>
+
+        {mode === "intake" && <IntakeCard embedded />}
+
+        {mode === "chat" && (
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="lg:col-span-2">
             <section className="flex min-h-[560px] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
@@ -326,6 +383,11 @@ export default function CopilotPage() {
                               )}
                               {message.response.generation_mode === "extractive" && (
                                 <span className="text-slate-500">{t("copilot.extractive")}</span>
+                              )}
+                              {message.response.generation_mode === "screened_local" && (
+                                <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 font-semibold text-slate-700">
+                                  <ShieldCheck size={13} aria-hidden="true" /> {t("copilot.localPrivacy")}
+                                </span>
                               )}
                             </div>
                             <CitationList citations={message.response.citations} title={t("copilot.source")} />
@@ -437,6 +499,7 @@ export default function CopilotPage() {
             </section>
           </aside>
         </div>
+        )}
       </div>
     </main>
   );

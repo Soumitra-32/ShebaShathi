@@ -12,8 +12,8 @@
   "how_to_check": {
     "title_bn": "স্ট্যাটাস কোথায় ও কীভাবে দেখবেন",
     "title_en": "Where and how to check your status",
-    "text_bn": "সরকারি স্ট্যাটাস পেজে পাসপোর্ট অফিস থেকে পাওয়া ডেলিভারি স্লিপের অ্যাপলিকেশন আইডি অথবা অনলাইন আবেদনের Online Registration ID (OID) দিয়ে, জন্মতারিখসহ স্ট্যাটাস দেখা যায়। এই সাইটে দয়া করে কোনো আইডি বা জন্মতারিখ না দিয়ে সরাসরি সরকারি পেজে স্বয়ং চেক করুন।",
-    "text_en": "On the official status page you enter the Application ID from the delivery slip (issued by the Passport Office) or the Online Registration ID (OID) from your online application, together with your date of birth. Please do not enter any ID or date of birth in this site; check the live status yourself on the official page.",
+    "text_bn": "সরকারি স্ট্যাটাস পেজে (https://www.epassport.gov.bd/authorization/application-status) ডেলিভারি স্লিপের অ্যাপলিকেশন আইডি অথবা অনলাইন আবেদনের Online Registration ID (OID), সাথে জন্মতারিখ দিয়ে স্ট্যাটাস দেখুন। এই সাইট কখনও এই তথ্য চায় না।",
+    "text_en": "Go to the official status page (https://www.epassport.gov.bd/authorization/application-status) and enter the Application ID from your delivery slip, or the Online Registration ID (OID) from your online application, together with your date of birth. This site never asks for those details.",
     "official_links": [
       {"label_bn": "সরকারি স্ট্যাটাস পেজ (epassport.gov.bd)", "label_en": "Official status page (epassport.gov.bd)", "url": "https://www.epassport.gov.bd/authorization/application-status"},
       {"label_bn": "সরকারি ই-পাসপোর্ট পোর্টাল", "label_en": "Official e-Passport portal", "url": "https://www.epassport.gov.bd/"}

@@ -48,3 +48,50 @@ def contains_identity_number(text: str) -> bool:
         or _MRZ_RE.search(text)
         or _CONTEXT_RE.search(text)
     )
+
+
+# Secret words that should never travel to a third-party model provider, even
+# without a number next to them (credentials, codes, card data).
+_SECRET_TERMS = (
+    "password", "pass word", "passcode", "pass phrase", "passphrase",
+    "one time code", "one-time code", "onetime code", "verification code",
+    "login code", "security code", "cvv", "cvc", "card number", "card pin",
+    "net banking password", "netbanking password",
+    "পাসওয়ার্ড", "গোপন নম্বর", "গোপন কোড", "ওটিপি", "নিরাপত্তা কোড", "পিন নম্বর",
+)
+
+_SECRET_RE = re.compile(
+    "|".join(re.escape(term) for term in _SECRET_TERMS),
+    re.IGNORECASE,
+)
+
+
+def contains_sensitive_data(text: str) -> bool:
+    """Broader screen for content that must not be sent to an LLM provider.
+
+    Everything ``contains_identity_number`` catches, plus secret-word mentions
+    (passwords, OTPs, card data). Used by the chat layer: a message matching
+    this is answered locally instead of being forwarded to the provider.
+    """
+    if not text:
+        return False
+    return contains_identity_number(text) or bool(_SECRET_RE.search(text))
+
+
+# Appended (never a standalone message) when a question was answered locally
+# because screening matched. It never quotes or hints at the matched content.
+SCREENED_NOTE_BN = (
+    " — নিরাপত্তার স্বার্থে ব্যক্তিগত নম্বর বা কোডের সম্ভাবনা থাকা বার্তা "
+    "বাইরের কোনো এআই সেবায় পাঠানো হয় না; এই উত্তর এখানেই, যাচাইকৃত উৎস "
+    "থেকে তৈরি হয়েছে। সংক্ষিপ্ত প্রশ্ন লিখলে আরও ভালো উত্তর পাবেন।"
+)
+SCREENED_NOTE_EN = (
+    " — For safety, messages that appear to contain personal numbers or "
+    "secret codes are never sent to the external AI service; this answer "
+    "was generated locally from verified sources. A short question will get a better answer."
+)
+
+
+def screened_note(language: str) -> str:
+    """Privacy note for locally answered (screened) questions."""
+    return SCREENED_NOTE_EN if language == "en" else SCREENED_NOTE_BN

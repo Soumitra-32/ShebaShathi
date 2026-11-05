@@ -3,11 +3,10 @@
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
-import { Menu, X, MessageCircle } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { LanguageProvider, useLanguage } from "../lib/language";
 import { warmupBackend } from "../lib/api";
 import "../lib/i18n";
-import ChatModal from "../components/ChatModal";
 import BuildathonBadge from "../components/buildathon-badge";
 
 /** Client-side nav with one global language switcher and a collapsible menu. */
@@ -35,7 +34,7 @@ function SiteNav() {
   }, [menuOpen]);
 
   const navItems = [
-    { href: "/#intake", key: "nav.intake" },
+    { href: "/copilot#intake", key: "nav.intake" },
     { href: "/services", key: "nav.services" },
     { href: "/services/epassport/status", key: "nav.status" },
     { href: "/redflag", key: "nav.fees" },
@@ -83,7 +82,6 @@ function SiteNav() {
 }
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
-  const [chatOpen, setChatOpen] = useState(false);
   // Wake the free-tier backend while the visitor browses (no user data sent).
   useEffect(() => {
     warmupBackend();
@@ -92,15 +90,6 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     <LanguageProvider>
       <SiteNav />
       {children}
-      {/* Floating chat button */}
-      <button
-        onClick={() => setChatOpen(true)}
-        className="fixed bottom-4 right-4 bg-blue-600 text-white rounded-full p-3 shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
-        aria-label="Open chat"
-      >
-        <MessageCircle size={24} aria-hidden="true" />
-      </button>
-      <ChatModal open={chatOpen} onClose={() => setChatOpen(false)} />
     </LanguageProvider>
   );
 }

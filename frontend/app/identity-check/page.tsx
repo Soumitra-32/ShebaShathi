@@ -15,6 +15,7 @@ import { useLanguage } from "../../lib/language";
 
 type Lang = "bn" | "en";
 type DocType = "birth" | "nid" | "passport" | "other";
+type CompareMode = "same" | "different";
 
 const MAX_DOCUMENTS = 3;
 const MAX_FILE_BYTES = 12 * 1024 * 1024;
@@ -35,7 +36,7 @@ const copy = {
     title: "তথ্য মিল যাচাই",
     language: "English",
     intro:
-      "নথির ছবি বা PDF যোগ করলে সেগুলোর লেখা আপনার ব্রাউজারেই পড়া হয় এবং যেসব ঘর বেছে নেবেন সেগুলোর তুলনা দেখানো হয়।",
+      "তুলনার ধরন বেছে নিন — একই ধরনের নথি, নাকি ভিন্ন নথি। নথির ছবি বা PDF যোগ করলে সেগুলোর লেখা আপনার ব্রাউজারেই পড়া হয় এবং সব ঘরের পূর্ণ তালিকা স্বয়ংক্রিয়ভাবে তৈরি হয়। কিছু টাইপ করতে হয় না।",
     privacyTitle: "গোপনীয়তা",
     privacy1:
       "আপলোড কোথাও হয় না। ছবি, PDF, পড়া লেখা ও তুলনার ফলাফল সবই শুধু আপনার ব্রাউজারের মেমোরিতে থাকে এবং পাতা বন্ধ বা রিলোড করলে মুছে যায়।",
@@ -44,7 +45,6 @@ const copy = {
     privacy3:
       "তবে এটি নথির সত্যতা প্রমাণ করে না—এটি কেবল আপনার দেওয়া নথিতে লেখা তথ্যের পার্থক্য দেখায়।",
     addFile: "নথি যোগ করুন",
-    addManual: "মানুলি তুলনা যোগ করুন",
     fileHint: "শুধু PNG/JPEG ছবি বা PDF (সর্বোচ্চ ১২ এমবি)।",
     docType: "নথির ধরন",
     remove: "সরান",
@@ -57,7 +57,14 @@ const copy = {
     fileMalformed: "ফাইলটির প্রকৃত বিষয়বস্তু পড়া গেল না।",
     fileEmpty: "ফাইলটি খালি।",
     fileLimit: "সর্বোচ্চ ৩টি নথি যোগ করা যাবে।",
-    fieldsTitle: "কোন কোন তথ্য তুলনা করবেন",
+    modeTitle: "তুলনার ধরন",
+    modeSame: "একই ধরনের নথি",
+    modeSameHint: "একই সার্টিফিকেটের দুটি কপি বা সংস্করণ (যেমন দুটি NID বা দুটি জন্ম সনদ) ঘরে ঘরে মিলিয়ে দেখে।",
+    modeDifferent: "ভিন্ন নথির ক্রস-চেক",
+    modeDifferentHint: "ভিন্ন নথিতে একই তথ্য মিলছে কি না দেখে — যেমন NID বনাম পাসপোর্টে নাম ও জন্মতারিখ।",
+    modeWarnSame: "'একই ধরনের নথি' মোড সবচেয়ে কাজের হয় যখন সব নথির ধরন একই। প্রয়োজন হলে প্রতিটি নথির ধরন বদলে নিন, বা 'ভিন্ন নথির ক্রস-চেক' বেছে নিন।",
+    modeWarnDifferent: "'ভিন্ন নথির ক্রস-চেক' মোড মানানসই হয় যখন নথিগুলোর ধরন আলাদা। সব নথি একই ধরনের হলে 'একই ধরনের নথি' মোড বেছে নিন।",
+    valueNote: "ঘরের মানগুলো নথির ফাইল থেকে স্বয়ংক্রিয়ভাবে পড়া (OCR) হয়েছে; OCR ভুল পড়তে পারে — মূল নথির সাথে মিলিয়ে নিন।",
     field: "তথ্য",
     status: "অবস্থা",
     clear: "সব মুছে ফেলুন",
@@ -65,13 +72,10 @@ const copy = {
     differ: "মিলেনি",
     missing: "তথ্য পাওয়া যায়নি",
     needsVerification: "যাচাই প্রয়োজন",
-    reason_insufficient_values: "তুলনার জন্য অন্তত দুটি মান দরকার।",
+    reason_insufficient_values: "তুলনার জন্য অন্তত দুটি নথিতে এই মানটি পড়া দরকার।",
     reason_all_equal: "পড়া লেখা এক হিসেবে মিলেছে।",
     reason_values_differ: "লেখা আলাদা—নিচের মানগুলো দেখুন।",
     reason_ambiguous_date: "তারিখের ফরম্যাট স্পষ্ট নয়, তাই দিন ও মাসের ক্রম নিশ্চিত করা যায়নি।",
-    reason_unconfirmed_value: "ফাইল থেকে পড়া লেখাটি এখনও যাচাই করা হয়নি।",
-    confirm: "যাচাই করেছি",
-    confirmHint: "পড়া লেখা ভুল হলে সরাসরি সংশোধন করুন।",
     boundaryTitle: "এই টুল কী করে না",
     boundary:
       "এটি শুধু লেখার পার্থক্য দেখায়। কোন তথ্যটি সঠিক বা কোনটি পরিবর্তন করতে হবে তা এটি ঠিক করে না, কোনো নথি বা ব্যক্তিকে যাচাই করে না।",
@@ -80,14 +84,14 @@ const copy = {
     nidGuide: "NID সংশোধন",
     disclaimer: "ShebaShathi BD একটি স্বাধীন নাগরিক সহায়তা টুল, কোনো সরকারি ওয়েবসাইট নয়।",
     note: "তারিখ বা নামের ফরম্যাট ভিন্ন হলে 'মিলেনি' দেখাতে পারে; এটি বানান বা বিন্যাসের পার্থক্যও ধরতে পারে।",
-    emptyDocs: "তুলনা শুরু করতে অন্তত দুটি নথি বা মানুলি কলাম যোগ করুন।",
+    emptyDocs: "তুলনা শুরু করতে অন্তত দুটি নথি যোগ করুন। বাকি সব স্বয়ংক্রিয়ভাবে হবে—কিছু টাইপ করতে হবে না।",
   },
   en: {
     eyebrow: "Stays in your browser only",
     title: "Document consistency check",
     language: "বাংলা",
     intro:
-      "Add document images or PDFs. Their text is read inside your browser, and only the fields you choose are compared.",
+      "Pick the comparison type — same type of document, or different documents. Add document images or PDFs: their text is read inside your browser and the full list of every field is compared automatically. No typing needed.",
     privacyTitle: "Privacy",
     privacy1:
       "Nothing is uploaded. Images, PDFs, extracted text and the comparison result stay in your browser's memory and are cleared when you close or reload the page.",
@@ -96,7 +100,6 @@ const copy = {
     privacy3:
       "This does not prove that a document is genuine—it only shows differences in the text you supplied.",
     addFile: "Add a document",
-    addManual: "Add a manual column",
     fileHint: "PNG/JPEG images or PDF only (12 MB maximum).",
     docType: "Document type",
     remove: "Remove",
@@ -109,7 +112,14 @@ const copy = {
     fileMalformed: "The real content of the file could not be read.",
     fileEmpty: "The file is empty.",
     fileLimit: "At most 3 documents can be added.",
-    fieldsTitle: "Which details to compare",
+    modeTitle: "Comparison type",
+    modeSame: "Same type of document",
+    modeSameHint: "Two copies or versions of the same certificate (for example two NIDs or two birth certificates), compared field by field.",
+    modeDifferent: "Cross-check different documents",
+    modeDifferentHint: "Checks that the same details match across different documents — for example name and date of birth on an NID versus a passport.",
+    modeWarnSame: "'Same type of document' mode works best when every document is the same type. Change the type under each document above, or choose 'Cross-check different documents'.",
+    modeWarnDifferent: "'Cross-check different documents' mode fits when the types differ. If all documents are the same type, choose 'Same type of document' instead.",
+    valueNote: "The values below were read from the document files automatically (OCR); OCR can misread—check them against the originals.",
     field: "Detail",
     status: "Status",
     clear: "Clear all",
@@ -117,13 +127,10 @@ const copy = {
     differ: "Differs",
     missing: "Not available",
     needsVerification: "Needs verification",
-    reason_insufficient_values: "Fill at least two values to compare.",
+    reason_insufficient_values: "This value must be readable in at least two documents to compare.",
     reason_all_equal: "The text that was read is the same.",
     reason_values_differ: "The text differs—see the values below.",
     reason_ambiguous_date: "The date format is unclear, so the day and month order could not be confirmed.",
-    reason_unconfirmed_value: "The text read from the file has not been confirmed yet.",
-    confirm: "I checked it",
-    confirmHint: "Correct the text directly if the reading was wrong.",
     boundaryTitle: "What this tool does not do",
     boundary:
       "It only shows text differences. It does not decide which value is correct or which one to change, and it does not verify any document or person.",
@@ -132,7 +139,7 @@ const copy = {
     nidGuide: "NID correction",
     disclaimer: "ShebaShathi BD is an independent citizen-help tool, not a government website.",
     note: "Different date or name formats can appear as “differs”; it can also flag spelling or formatting differences.",
-    emptyDocs: "Add at least two documents or manual columns to start comparing.",
+    emptyDocs: "Add at least two documents to start comparing. Everything else happens automatically—no typing needed.",
   },
 } satisfies Record<Lang, Record<string, string>>;
 
@@ -141,23 +148,21 @@ interface ComparisonDoc {
   type: DocType;
   name: string;
   size: number;
-  kind: FileKind | "manual";
+  kind: FileKind;
   previewUrl: string | null;
   status: "reading" | "ready" | "error";
   error?: string;
   truncated?: boolean;
   values: Record<FieldKey, string>;
-  confirmed: Record<FieldKey, boolean>;
 }
 
 const emptyValues = (): Record<FieldKey, string> => ({ name: "", dob: "", father: "", mother: "" });
-const emptyConfirmed = (): Record<FieldKey, boolean> => ({ name: false, dob: false, father: false, mother: false });
 
 export default function IdentityCheckPage() {
   const { lang } = useLanguage();
   const t = copy[lang];
   const [documents, setDocuments] = useState<ComparisonDoc[]>([]);
-  const [selectedFields, setSelectedFields] = useState<FieldKey[]>([...FIELD_KEYS]);
+  const [mode, setMode] = useState<CompareMode>("different");
   const [rejections, setRejections] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const documentsRef = useRef<ComparisonDoc[]>([]);
@@ -198,11 +203,10 @@ export default function IdentityCheckPage() {
         type: "other",
         name: accepted.name,
         size: accepted.size,
-        kind: accepted.kind,
+        kind: accepted.kind as FileKind,
         previewUrl,
         status: "reading",
         values: emptyValues(),
-        confirmed: emptyConfirmed(),
       };
       setDocuments((previous) => [...previous, document]);
 
@@ -213,11 +217,10 @@ export default function IdentityCheckPage() {
           previous.map((item) => {
             if (item.id !== id) return item;
             const values = { ...emptyValues() };
-            const confirmed = { ...emptyConfirmed() };
             for (const suggestion of suggestions) {
               if (!values[suggestion.field]) values[suggestion.field] = suggestion.value;
             }
-            return { ...item, status: "ready", values, confirmed, truncated: extracted.truncated };
+            return { ...item, status: "ready", values, truncated: extracted.truncated };
           })
         );
       } catch {
@@ -229,27 +232,6 @@ export default function IdentityCheckPage() {
       }
     }
     if (fileInputRef.current) fileInputRef.current.value = "";
-  };
-
-  const addManual = () => {
-    if (documents.length >= MAX_DOCUMENTS) {
-      setRejections([t.fileLimit]);
-      return;
-    }
-    setDocuments((previous) => [
-      ...previous,
-      {
-        id: `${Date.now()}-manual`,
-        type: "other",
-        name: "",
-        size: 0,
-        kind: "manual",
-        previewUrl: null,
-        status: "ready",
-        values: emptyValues(),
-        confirmed: emptyConfirmed(),
-      },
-    ]);
   };
 
   const removeDocument = (id: string) => {
@@ -266,28 +248,6 @@ export default function IdentityCheckPage() {
     );
   };
 
-  const setValue = (id: string, field: FieldKey, value: string) => {
-    setDocuments((previous) =>
-      previous.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              values: { ...item.values, [field]: value },
-              confirmed: { ...item.confirmed, [field]: true },
-            }
-          : item
-      )
-    );
-  };
-
-  const confirmValue = (id: string, field: FieldKey) => {
-    setDocuments((previous) =>
-      previous.map((item) =>
-        item.id === id ? { ...item, confirmed: { ...item.confirmed, [field]: true } } : item
-      )
-    );
-  };
-
   const clearAll = () => {
     setDocuments((previous) => {
       for (const document of previous) releasePreviewUrl(document.previewUrl);
@@ -296,23 +256,34 @@ export default function IdentityCheckPage() {
     setRejections([]);
   };
 
-  const toggleField = (field: FieldKey) => {
-    setSelectedFields((previous) =>
-      previous.includes(field) ? previous.filter((item) => item !== field) : [...previous, field]
-    );
-  };
-
+  // The full comparison list is always produced automatically: every field,
+  // every document, no manual selection. OCR values are machine-read only.
   const comparisons = useMemo(() => {
     const valuesByField = {} as Record<FieldKey, ComparedValue[]>;
     for (const field of FIELD_KEYS) {
       valuesByField[field] = documents.map((document) => ({
         docId: document.id,
         value: document.values[field] ?? "",
-        confirmed: document.confirmed[field] ?? false,
+        confirmed: true,
       }));
     }
-    return compareFields(selectedFields, valuesByField);
-  }, [documents, selectedFields]);
+    return compareFields(FIELD_KEYS, valuesByField);
+  }, [documents]);
+
+  const readyTypes = useMemo(
+    () => [...new Set(documents.filter((doc) => doc.status === "ready").map((doc) => doc.type))],
+    [documents]
+  );
+  const modeAdvisory =
+    documents.length >= 2 && documents.every((doc) => doc.status === "ready")
+      ? mode === "same"
+        ? readyTypes.length > 1
+          ? t.modeWarnSame
+          : null
+        : readyTypes.length === 1
+          ? t.modeWarnDifferent
+          : null
+      : null;
 
   const statusStyle = (status: string) =>
     status === "match"
@@ -342,9 +313,43 @@ export default function IdentityCheckPage() {
         </section>
 
         <section className="mb-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 className="text-lg font-bold text-slate-900">{t.modeTitle}</h2>
+          <div role="radiogroup" aria-label={t.modeTitle} className="mt-3 grid gap-3 sm:grid-cols-2">
+            <button
+              type="button"
+              role="radio"
+              aria-checked={mode === "same"}
+              onClick={() => setMode("same")}
+              className={`min-h-11 rounded-xl border p-4 text-left ${
+                mode === "same"
+                  ? "border-emerald-600 bg-emerald-50 ring-2 ring-emerald-200"
+                  : "border-slate-300 bg-white hover:border-slate-400"
+              }`}
+            >
+              <span className="block font-bold text-slate-900">{t.modeSame}</span>
+              <span className="mt-1 block text-sm text-slate-600">{t.modeSameHint}</span>
+            </button>
+            <button
+              type="button"
+              role="radio"
+              aria-checked={mode === "different"}
+              onClick={() => setMode("different")}
+              className={`min-h-11 rounded-xl border p-4 text-left ${
+                mode === "different"
+                  ? "border-emerald-600 bg-emerald-50 ring-2 ring-emerald-200"
+                  : "border-slate-300 bg-white hover:border-slate-400"
+              }`}
+            >
+              <span className="block font-bold text-slate-900">{t.modeDifferent}</span>
+              <span className="mt-1 block text-sm text-slate-600">{t.modeDifferentHint}</span>
+            </button>
+          </div>
+        </section>
+
+        <section className="mb-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <h2 className="text-lg font-bold text-slate-900">{t.addFile}</h2>
           <p className="mt-1 text-sm text-slate-600">{t.fileHint}</p>
-          <div className="mt-3 flex flex-wrap items-center gap-3">
+          <div className="mt-3">
             <input
               ref={fileInputRef}
               id="identity-documents"
@@ -354,13 +359,6 @@ export default function IdentityCheckPage() {
               onChange={(event) => void addFiles(event.target.files)}
               className="block w-full max-w-sm text-sm"
             />
-            <button
-              type="button"
-              onClick={addManual}
-              className="min-h-11 rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-800"
-            >
-              {t.addManual}
-            </button>
           </div>
           {rejections.length > 0 && (
             <ul role="alert" className="mt-3 space-y-1 text-xs text-red-700">
@@ -384,16 +382,12 @@ export default function IdentityCheckPage() {
                       />
                     ) : (
                       <span className="flex h-14 w-14 items-center justify-center rounded bg-slate-100 text-xs font-semibold text-slate-600">
-                        {document.kind === "manual" ? "—" : document.kind === "pdf" ? "PDF" : "IMG"}
+                        {document.kind === "pdf" ? "PDF" : "IMG"}
                       </span>
                     )}
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium text-slate-900">
-                        {document.name || t.addManual}
-                      </p>
-                      {document.kind !== "manual" && (
-                        <p className="text-xs text-slate-600">{formatBytes(document.size)}</p>
-                      )}
+                      <p className="truncate text-sm font-medium text-slate-900">{document.name}</p>
+                      <p className="text-xs text-slate-600">{formatBytes(document.size)}</p>
                       {document.status === "reading" && (
                         <p role="status" className="text-xs text-slate-600">
                           {t.reading}
@@ -404,7 +398,7 @@ export default function IdentityCheckPage() {
                           {document.error}
                         </p>
                       )}
-                      {document.status === "ready" && document.kind !== "manual" && (
+                      {document.status === "ready" && (
                         <p className="text-xs text-emerald-700">
                           {t.ready}
                           {document.truncated && (
@@ -444,104 +438,80 @@ export default function IdentityCheckPage() {
           )}
         </section>
 
-        <section className="mb-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="text-lg font-bold text-slate-900">{t.fieldsTitle}</h2>
-          <div className="mt-3 flex flex-wrap gap-3">
-            {FIELD_KEYS.map((field) => (
-              <label key={field} className="flex min-h-11 items-center gap-2 text-sm text-slate-800">
-                <input
-                  type="checkbox"
-                  checked={selectedFields.includes(field)}
-                  onChange={() => toggleField(field)}
-                  className="h-5 w-5 rounded border-slate-400 accent-emerald-700"
-                />
-                {FIELD_LABELS[lang][field]}
-              </label>
-            ))}
-          </div>
-        </section>
-
         {documents.length === 0 ? (
           <p className="rounded-2xl border border-slate-200 bg-white p-8 text-center text-slate-500">
             {t.emptyDocs}
           </p>
         ) : (
-          <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
-            <table className="w-full min-w-[640px] border-collapse text-left text-sm">
-              <caption className="sr-only">{t.title}</caption>
-              <thead>
-                <tr className="border-b border-slate-200 bg-slate-50">
-                  <th scope="col" className="p-3 font-semibold text-slate-700">
-                    {t.field}
-                  </th>
-                  {documents.map((document) => (
-                    <th key={document.id} scope="col" className="p-3 font-semibold text-slate-700">
-                      {DOC_LABELS[lang][document.type]}
+          <section>
+            {modeAdvisory && (
+              <p role="status" className="mb-3 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+                {modeAdvisory}
+              </p>
+            )}
+            {documents.some((doc) => doc.status === "ready") && (
+              <p className="mb-3 text-xs text-slate-500">{t.valueNote}</p>
+            )}
+            <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+              <table className="w-full min-w-[640px] border-collapse text-left text-sm">
+                <caption className="sr-only">{t.title}</caption>
+                <thead>
+                  <tr className="border-b border-slate-200 bg-slate-50">
+                    <th scope="col" className="p-3 font-semibold text-slate-700">
+                      {t.field}
                     </th>
-                  ))}
-                  <th scope="col" className="p-3 font-semibold text-slate-700">
-                    {t.status}
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {comparisons.map((comparison) => (
-                  <tr key={comparison.field} className="border-b border-slate-100 last:border-0">
-                    <th scope="row" className="p-3 align-top font-medium text-slate-800">
-                      {FIELD_LABELS[lang][comparison.field]}
+                    {documents.map((document, index) => (
+                      <th key={document.id} scope="col" className="p-3 font-semibold text-slate-700">
+                        {DOC_LABELS[lang][document.type]}
+                        {documents.length > 1 && <span aria-hidden="true"> · {index + 1}</span>}
+                        {document.name && (
+                          <span className="block max-w-[180px] truncate text-xs font-normal text-slate-500">
+                            {document.name}
+                          </span>
+                        )}
+                      </th>
+                    ))}
+                    <th scope="col" className="p-3 font-semibold text-slate-700">
+                      {t.status}
                     </th>
-                    {documents.map((document) => {
-                      const value = document.values[comparison.field] ?? "";
-                      const confirmed = document.confirmed[comparison.field] ?? false;
-                      return (
-                        <td key={document.id} className="p-3 align-top">
-                          <label className="sr-only" htmlFor={`value-${document.id}-${comparison.field}`}>
-                            {`${FIELD_LABELS[lang][comparison.field]} — ${DOC_LABELS[lang][document.type]}`}
-                          </label>
-                          <input
-                            id={`value-${document.id}-${comparison.field}`}
-                            type="text"
-                            autoComplete="off"
-                            spellCheck={false}
-                            maxLength={120}
-                            value={value}
-                            onChange={(event) => setValue(document.id, comparison.field, event.target.value)}
-                            className="min-h-11 w-full rounded-lg border border-slate-300 px-3 py-2"
-                          />
-                          {value && !confirmed && (
-                            <button
-                              type="button"
-                              onClick={() => confirmValue(document.id, comparison.field)}
-                              className="mt-1 text-xs font-medium text-amber-700 underline"
-                            >
-                              {t.confirm}
-                            </button>
-                          )}
-                        </td>
-                      );
-                    })}
-                    <td className="p-3 align-top">
-                      <span
-                        aria-live="polite"
-                        className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${statusStyle(comparison.status)}`}
-                      >
-                        {comparison.status === "match"
-                          ? t.match
-                          : comparison.status === "differ"
-                            ? t.differ
-                            : comparison.status === "needs_verification"
-                              ? t.needsVerification
-                              : t.missing}
-                      </span>
-                      <p className="mt-1 text-xs text-slate-600">
-                        {t[`reason_${comparison.reason}` as keyof typeof t]}
-                      </p>
-                    </td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {comparisons.map((comparison) => (
+                    <tr key={comparison.field} className="border-b border-slate-100 last:border-0">
+                      <th scope="row" className="p-3 align-top font-medium text-slate-800">
+                        {FIELD_LABELS[lang][comparison.field]}
+                      </th>
+                      {documents.map((document) => (
+                        <td key={document.id} className="p-3 align-top">
+                          <span className="block break-words whitespace-pre-wrap text-slate-800">
+                            {(document.values[comparison.field] ?? "").trim() || "—"}
+                          </span>
+                        </td>
+                      ))}
+                      <td className="p-3 align-top">
+                        <span
+                          aria-live="polite"
+                          className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${statusStyle(comparison.status)}`}
+                        >
+                          {comparison.status === "match"
+                            ? t.match
+                            : comparison.status === "differ"
+                              ? t.differ
+                              : comparison.status === "needs_verification"
+                                ? t.needsVerification
+                                : t.missing}
+                        </span>
+                        <p className="mt-1 text-xs text-slate-600">
+                          {t[`reason_${comparison.reason}` as keyof typeof t]}
+                        </p>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
         )}
 
         <div className="mt-4 flex flex-wrap items-center gap-3">

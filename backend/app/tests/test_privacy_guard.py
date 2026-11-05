@@ -19,6 +19,18 @@ def test_identity_numbers_are_detected_but_short_answers_are_allowed():
     assert contains_identity_number("48 pages, 5 years, regular") is False
 
 
+def test_sensitive_data_screen_adds_secret_terms():
+    from app.privacy import contains_sensitive_data
+
+    assert contains_sensitive_data("NID 1234567890") is True
+    assert contains_sensitive_data("my password is hunter2") is True
+    assert contains_sensitive_data(  # Bangla secret terms are screened too
+        "আমার পাসওয়ার্ড ভুলে গেছি"
+    ) is True
+    assert contains_sensitive_data("what is the passport fee?") is False
+    assert contains_sensitive_data("") is False
+
+
 def test_guard_blocks_the_four_adversarial_categories():
     assert guard.classify("Which agent is fastest for passport?") == "intermediary"
     assert guard.classify("Bribe speeds passport?") == "bribe"
@@ -50,12 +62,17 @@ def test_copilot_blocks_unsafe_intent_before_retrieval(monkeypatch):
     assert "agent" in body["answer"].lower()
 
 
-def test_copilot_rejects_identity_numbers():
+def test_copilot_screens_sensitive_question_without_rejection(monkeypatch):
+    monkeypatch.setattr("app.rag.retriever.retrieve", lambda *a, **k: [])
     response = client.post("/api/copilot/ask", json={
         "question": "Check my NID 1234567890", "language": "en",
     })
-    assert response.status_code == 422
-    assert response.json()["error"]["code"] == "IDENTITY_DATA_REJECTED"
+    assert response.status_code == 200
+    body = response.json()
+    assert body["grounded"] is False
+    assert body["safety_blocked"] is True
+    assert body["citations"] == []
+    assert body["llm_provider"] == "none"
 
 
 def test_rate_limiter_allows_the_limit_then_returns_retry_after():

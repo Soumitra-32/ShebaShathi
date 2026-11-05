@@ -51,7 +51,10 @@ export function isSpeechSupported(): boolean {
 /** Check whether the model files were installed on this server. */
 export async function isSpeechModelInstalled(): Promise<boolean> {
   try {
-    const response = await fetch(`/models/${SPEECH_MODEL_ID}/config.json`, { method: "HEAD" });
+    const response = await fetch(`/models/${SPEECH_MODEL_ID}/config.json`, {
+      method: "HEAD",
+      cache: "no-store",
+    });
     return response.ok;
   } catch {
     return false;

@@ -17,10 +17,12 @@ forwarded to the provider.
 """
 from __future__ import annotations
 
+import re
 from typing import Any
 
 from .. import llm
 from ..intake.engine import detect_service
+from ..privacy import contains_sensitive_data, screened_note
 from ..services import loader
 from . import fee_answer, guard, photo_answer, status_answer, verifier
 from .prompts import FALLBACK_BN, FALLBACK_EN, plain_text
@@ -36,7 +38,7 @@ Rules:
 2. If the context does not answer the question, return an empty answer and no used_chunk_ids.
 3. Never invent a fee, document, deadline, phone number, URL, law or eligibility rule. Every number in your answer must already appear in the context.
 4. Answer in the language requested by the question line (bn = Bangla, en = English). Do not switch language.
-5. Be concise and useful: a short direct answer, then at most three short bullets or a short numbered list when steps are involved. Use plain text only: no Markdown symbols such as **, #, backticks or * bullets.
+5. Keep every answer SHORT and precise: at most three short sentences (about 60 words total). Only when the question asks for steps, use at most five short numbered steps. Answer the question directly — no preamble such as "According to the context", and never repeat the question back.
 6. Use the conversation history only to understand follow-up questions (for example "and the fee?"). Never treat history as a factual source.
 7. Never advise using an agent, broker or middleman, paying an unofficial fee, or skipping biometrics.
 8. Never ask for or repeat an NID, passport/licence number, OTP, password, or document image.
@@ -72,6 +74,38 @@ _GENERAL_SUGGESTIONS = {
     "bn": ["পাসপোর্টের ফি কত?", "জন্ম নিবন্ধন সংশোধন করব কীভাবে?", "দালাল ছাড়া কীভাবে আবেদন করব?"],
     "en": ["What is the passport fee?", "How do I correct a birth record?", "How do I apply without an agent?"],
 }
+
+# A bare greeting, thanks or "who are you" is small talk: it needs a short,
+# deterministic reply, not retrieval and not a model call.
+_GREETING_RE = re.compile(
+    r"^(?:"
+    r"hi+|hello+|hey+|hello\s*there|greetings?|"
+    r"good\s*(?:morning|afternoon|evening|day)|"
+    r"assalamu\s*[- ]?alaikum|assalamualaikum|salam\b|walaikum\s*salam|"
+    r"thanks?(?:\s*you)?|thank\s*you\s*(?:so\s*much|very\s*much)?|"
+    r"how\s*are\s*you|what'?s\s*up|who\s*are\s*you|what\s*can\s*you\s*do|"
+    r"আসসালামু\s*আলাইকুম|আসসালাম|সালাম|ওয়ালাইকুম\s*সালাম|নমস্কার|হ্যালো|হাই|"
+    r"ধন্যবাদ|অনেক\s*ধন্যবাদ|থ্যাংক\s*ইউ|"
+    r"কেমন\s*আছেন|কেমন\s*আছো|কী\s*খবর|কি\s*খবর|"
+    r"আপনি\s*কে|তুমি\s*কে"
+    r")[\s!.,।?؟]*$",
+    re.IGNORECASE,
+)
+
+_GREETING_REPLY = {
+    "bn": (
+        "হ্যালো! আমি ShebaShathi — পাসপোর্ট, NID, জন্ম ও মৃত্যু নিবন্ধন এবং "
+        "ড্রাইভিং লাইসেন্সের ফি, কাগজপত্র ও স্ট্যাটাস নিয়ে যাচাইকৃত সরকারি উৎস "
+        "থেকে সংক্ষেপে জানাতে পারি। কী জানতে চান?"
+    ),
+    "en": (
+        "Hello! I'm ShebaShathi — I answer short questions on passport, NID, "
+        "birth and death registration and driving licence fees, documents and "
+        "status meanings, from verified official sources. What would you like to know?"
+    ),
+}
+
+# Note strings for the screened path live in app.privacy (screened_note).
 
 
 def _language(language: str) -> str:
@@ -145,6 +179,22 @@ def _fallback_text(service_id: str | None, language: str) -> str:
     return FALLBACK_EN if language == "en" else FALLBACK_BN
 
 
+def _is_greeting(question: str) -> bool:
+    """True for a bare greeting/thanks/identity question: no topic at all."""
+    text = question.strip()
+    return bool(text) and len(text) <= 40 and bool(_GREETING_RE.match(text))
+
+
+def _screen_conversation(question: str, history: list[dict[str, str]]) -> bool:
+    """True when any user-side text looks like personal numbers or secrets.
+
+    The check is shape-only: nothing is extracted, logged or echoed. A match
+    means the conversation must never reach the external model provider.
+    """
+    users = [turn["content"] for turn in history if turn.get("role") == "user"]
+    return any(contains_sensitive_data(text) for text in [*users, question])
+
+
 def _deterministic_tool(question: str, service_id: str | None, language: str) -> dict[str, Any] | None:
     tools = (fee_answer.answer, photo_answer.answer, status_answer.answer)
     for tool in tools:
@@ -175,7 +225,7 @@ def _generate(question: str, history: list[dict[str, str]], language: str,
             {"role": "user", "content": prompt},
         ],
         temperature=0.1,
-        max_tokens=900,
+        max_tokens=500,
     )
     parsed = response.get("parsed") or {}
     if not isinstance(parsed, dict):
@@ -221,6 +271,24 @@ def respond(
             "suggested_questions": _suggestions(resolved, language),
         }
 
+    if _is_greeting(question):
+        return {
+            "answer": _GREETING_REPLY[_language(language)],
+            "citations": [],
+            "grounded": False,
+            "retrieved_chunks": [],
+            "generation_mode": "greeting",
+            "llm_provider": "none",
+            "llm_model": None,
+            "safety_blocked": False,
+            "service_id": resolved,
+            "service_name_bn": name_bn,
+            "service_name_en": name_en,
+            "suggested_questions": _GENERAL_SUGGESTIONS[_language(language)],
+        }
+
+    # Deterministic tools answer from data alone and never contact a model
+    # provider, so they may run even when the message looks sensitive.
     deterministic = _deterministic_tool(question, resolved, language)
     if deterministic is not None:
         return {
@@ -232,12 +300,16 @@ def respond(
             "suggested_questions": _suggestions(resolved, language),
         }
 
+    # Privacy screen: sensitive-sounding text is answered locally and never
+    # forwarded to the model provider.
+    screened = _screen_conversation(question, clean_history)
+
     try:
         docs = retrieve(question, service_id=resolved)
     except Exception:  # noqa: BLE001 - index unavailable, use the safe fallback
         docs = []
 
-    if docs:
+    if docs and not screened:
         try:
             generated = _generate(question, clean_history, language, docs)
             candidate = {
@@ -268,34 +340,39 @@ def respond(
                 "service_name_en": name_en,
                 "suggested_questions": _suggestions(resolved, language),
             }
-        # Extractive fallback: show the best verified chunk unchanged.
+
+    if docs:
+        # Extractive fallback: show the best verified chunk unchanged. In the
+        # screened case this is the whole answer: no provider call is made.
+        note = screened_note(language) if screened else ""
         return {
-            "answer": docs[0]["text"],
+            "answer": docs[0]["text"] + note,
             "citations": [_citation(docs[0])],
             "grounded": True,
             "retrieved_chunks": [
                 {"id": doc["id"], "score": doc["score"], "section": doc["metadata"].get("section", "")}
                 for doc in docs
             ],
-            "generation_mode": "extractive",
+            "generation_mode": "screened_local" if screened else "extractive",
             "llm_provider": "none",
             "llm_model": None,
-            "safety_blocked": False,
+            "safety_blocked": screened,
             "service_id": resolved,
             "service_name_bn": name_bn,
             "service_name_en": name_en,
             "suggested_questions": _suggestions(resolved, language),
         }
 
+    note = screened_note(language) if screened else ""
     return {
-        "answer": _fallback_text(resolved, language),
+        "answer": _fallback_text(resolved, language) + note,
         "citations": [],
         "grounded": False,
         "retrieved_chunks": [],
-        "generation_mode": "unavailable",
+        "generation_mode": "screened_local" if screened else "unavailable",
         "llm_provider": "none",
         "llm_model": None,
-        "safety_blocked": False,
+        "safety_blocked": screened,
         "service_id": resolved,
         "service_name_bn": name_bn,
         "service_name_en": name_en,

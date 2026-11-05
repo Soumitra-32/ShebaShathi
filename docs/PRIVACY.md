@@ -1,6 +1,6 @@
 # Privacy and local-processing map
 
-> Scope: the AI intake (`/#intake`), the grounded copilot (`/copilot` and the floating assistant), the AI case brief on a verified checklist, the complaint drafter (`/grs`), the document consistency check (`/identity-check`) and the fee checker (`/redflag`).
+> Scope: the AI intake (`/#intake`), the grounded copilot (`/copilot`), the AI case brief on a verified checklist, the complaint drafter (`/grs`), the document consistency check (`/identity-check`) and the fee checker (`/redflag`).
 > Rules for this behaviour live in `docs/SECURITY_ASSESSMENT.md` §3.1.1.
 
 ## What runs where
@@ -9,7 +9,7 @@
 |---|---|---|---|
 | AI intake routing | Backend, then optional LLM | `backend/app/intake/engine.py`: validated catalog + deterministic Bangla/English/Banglish keyword fallback; optional OpenAI-compatible classifier | `POST /api/intake`; if configured, the description is sent to the provider for classification only |
 | Conditional checklist | Backend | `backend/app/services/engine.py` from validated `data/services/*.json` | `POST /api/services/{id}/checklist` |
-| Multi-turn copilot chat | Backend, then optional LLM | Deterministic tools first (`backend/app/rag/fee_answer.py`, `photo_answer.py`, `status_answer.py`), then service-scoped Chroma retrieval + verifier; optional OpenAI-compatible model explains only retrieved excerpts | `POST /api/copilot/chat`; if configured, the question, up to six recent turns and retrieved excerpts are sent to the provider |
+| Multi-turn copilot chat | Backend, then optional LLM | Deterministic tools first (`backend/app/rag/fee_answer.py`, `photo_answer.py`, `status_answer.py`); a deterministic greeting handler for small talk; a shape-only privacy screen (`backend/app/privacy.py`) before any provider call; then service-scoped retrieval + verifier; optional OpenAI-compatible model explains only retrieved excerpts | `POST /api/copilot/chat`; if configured **and the message passes the screen**, the question, up to six recent turns and retrieved excerpts are sent to the provider |
 | AI case brief | Backend, then optional LLM | `backend/app/rag/brief.py` over the already-verified deterministic checklist; verifier rejects unsupported numbers | `POST /api/services/{id}/checklist/brief`; if configured, the verified checklist text is sent to the provider |
 | Complaint drafting (template + validation) | Browser | `frontend/lib/local/complaint.ts` (deterministic, no model) | none |
 | Voice input (dictation) | Browser | `@huggingface/transformers` + `onnxruntime-web` (WASM), Whisper `onnx-community/whisper-base`, served from `/models/` | model files only, from this project's own origin |
@@ -44,10 +44,16 @@ The description is held in component state for the current page only. The applic
 ```
 question + recent turns (React state)
       │
-      ├─► POST /api/copilot/chat ─► rate limit ─► identity-number rejection
-      │                                               └─► 422; no model/retrieval call
+      ├─► POST /api/copilot/chat ─► rate limit ─► unsafe-intent guard
+      │
+      ├─► simple greeting / thanks ─► short deterministic reply (no model)
       │
       ├─► deterministic fee / photo / status tool (no model)
+      │
+      ├─► privacy screen (shape-only: identity numbers, OTP/password/card terms)
+      │        │
+      │        └─► match: answer locally from retrieved excerpts + citations;
+      │             the provider is never called (generation_mode=screened_local)
       │
       └─► service-scoped retrieval ─► optional model explains only retrieved excerpts
                                             │
@@ -55,7 +61,7 @@ question + recent turns (React state)
                                             │
                               answer + citations, or extractive fallback
 ```
-The browser holds the conversation and sends at most the last six turns with each request. The server does not store or log chat history. The provider receives the question, those recent turns and the retrieved source excerpts; it never receives documents, OCR text, voice audio, complaint text or extracted identity values. Identity-like numbers are rejected before any model or embedding call.
+The browser holds the conversation and sends at most the last six turns with each request. The server does not store or log chat history. When the screen passes, the provider receives the question, those recent turns and the retrieved source excerpts; it never receives documents, OCR text, voice audio, complaint text or extracted identity values. A message that looks like it contains an identity number, OTP, password or card detail is answered locally and is never sent to any provider. The screen is heuristic, not a guarantee — the UI still asks users not to paste identity data.
 
 ### AI case brief
 ```
@@ -125,9 +131,9 @@ The claimed amount is never sent. The catalog contains no personal data.
 | `GET /api/services`, `/api/services/{id}`, `/api/fees/calculate`, `/api/checklist` (existing pages) | existing public guide data and deterministic fees | no |
 | `GET /api/services/{id}/status-guide` (backend) | public, source-dated status meanings, diaspora guidance and fraud warnings | no: the status guide and the fraud shield deliberately have no identity inputs |
 | `GET /models/**`, `/tessdata/**`, `/tesseract/**`, `/pdf/**`, `/ort/**` (this origin) | self-hosted OCR/speech runtime and models | no |
-| `POST /api/copilot/ask` → optional LLM provider (OpenRouter / OpenAI) | only when `LLM_API_KEY` is set: the question and the retrieved source excerpts are sent to the configured provider to write a grounded answer | the question only — never a document, OCR text, transcript, complaint text or extracted identity value. Do not paste identity data into the copilot |
-| `POST /api/copilot/chat` (backend) | multi-turn grounded answer with deterministic tools and service-scoped retrieval | yes: the question and up to six recent turns. No server-side storage; identity-like numbers are rejected before routing |
-| `POST /api/copilot/chat` → optional LLM provider | only when `LLM_API_KEY` is set: explain the retrieved excerpts and keep the conversation context | the question, recent turns and retrieved public source excerpts. Never a document, OCR text, transcript, complaint text or extracted identity value |
+| `POST /api/copilot/ask` → optional LLM provider (OpenRouter / OpenAI) | only when `LLM_API_KEY` is set and the privacy screen passes: the question and the retrieved source excerpts are sent to the configured provider to write a grounded answer | the question only — never a document, OCR text, transcript, complaint text or extracted identity value. A screened question is answered locally and never sent |
+| `POST /api/copilot/chat` (backend) | multi-turn grounded answer with deterministic tools and service-scoped retrieval | yes: the question and up to six recent turns. No server-side storage; a sensitive-looking message is answered locally |
+| `POST /api/copilot/chat` → optional LLM provider | only when `LLM_API_KEY` is set and the privacy screen passes: explain the retrieved excerpts and keep the conversation context | the question, recent turns and retrieved public source excerpts. Never a document, OCR text, transcript, complaint text or extracted identity value. Screened messages never reach the provider |
 | `POST /api/services/{id}/checklist/brief` → optional LLM provider | only when `LLM_API_KEY` is set: rewrite the verified checklist in plain language | the verified checklist text only (public rules plus the minimal non-sensitive answers). No identity data, files or credentials |
 
 Nothing else is contacted. There is no analytics, session-replay or crash-reporting script in the project.
@@ -135,7 +141,7 @@ Nothing else is contacted. There is no analytics, session-replay or crash-report
 ## Storage
 
 * Intake text and answers live only in React state and the request/response of the current page; they are not put in browser storage and the POST response is not cached.
-* Copilot chat history lives in React state for the current page/session only. It is not written to browser storage, a database or a server log; reloading clears it. The floating assistant keeps its own short-lived state.
+* Copilot chat history lives in React state for the current page/session only. It is not written to browser storage, a database or a server log; reloading clears it.
 * No sensitive value is written to `localStorage`, `sessionStorage`, `IndexedDB`, cookies or a service-worker cache.
 * The API client caches **GET** responses only (public guide data and the fee catalog) and never a request body.
 * Object URLs for previews are revoked when a file is removed, the workflow is reset, or the page is unloaded.
@@ -143,8 +149,8 @@ Nothing else is contacted. There is no analytics, session-replay or crash-report
 
 ## Limitations that remain
 
-* Identity-number rejection is shape-based and conservative. It can miss an unusual format and may occasionally reject a legitimate long number. Users are told not to paste identity data; the application must not be treated as a guarantee that free text is anonymous.
-* When `LLM_API_KEY` is configured, the AI intake sends the description to that provider, and the copilot/brief send the question, recent turns or verified checklist text. Leave the key unset to keep these features on deterministic and cited extractive answers.
+* Identity-number rejection is shape-based and conservative. It can miss an unusual format and may occasionally flag a legitimate long number. Users are told not to paste identity data; the application must not be treated as a guarantee that free text is anonymous.
+* When `LLM_API_KEY` is configured, the AI intake sends the description to that provider after its identity-number check, and the copilot/brief send the question, recent turns or verified checklist text after the privacy screen passes. Screened chat messages are answered locally with citations. Leave the key unset to keep these features on deterministic and cited extractive answers.
 * The AI intake can misclassify an ambiguous sentence. It asks the user to choose a service/task instead of silently guessing, and all documents, fees and rules still come from validated data.
 * Browser-local processing stops **this application** from uploading your data. It does not protect against a compromised device, a malicious browser extension, or malicious application code.
 * OCR quality depends on the scan. Extracted values are always shown unconfirmed so a wrong reading is visible.

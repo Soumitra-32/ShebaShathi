@@ -42,7 +42,7 @@ from .drafter import grs as grs_drafter
 from .services import engine as service_engine
 from .services import loader as service_loader
 from .intake import engine as intake_engine
-from .privacy import contains_identity_number
+from .privacy import contains_identity_number, contains_sensitive_data, screened_note
 from .rag import guard as rag_guard
 from .rag import fee_answer as rag_fee_answer
 from .rag import photo_answer as rag_photo_answer
@@ -227,20 +227,10 @@ async def copilot_chat(req: CopilotChatRequest, request: Request):
     """Multi-turn, source-grounded chat with deterministic tools first.
 
     The browser sends the recent conversation; nothing is stored server-side.
-    Identity-like numbers are rejected before any model or embedding call.
+    Messages that screen as sensitive (identity-like numbers, codes) are
+    answered locally and never forwarded to the model provider.
     """
     enforce_rate_limit(copilot_limiter, request)
-    user_texts = [req.question] + [turn.content for turn in req.history if turn.role == "user"]
-    if any(contains_identity_number(text) for text in user_texts):
-        raise HTTPException(
-            status_code=422,
-            detail={
-                "error": {
-                    "code": "IDENTITY_DATA_REJECTED",
-                    "message": "Remove ID, passport, phone or OTP numbers from the chat.",
-                }
-            },
-        )
     if req.service_id is not None:
         try:
             service_loader.get_service(req.service_id)
@@ -265,21 +255,11 @@ async def copilot_ask(req: CopilotAskRequest, request: Request):
     service's configured fallback string. Without it, the legacy e-Passport
     context is used unchanged.
 
-    Safety order: rate limit, identity-number rejection, deterministic
-    unsafe-intent guard, then retrieval/generation. A blocked request never
-    reaches the embedding model or the LLM.
+    Safety order: rate limit, deterministic unsafe-intent guard, deterministic
+    tools, then retrieval/generation. A screened question is answered locally
+    and never reaches the LLM.
     """
     enforce_rate_limit(copilot_limiter, request)
-    if contains_identity_number(req.question):
-        raise HTTPException(
-            status_code=422,
-            detail={
-                "error": {
-                    "code": "IDENTITY_DATA_REJECTED",
-                    "message": "Remove ID, passport, phone or OTP numbers from the question.",
-                }
-            },
-        )
     unsafe_category = rag_guard.classify(req.question)
     if unsafe_category:
         return CopilotAskResponse(
@@ -312,6 +292,55 @@ async def copilot_ask(req: CopilotAskRequest, request: Request):
         deterministic_status = None
     if deterministic_status is not None:
         return CopilotAskResponse(**deterministic_status)
+
+    # Privacy screen: a sensitive-sounding question is answered locally from
+    # the retrieved context; it is never forwarded to the model provider.
+    if req.service_id is not None:
+        try:
+            service_loader.get_service(req.service_id)
+        except KeyError:
+            raise HTTPException(status_code=404, detail={"error": {"code": "SERVICE_NOT_FOUND", "message": "The requested service is not available."}})
+    if contains_sensitive_data(req.question):
+        from .rag.retriever import retrieve as _retrieve
+
+        try:
+            docs = _retrieve(req.question, top_k=settings.top_k, service_id=req.service_id)
+        except Exception:  # noqa: BLE001 - index unavailable, use the safe fallback
+            docs = []
+        note = screened_note(req.language)
+        if docs:
+            first = docs[0]
+            return CopilotAskResponse(
+                answer=first["text"] + note,
+                citations=[{
+                    "title": first["metadata"].get("title", "Official source"),
+                    "url": first["metadata"]["source_url"],
+                    "last_verified": first["metadata"]["last_verified"],
+                    "quote_snippet": first["text"][:300],
+                }],
+                grounded=True,
+                retrieved_chunks=[
+                    {"id": d["id"], "score": d["score"], "section": d["metadata"].get("section", "")}
+                    for d in docs
+                ],
+                generation_mode="screened_local",
+                llm_provider="none",
+                llm_model=None,
+                safety_blocked=True,
+            )
+        from .rag.prompts import FALLBACK_BN as _FB_BN, FALLBACK_EN as _FB_EN
+
+        return CopilotAskResponse(
+            answer=(_FB_EN if req.language == "en" else _FB_BN) + note,
+            citations=[],
+            grounded=False,
+            retrieved_chunks=[],
+            generation_mode="screened_local",
+            llm_provider="none",
+            llm_model=None,
+            safety_blocked=True,
+        )
+
     try:
         from .rag import generator as rag_gen
         from .rag import verifier as rag_ver

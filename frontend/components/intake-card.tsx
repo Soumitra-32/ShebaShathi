@@ -176,7 +176,7 @@ function QuestionField({
   );
 }
 
-export default function IntakeCard() {
+export default function IntakeCard({ embedded = false }: { embedded?: boolean }) {
   const { t } = useTranslation("translation");
   const { lang } = useLanguage();
   const id = useId();
@@ -351,7 +351,11 @@ export default function IntakeCard() {
     ) : null;
 
   return (
-    <section className="intake-section" id="intake" aria-labelledby={`${id}-title`}>
+    <section
+      className={`intake-section${embedded ? " intake-section-embedded" : ""}`}
+      id="intake"
+      aria-labelledby={`${id}-title`}
+    >
       <div className="intake-card">
         <div className="intake-head">
           <div>
@@ -764,6 +768,7 @@ export default function IntakeCard() {
 
       <style jsx>{`
         .intake-section { max-width: 1152px; margin: -1.15rem auto 0; padding: 0 1.25rem 1rem; scroll-margin-top: 90px; }
+        .intake-section-embedded { max-width: none; margin: 0; padding: 0; scroll-margin-top: 110px; }
         .intake-card { position: relative; overflow: hidden; border: 1px solid #cfe3d5; border-radius: 22px; background: linear-gradient(135deg, #ffffff 0%, #f3faf5 100%); box-shadow: 0 18px 45px #183a2814; }
         .intake-card::before { position: absolute; top: 0; right: 0; width: 230px; height: 230px; border-radius: 50%; background: radial-gradient(circle, #b9ddc566 0%, transparent 68%); content: ""; pointer-events: none; }
         .intake-head { position: relative; display: flex; align-items: flex-start; justify-content: space-between; gap: 1.5rem; padding: 1.65rem 1.6rem 0; }
@@ -867,6 +872,7 @@ export default function IntakeCard() {
         @keyframes intake-spin { to { transform: rotate(360deg); } }
         @media (max-width: 760px) {
           .intake-section { margin-top: .3rem; padding: 0 .85rem .8rem; }
+          .intake-section-embedded { margin-top: 0; padding: 0; }
           .intake-head { padding: 1.2rem 1rem 0; }
           .intake-body { padding: 1rem; }
           .intake-head-mark { display: none; }

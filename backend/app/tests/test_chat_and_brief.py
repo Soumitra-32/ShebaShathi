@@ -70,17 +70,68 @@ def test_chat_generates_grounded_answer_with_citation(monkeypatch):
     assert body["llm_model"] == "anthropic/claude-sonnet-4.6"
 
 
-def test_chat_rejects_identity_numbers_before_any_model_call(monkeypatch):
-    def _must_not_run(*args, **kwargs):  # pragma: no cover
-        raise AssertionError("the assistant must not run after a privacy rejection")
+def test_chat_screens_sensitive_message_and_answers_locally(monkeypatch):
+    """A sensitive-sounding message never reaches the LLM but still gets a cited answer."""
 
-    monkeypatch.setattr(chat, "respond", _must_not_run)
+    def _must_not_generate(*args, **kwargs):  # pragma: no cover
+        raise AssertionError("screened messages must not be sent to the model provider")
+
+    monkeypatch.setattr(chat, "_generate", _must_not_generate)
+    monkeypatch.setattr(chat, "retrieve", lambda *args, **kwargs: [_chunk()])
     response = client.post("/api/copilot/chat", json={
         "question": "My NID is 1234567890, what is the fee?",
         "language": "en",
     })
-    assert response.status_code == 422
-    assert response.json()["error"]["code"] == "IDENTITY_DATA_REJECTED"
+    assert response.status_code == 200
+    body = response.json()
+    assert body["generation_mode"] == "screened_local"
+    assert body["safety_blocked"] is True
+    assert body["llm_provider"] == "none"
+    assert body["grounded"] is True
+    assert body["citations"][0]["url"] == _chunk()["metadata"]["source_url"]
+
+
+def test_chat_answers_greeting_deterministically(monkeypatch):
+    def _must_not_retrieve(*args, **kwargs):  # pragma: no cover
+        raise AssertionError("a greeting must not trigger retrieval or a model call")
+
+    monkeypatch.setattr(chat, "retrieve", _must_not_retrieve)
+    response = client.post("/api/copilot/chat", json={
+        "question": "hello",
+        "language": "en",
+    })
+    assert response.status_code == 200
+    body = response.json()
+    assert body["generation_mode"] == "greeting"
+    assert body["grounded"] is False
+    assert body["llm_provider"] == "none"
+    assert "ShebaShathi" in body["answer"]
+    assert body["suggested_questions"]
+
+    response = client.post("/api/copilot/chat", json={
+        "question": "হ্যালো!",
+        "language": "bn",
+    })
+    assert response.status_code == 200
+    assert response.json()["generation_mode"] == "greeting"
+    assert "ShebaShathi" in response.json()["answer"]
+
+
+def test_screened_ask_skips_the_provider(monkeypatch):
+    def _must_not_run(*args, **kwargs):  # pragma: no cover
+        raise AssertionError("a screened /ask question must not reach the model provider")
+
+    monkeypatch.setattr(chat, "_generate", _must_not_run)
+    monkeypatch.setattr(chat, "retrieve", lambda *args, **kwargs: [_chunk()])
+    response = client.post("/api/copilot/ask", json={
+        "question": "My OTP is 123456, help me",
+        "language": "en",
+    })
+    assert response.status_code == 200
+    body = response.json()
+    assert body["generation_mode"] == "screened_local"
+    assert body["safety_blocked"] is True
+    assert "never sent to the external AI service" in body["answer"]
 
 
 def test_chat_carries_service_scope_into_follow_up(monkeypatch):

@@ -92,18 +92,22 @@ the fp32 e5-small weights need roughly 1 GB, so production runs the same
 1. Import the repo in Vercel, root directory `frontend/`.
 2. Build: `npm ci && npm run build`. Start: `npm run start`.
    `npm ci` runs the postinstall step that copies the local OCR, PDF and ONNX
-   runtime into `frontend/public/`.
+   runtime into `frontend/public/`. The `build` script itself now runs
+   `fetch-models --soft` first, so a default Vercel build downloads the local
+   OCR and voice models automatically; a download failure only warns and never
+   breaks the deployment.
 3. Environment variable (set BEFORE the first build; the CSP bakes it in):
    `NEXT_PUBLIC_API_URL=https://<your-backend>.onrender.com`.
 4. Redeploy after changing the backend URL. Verify `/services` loads without
    `offline_fallback`.
 5. **Local OCR and voice input** need the model files in `frontend/public/`
-   (`npm run fetch-models`, ~74 MB). Run it before the build, or upload
-   `frontend/public/models/` and `frontend/public/tessdata/` to the deployment
-   by other means. Without them the app still works: the OCR and microphone
-   features explain that the local model is missing and the manual input paths
-   stay available. The models are served from your own domain, so no
-   third-party host ever sees a user's document.
+   (~74 MB). A standard `npm run build` fetches any that are missing
+   automatically. To force-manage them, run `npm run fetch-models` before the
+   build, or upload `frontend/public/models/` and `frontend/public/tessdata/`
+   to the deployment by other means. Without them the app still works: the OCR
+   and microphone features explain that the local model is missing and the
+   manual input paths stay available. The models are served from your own
+   domain, so no third-party host ever sees a user's document.
 6. The security headers are set in `frontend/next.config.js` and are applied by
    `next start` as well as by Vercel. Keep `NEXT_PUBLIC_API_URL` accurate: the
    CSP allows only that origin for `connect-src`.

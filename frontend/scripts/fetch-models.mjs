@@ -60,6 +60,11 @@ function parseModel() {
   return value;
 }
 
+// --soft: build-time mode. A failed download only warns and exits 0 so a
+// network hiccup cannot break a deployment; the app then honestly explains
+// that the local model is missing instead of failing to build.
+const SOFT = process.argv.includes("--soft");
+
 async function exists(path) {
   try {
     await stat(path);
@@ -83,6 +88,7 @@ async function download(url, destination) {
 async function main() {
   const modelKey = parseModel();
   const model = MODELS[modelKey];
+  const failures = [];
 
   console.log(`[models] Tesseract language data (ben, eng) -> ${join(publicDir, "tessdata")}`);
   for (const language of ["ben", "eng"]) {
@@ -91,8 +97,12 @@ async function main() {
       console.log(`[models]   ${language}.traineddata.gz already present`);
       continue;
     }
-    const size = await download(`${TESSDATA_BASE}/${language}.traineddata.gz`, target);
-    console.log(`[models]   ${language}.traineddata.gz (${(size / 1024).toFixed(0)} KB)`);
+    try {
+      const size = await download(`${TESSDATA_BASE}/${language}.traineddata.gz`, target);
+      console.log(`[models]   ${language}.traineddata.gz (${(size / 1024).toFixed(0)} KB)`);
+    } catch (error) {
+      failures.push(`${language}.traineddata.gz: ${error?.message ?? error}`);
+    }
   }
 
   console.log(`[models] ${model.repo} (${modelKey}) -> ${join(publicDir, "models", model.repo)}`);
@@ -102,8 +112,27 @@ async function main() {
       console.log(`[models]   ${file} already present`);
       continue;
     }
-    const size = await download(`${HUGGINGFACE_BASE}/${model.repo}/resolve/main/${file}`, target);
-    console.log(`[models]   ${file} (${(size / (1024 * 1024)).toFixed(1)} MB)`);
+    try {
+      const size = await download(`${HUGGINGFACE_BASE}/${model.repo}/resolve/main/${file}`, target);
+      console.log(`[models]   ${file} (${(size / (1024 * 1024)).toFixed(1)} MB)`);
+    } catch (error) {
+      failures.push(`${file}: ${error?.message ?? error}`);
+    }
+  }
+
+  if (failures.length > 0) {
+    for (const failure of failures) {
+      console.warn(`[models] could not download ${failure}`);
+    }
+    if (SOFT) {
+      console.warn(
+        "[models] continuing the build without these files — the app explains that the local model is unavailable and keeps manual input paths working. Run `npm run fetch-models` once with a network connection to fix it."
+      );
+      return;
+    }
+    console.error("[models] failed. Re-run `npm run fetch-models` with a network connection.");
+    process.exitCode = 1;
+    return;
   }
 
   console.log("[models] done. The app now serves every model from its own origin.");
@@ -111,5 +140,6 @@ async function main() {
 
 main().catch((error) => {
   console.error("[models] failed:", error?.message ?? error);
-  process.exitCode = 1;
+  if (!SOFT) process.exitCode = 1;
+  else console.warn("[models] continuing the build without the local model files (soft mode).");
 });

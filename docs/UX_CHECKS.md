@@ -82,17 +82,23 @@ calls (no desktop browser was connected, so no new screenshots were captured):
   brief (`generation_mode: api`). When the provider was temporarily
   unaffordable, the same endpoint returned the deterministic brief with
   `grounded: true` and `generation_mode: extractive` instead of an error.
-- `POST /api/copilot/chat` rejects an identity-like number with
-  `422 IDENTITY_DATA_REJECTED` before retrieval or any model call (unit test).
+- `POST /api/copilot/chat` answers a simple greeting ("hello", "হ্যালো") with a
+  short deterministic capability reply (`generation_mode: greeting`) instead of
+  an unrelated source excerpt.
+- A message that screens as containing an identity-like number or secret code is
+  answered locally from verified excerpts (`generation_mode: screened_local`,
+  `llm_provider: none`) and is never sent to the model provider (unit tests).
+- The passport "how do I check my application status?" answer leads with the
+  action and the official status URL; the privacy line is one short last sentence.
 - Markdown formatting from a model is stripped by the shared plain-text
   sanitizer; the UI renders answers with `whitespace-pre-wrap`.
 - Sticker assets exist at `frontend/public/built-for-aignite-2026.png` and
   `frontend/public/built-for-aignite-2026-nav.jpg`; the navbar badge renders on
   every page and the hero badge on `/`.
 
-Checks run: backend `pytest` 150 passed; frontend `npm test`, `npx tsc --noEmit`,
-`npm run lint` (warnings only) and `npm run build` (see the final report for the
-exact run). Not checked: a real mobile device, screen reader, live browser
+Checks run: backend `pytest` 168 passed (default and production mode); frontend
+`npm test` 86 passed, `npx tsc --noEmit`, `npm run lint` (warnings only) and
+`npm run build`. Not checked: a real mobile device, screen reader, live browser
 screenshots after the last CSS change, and the deployed URL.
 
 

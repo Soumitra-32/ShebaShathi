@@ -6,7 +6,6 @@ import { useTranslation } from "react-i18next";
 import { useLanguage } from "../lib/language";
 import { ArrowUpRight, ClipboardCheck, HelpCircle, FileText, Landmark, ClipboardList, ShieldCheck, Fingerprint, UserRound, CarFront, HeartPulse, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import catalog from "../public/services/catalog.json";
-import IntakeCard from "../components/intake-card";
 import BuildathonBadge from "../components/buildathon-badge";
 
 const services = catalog.services.filter((service) => service.enabled);
@@ -41,7 +40,7 @@ export default function HomePage() {
         <p className="eyebrow">{t("home.eyebrow")}</p>
         <h1>{t("home.title_line1")}<br /><span>{t("home.title_line2")}</span></h1>
         <p className="hero-copy">{t("home.copy")}</p>
-        <div className="hero-actions"><Link href="#intake" className="primary-link"><Sparkles size={18} />{t("home.cta_intake")}</Link><Link href="/services" className="secondary-link">{t("home.cta_browse")}</Link><span>{t("home.cta_sub")}</span></div>
+        <div className="hero-actions"><Link href="/copilot#intake" className="primary-link"><Sparkles size={18} />{t("home.cta_intake")}</Link><Link href="/services" className="secondary-link">{t("home.cta_browse")}</Link><span>{t("home.cta_sub")}</span></div>
         <div className="hero-note"><ShieldCheck size={18} /><span>{t("home.note")}</span></div>
       </div>
       <div className="hero-art" aria-label={currentLang === "bn" ? "সেবার স্লাইডার" : "Service carousel"}>
@@ -50,7 +49,6 @@ export default function HomePage() {
         <div className="service-controls"><button type="button" aria-label={currentLang === "bn" ? "আগের সেবা" : "Previous service"} onClick={() => setActiveService((activeService - 1 + services.length) % services.length)}><ChevronLeft size={17}/></button><span>{services.map((item, index) => <button key={item.service_id} type="button" aria-label={currentLang === "bn" ? item.service_name_bn : item.service_name_en} aria-current={index === activeService} onClick={() => setActiveService(index)} />)}</span><button type="button" aria-label={currentLang === "bn" ? "পরের সেবা" : "Next service"} onClick={() => setActiveService((activeService + 1) % services.length)}><ChevronRight size={17}/></button></div>
       </div>
     </section>
-    <IntakeCard />
     <section className="tools-section">
       <div className="section-heading"><div><p className="eyebrow">{t("home.tools_eyebrow")}</p><h2>{t("home.tools_title")}</h2></div><p>{t("home.tools_sub")}</p></div>
       <div className="tool-grid">{tools.map(({ href, titleKey, descriptionKey, icon: Icon }, index) => <Link key={href} href={href} className="tool-card" style={{ animationDelay: `${index * 65}ms` }}><span className="tool-icon"><Icon size={21} strokeWidth={1.8} /></span><span className="tool-arrow"><ArrowUpRight size={17} /></span><h3>{t(titleKey)}</h3><p>{t(descriptionKey)}</p></Link>)}</div>
