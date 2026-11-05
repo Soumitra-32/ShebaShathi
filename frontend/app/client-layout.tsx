@@ -36,7 +36,6 @@ function SiteNav() {
   const navItems = [
     { href: "/copilot#intake", key: "nav.intake" },
     { href: "/services", key: "nav.services" },
-    { href: "/services/epassport/status", key: "nav.status" },
     { href: "/redflag", key: "nav.fees" },
     { href: "/copilot", key: "nav.copilot" },
     { href: "/identity-check", key: "nav.identity-check" },

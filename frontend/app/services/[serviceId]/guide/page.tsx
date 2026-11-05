@@ -126,16 +126,16 @@ function GuideContent() {
   async function shareChecklist() {
     if (!checklist || !service) return;
     const shareUrl = checklist.official_links[0]?.url ?? checklist.source_url;
-    const outcome = await shareText(t("status_guide.shareTitle"), [
+    const outcome = await shareText(t("service_guide.shareTitle"), [
       serviceName,
       currentLang === "bn" ? checklist.task_label_bn : checklist.task_label_en,
       `${currentLang === "bn" ? "সরকারি লিংক" : "Official link"}: ${shareUrl}`,
-      `${t("status_guide.verified")}: ${checklist.last_verified} (${checklist.source_url})`,
+      `${t("service_guide.verified")}: ${checklist.last_verified} (${checklist.source_url})`,
     ]);
-    setShareNote(outcome === "shared" ? t("status_guide.shared")
-      : outcome === "copied" ? t("status_guide.copied")
+    setShareNote(outcome === "shared" ? t("service_guide.shared")
+      : outcome === "copied" ? t("service_guide.copied")
       : outcome === "cancelled" ? ""
-      : t("status_guide.shareUnsupported"));
+      : t("service_guide.shareUnsupported"));
   }
 
   // Checklist steps and warnings come from the backend in the requested
@@ -207,7 +207,7 @@ function GuideContent() {
             </div>
             <div className="flex flex-col items-end gap-2">
               <button type="button" onClick={() => window.print()} className="min-h-11 rounded-lg border border-indigo-700 px-4 py-2 font-semibold text-indigo-800 print:hidden">{t("service_guide.pdf")}</button>
-              <button type="button" onClick={shareChecklist} className="min-h-11 rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 print:hidden">{t("status_guide.share")}</button>
+              <button type="button" onClick={shareChecklist} className="min-h-11 rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 print:hidden">{t("service_guide.share")}</button>
               {shareNote && <p role="status" className="max-w-[16rem] text-right text-xs text-emerald-800 print:hidden">{shareNote}</p>}
             </div>
           </div>

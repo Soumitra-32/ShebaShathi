@@ -128,3 +128,25 @@ and the backend on `http://localhost:8000`:
 
 Not checked here: a real microphone (the headless browser has no audio input),
 a physical phone, and the printed output of the complaint draft.
+
+## Verified fees, status-guide removal, homepage cleanup (2026-11-05)
+
+Checked locally on 2026-11-05:
+
+- `GET /api/fee-schedules` returns six services, all `available: true`, with
+  12 (e-Passport), 7 (driving licence), 5 (NID), 6 (birth), 5 (death) and 2
+  (land mutation) fee rules. The browser-side calculator shows the published
+  amount for each selection; no amount is asked for or sent.
+- Backend: `python -m pytest backend/app/tests -q` — **169 passed**.
+- Frontend: `tsc --noEmit` clean; `npm test` — **86 passed (9 files)**;
+  `npm run lint` — warnings only (pre-existing hook-dependency warnings);
+  `npm run build` — passed, **10 routes**. `/services/[serviceId]/status` is no
+  longer in the route list.
+- The homepage no longer renders the helper-tools card grid, and both locale
+  files no longer contain the `home.tools_*` keys.
+- Navigation no longer contains the "Status guide" entry; the service overview
+  no longer renders the status-guide card.
+
+Not run: the browser E2E scripts (`verify:intake`, `verify:privacy`) because no
+desktop browser was connected; the status-guide assertions were removed from
+`verify:intake` rather than left to fail.

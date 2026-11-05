@@ -14,8 +14,7 @@
     "copilot": "Knowledge assistant",
     "redflag": "Check a fee",
     "identity-check": "Document consistency check",
-    "grs": "Complaint draft",
-    "status": "Status guide"
+    "grs": "Complaint draft"
   },
   "common": {
     "language_bn": "বাংলা",
@@ -40,24 +39,7 @@
     "cta_intake": "Ask the knowledge assistant",
     "cta_browse": "Browse all services",
     "cta_sub": "Free to use · No account required",
-    "note": "Sourced from official portals · Verification dates included",
-    "tools_eyebrow": "Tools and resources",
-    "tools_title": "Guidance tools",
-    "tools_sub": "Each tool supports a specific part of your preparation.",
-    "tools_services": "Service directory",
-    "tools_services_desc": "Check the documents and steps for birth registration, NID, e-Passport and driving licence.",
-    "tools_wizard": "Passport preparation",
-    "tools_wizard_desc": "Generate a fee estimate and document checklist for your passport application.",
-    "tools_fees": "Fee service",
-    "tools_fees_desc": "Review official fee schedules and compare them with the amount you were quoted.",
-    "tools_copilot": "Knowledge assistant",
-    "tools_copilot_desc": "Request a verified answer or a document checklist for any supported service.",
-    "tools_redflag": "Check a fee",
-    "tools_redflag_desc": "Compare a quoted amount with the published official fee.",
-    "tools_identity": "Document consistency check",
-    "tools_identity_desc": "Compare name and date details entirely in your browser—nothing is uploaded.",
-    "tools_grs": "Complaint draft",
-    "tools_grs_desc": "Draft a neutral complaint using only the facts you provide."
+    "note": "Sourced from official portals · Verification dates included"
   },
   "intake": {
     "eyebrow": "Guided checklist preparation",
@@ -185,7 +167,13 @@
     "disclaimer": "ShebaShathi BD is an independent citizen-help tool, not a government website.",
     "yes": "Yes",
     "no": "No",
-    "select": "Select"
+    "select": "Select",
+    "share": "Share",
+    "shared": "Shared.",
+    "copied": "Copied to clipboard.",
+    "shareUnsupported": "Sharing is unavailable on this device — copy the text manually.",
+    "shareTitle": "ShebaShathi BD — verified government service information",
+    "verified": "Verified"
   },
   "wizard": {
     "title": "Prepare for your passport",
@@ -308,30 +296,5 @@
     "disclaimer": "ShebaShathi BD is an independent citizen-help tool, not a government website.",
     "note": "If the date or name format differs, it may show 'Differs'; it may also catch spelling or formatting differences.",
     "emptyDocs": "To start comparing, add at least two documents or manual columns."
-  },
-  "status_guide": {
-    "back": "Back to the guide",
-    "loading": "Status guide is being loaded…",
-    "error": "The status guide could not be loaded. Check your connection and try again.",
-    "notFound": "No verified status guide is available for this service yet.",
-    "privacy": "This guide never asks for your Application ID, date of birth or any other personal detail. Nothing is stored.",
-    "offline": "Live data is unavailable; this is the last verified copy from this device.",
-    "share": "Share",
-    "print": "Print",
-    "shared": "Shared.",
-    "copied": "Copied to clipboard.",
-    "shareUnsupported": "Sharing is unavailable on this device — copy the text manually.",
-    "shareTitle": "ShebaShathi BD — verified government service information",
-    "verified": "Verified",
-    "statuses": "What each official status means",
-    "meaning": "Meaning",
-    "action": "What to do",
-    "tips": "Verified tips that prevent rejection and delay",
-    "source": "Source",
-    "boundary": "This guide only explains official statuses. It never replaces the official status check and is not a government service.",
-    "reportOutdated": "Found something outdated or wrong? Report it on the GRS page.",
-    "overviewTitle": "Application status guide",
-    "overviewCopy": "Plain-language explanation of official status strings, diaspora guidance and fraud warnings — all source-dated.",
-    "overviewLink": "Open the status guide"
   }
 }

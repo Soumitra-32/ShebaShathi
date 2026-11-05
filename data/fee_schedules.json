@@ -1,9 +1,9 @@
 {
-  "catalog_version": "2026-10-20",
+  "catalog_version": "2026-11-05",
   "currency": "BDT",
-  "last_updated": "2026-10-20",
-  "notes_bn": "এখানে শুধু যাচাই করা সরকারি ফির তালিকা আছে। যেসব সেবার ফি তালিকা যাচাই করা যায়নি, সেগুলো 'ম্যানুয়াল যাচাই প্রয়োজন' হিসেবে দেখানো হয়েছে।",
-  "notes_en": "Only verified official fee schedules are listed. Services whose fee schedule could not be verified are shown as 'manual verification required'.",
+  "last_updated": "2026-11-05",
+  "notes_bn": "এখানে শুধু যাচাই করা সরকারি ফির তালিকা আছে। প্রতিটি সেবার উৎস ও যাচাইয়ের তারিখ দেওয়া আছে; চূড়ান্ত অঙ্ক সরকারি পোর্টালে নিশ্চিত করুন।",
+  "notes_en": "Only verified official fee schedules are listed. Each service shows its source and verification date; confirm the final amount on the official portal.",
   "services": [
     {
       "service_id": "epassport",
@@ -351,15 +351,90 @@
       "service_id": "nid",
       "label_bn": "জাতীয় পরিচয়পত্র (NID)",
       "label_en": "National ID (NID)",
-      "authority_bn": "নির্বাচন কমিশন",
-      "authority_en": "Election Commission",
-      "available": false,
+      "authority_bn": "বাংলাদেশ নির্বাচন কমিশন (NID উইং)",
+      "authority_en": "Bangladesh Election Commission (NID Wing)",
+      "available": true,
       "source_url": "https://services.nidw.gov.bd/nid-pub/fees",
-      "last_verified": "2026-10-17",
-      "unavailable_reason_bn": "এই সেবার ফি তালিকা এখনও যাচাই করা হয়নি, তাই এখানে কোনো অঙ্ক দেখানো হচ্ছে না। সরকারি ফি পাতায় অঙ্ক যাচাই করুন।",
-      "unavailable_reason_en": "The fee schedule for this service has not been verified yet, so no amount is shown. Check the official fee page.",
-      "parameters": [],
-      "fee_rules": []
+      "last_verified": "2026-11-05",
+      "scope_note_bn": "সংশোধন ও রিইস্যু/ডুপ্লিকেট কার্ডের প্রকাশিত ফি। চূড়ান্ত অঙ্ক আপনার নিজের NID দিয়ে নির্বাচন কমিশনের ফি ক্যালকুলেটরে যাচাই করুন; এখানে কোনো তৃতীয় পক্ষের সেবা ফি অন্তর্ভুক্ত নয়।",
+      "scope_note_en": "Published fees for corrections and reissue/duplicate cards. Confirm the final amount in the Election Commission fee calculator with your own NID; no third-party service charge is included.",
+      "parameters": [
+        {
+          "id": "request_type",
+          "type": "select",
+          "label_bn": "আবেদনের ধরন",
+          "label_en": "Application type",
+          "options": [
+            {"value": "nid_correction", "label_bn": "শুধু NID তথ্য সংশোধন", "label_en": "NID information correction only"},
+            {"value": "other_correction", "label_bn": "শুধু অন্যান্য তথ্য সংশোধন", "label_en": "Other information correction only"},
+            {"value": "both_correction", "label_bn": "NID ও অন্যান্য তথ্য—উভয়ই সংশোধন", "label_en": "Both NID and other information correction"},
+            {"value": "reissue", "label_bn": "NID রিইস্যু / ডুপ্লিকেট কার্ড", "label_en": "NID reissue / duplicate card"}
+          ]
+        },
+        {
+          "id": "delivery",
+          "type": "select",
+          "label_bn": "কার্ড বিতরণের ধরন",
+          "label_en": "Card delivery type",
+          "applies_when": {"request_type": "reissue"},
+          "options": [
+            {"value": "regular", "label_bn": "সাধারণ", "label_en": "Regular"},
+            {"value": "urgent", "label_bn": "জরুরি", "label_en": "Urgent"}
+          ]
+        }
+      ],
+      "fee_rules": [
+        {
+          "id": "nid-info-correction",
+          "selection": {"request_type": "nid_correction"},
+          "components": [
+            {"id": "fee", "label_bn": "NID তথ্য সংশোধন ফি", "label_en": "NID information correction fee", "amount": 230}
+          ],
+          "total": 230,
+          "notes_bn": "NID-তে সংরক্ষিত তথ্য সংশোধনের আবেদন ফি (প্রথম সংশোধন)।",
+          "notes_en": "Application fee for correcting information held in the NID (first correction)."
+        },
+        {
+          "id": "nid-other-info-correction",
+          "selection": {"request_type": "other_correction"},
+          "components": [
+            {"id": "fee", "label_bn": "অন্যান্য তথ্য সংশোধন ফি", "label_en": "Other information correction fee", "amount": 115}
+          ],
+          "total": 115,
+          "notes_bn": "NID-র মূল তথ্য ছাড়া অন্যান্য তথ্য সংশোধনের আবেদন ফি।",
+          "notes_en": "Application fee for correcting other information that is not part of the core NID data."
+        },
+        {
+          "id": "nid-both-correction",
+          "selection": {"request_type": "both_correction"},
+          "components": [
+            {"id": "fee", "label_bn": "উভয় ধরনের সংশোধন ফি", "label_en": "Both corrections fee", "amount": 345}
+          ],
+          "total": 345,
+          "notes_bn": "NID তথ্য ও অন্যান্য তথ্য—উভয়ই একসাথে সংশোধনের আবেদন ফি।",
+          "notes_en": "Application fee when both NID and other information are corrected together."
+        },
+        {
+          "id": "nid-reissue-regular",
+          "selection": {"request_type": "reissue", "delivery": "regular"},
+          "components": [
+            {"id": "fee", "label_bn": "NID রিইস্যু ফি (সাধারণ)", "label_en": "NID reissue fee (regular)", "amount": 345}
+          ],
+          "total": 345,
+          "notes_bn": "সাধারণ ডেলিভারিতে ডুপ্লিকেট/রিইস্যু কার্ডের ফি।",
+          "notes_en": "Duplicate/reissue card fee with regular delivery."
+        },
+        {
+          "id": "nid-reissue-urgent",
+          "selection": {"request_type": "reissue", "delivery": "urgent"},
+          "components": [
+            {"id": "fee", "label_bn": "NID রিইস্যু ফি (জরুরি)", "label_en": "NID reissue fee (urgent)", "amount": 575}
+          ],
+          "total": 575,
+          "notes_bn": "জরুরি ডেলিভারিতে ডুপ্লিকেট/রিইস্যু কার্ডের ফি।",
+          "notes_en": "Duplicate/reissue card fee with urgent delivery."
+        }
+      ]
     },
     {
       "service_id": "birth_registration",
@@ -367,13 +442,89 @@
       "label_en": "Birth registration",
       "authority_bn": "জন্ম ও মৃত্যু নিবন্ধন অধিদপ্তর (BDRIS)",
       "authority_en": "Directorate of Registration of Births and Deaths (BDRIS)",
-      "available": false,
-      "source_url": "https://bdris.gov.bd/",
-      "last_verified": "2026-10-17",
-      "unavailable_reason_bn": "জন্ম নিবন্ধনের ফি তালিকা যাচাই করা যায়নি (পরিষেবাটি সরকারি পোর্টালে দেখা যায়)। এখানে কোনো অঙ্ক দেখানো হচ্ছে না।",
-      "unavailable_reason_en": "The birth-registration fee schedule could not be verified, so no amount is shown. Check the official portal.",
-      "parameters": [],
-      "fee_rules": []
+      "available": true,
+      "source_url": "https://orgbdr.gov.bd/pages/static-pages/69cf48059d736d71f1a34c8c",
+      "last_verified": "2026-11-05",
+      "scope_note_bn": "রেজিস্ট্রার জেনারেলের কার্যালয়ের প্রকাশিত ফি। অঙ্কগুলো মোট ফি; বাংলা ও ইংরেজি উভয় ভাষার মূল সনদ বা সংশোধনের পর সনদের কপি বিনা ফিতে দেওয়া হয়।",
+      "scope_note_en": "Fees published by the Office of the Registrar General. Amounts are totals; the original certificate in both Bangla and English, or a copy after correction, is issued free of charge.",
+      "parameters": [
+        {
+          "id": "request_type",
+          "type": "select",
+          "label_bn": "আবেদনের ধরন",
+          "label_en": "Application type",
+          "options": [
+            {"value": "within_45_days", "label_bn": "৪৫ দিনের মধ্যে নতুন নিবন্ধন", "label_en": "New registration within 45 days"},
+            {"value": "after_45_days_to_5_years", "label_bn": "৪৫ দিনের পর থেকে ৫ বছর পর্যন্ত নিবন্ধন", "label_en": "Registration after 45 days up to 5 years"},
+            {"value": "after_5_years", "label_bn": "৫ বছরের পর নিবন্ধন", "label_en": "Registration after 5 years"},
+            {"value": "birth_date_correction", "label_bn": "জন্ম তারিখ সংশোধন", "label_en": "Birth date correction"},
+            {"value": "other_info_correction", "label_bn": "নাম/পিতা-মাতার নাম/ঠিকানা ইত্যাদি সংশোধন", "label_en": "Name, parents' names, address and other information correction"},
+            {"value": "duplicate_copy", "label_bn": "সনদের নকল কপি", "label_en": "Duplicate certificate copy"}
+          ]
+        }
+      ],
+      "fee_rules": [
+        {
+          "id": "birth-within-45-days",
+          "selection": {"request_type": "within_45_days"},
+          "components": [
+            {"id": "fee", "label_bn": "নিবন্ধন ফি", "label_en": "Registration fee", "amount": 0}
+          ],
+          "total": 0,
+          "notes_bn": "জন্মের ৪৫ দিনের মধ্যে নিবন্ধন বিনা ফিতে হয়।",
+          "notes_en": "Registration within 45 days of birth is free."
+        },
+        {
+          "id": "birth-after-45-days-to-5-years",
+          "selection": {"request_type": "after_45_days_to_5_years"},
+          "components": [
+            {"id": "fee", "label_bn": "নিবন্ধন ফি (মোট)", "label_en": "Registration fee (total)", "amount": 25}
+          ],
+          "total": 25,
+          "notes_bn": "৪৫ দিনের পর থেকে ৫ বছর পর্যন্ত নিবন্ধনের মোট ফি ২৫ টাকা।",
+          "notes_en": "Total registration fee from after 45 days up to 5 years is BDT 25."
+        },
+        {
+          "id": "birth-after-5-years",
+          "selection": {"request_type": "after_5_years"},
+          "components": [
+            {"id": "fee", "label_bn": "নিবন্ধন ফি (মোট)", "label_en": "Registration fee (total)", "amount": 50}
+          ],
+          "total": 50,
+          "notes_bn": "৫ বছর পার হওয়ার পর নিবন্ধনের মোট ফি ৫০ টাকা।",
+          "notes_en": "Total registration fee after 5 years is BDT 50."
+        },
+        {
+          "id": "birth-date-correction",
+          "selection": {"request_type": "birth_date_correction"},
+          "components": [
+            {"id": "fee", "label_bn": "জন্ম তারিখ সংশোধনের আবেদন ফি", "label_en": "Birth date correction application fee", "amount": 100}
+          ],
+          "total": 100,
+          "notes_bn": "জন্ম তারিখ সংশোধনের আবেদন ফি ১০০ টাকা।",
+          "notes_en": "Birth date correction application fee is BDT 100."
+        },
+        {
+          "id": "birth-other-info-correction",
+          "selection": {"request_type": "other_info_correction"},
+          "components": [
+            {"id": "fee", "label_bn": "তথ্য সংশোধনের আবেদন ফি", "label_en": "Information correction application fee", "amount": 50}
+          ],
+          "total": 50,
+          "notes_bn": "নাম, পিতা-মাতার নাম, ঠিকানা ইত্যাদি সংশোধনের আবেদন ফি ৫০ টাকা।",
+          "notes_en": "Application fee for correcting name, parents' names, address and similar information is BDT 50."
+        },
+        {
+          "id": "birth-duplicate-copy",
+          "selection": {"request_type": "duplicate_copy"},
+          "components": [
+            {"id": "fee", "label_bn": "সনদের নকল কপির ফি", "label_en": "Duplicate certificate copy fee", "amount": 50}
+          ],
+          "total": 50,
+          "notes_bn": "বাংলা ও ইংরেজি উভয় ভাষায় সনদের নকল কপির ফি ৫০ টাকা।",
+          "notes_en": "Duplicate certificate copy in both Bangla and English costs BDT 50."
+        }
+      ]
     },
     {
       "service_id": "death_registration",
@@ -381,27 +532,127 @@
       "label_en": "Death registration",
       "authority_bn": "জন্ম ও মৃত্যু নিবন্ধন অধিদপ্তর (BDRIS)",
       "authority_en": "Directorate of Registration of Births and Deaths (BDRIS)",
-      "available": false,
-      "source_url": "https://bdris.gov.bd/",
-      "last_verified": "2026-10-17",
-      "unavailable_reason_bn": "মৃত্যু নিবন্ধনের ফি তালিকা যাচাই করা যায়নি, তাই এখানে কোনো অঙ্ক দেখানো হচ্ছে না। সরকারি পোর্টালে যাচাই করুন।",
-      "unavailable_reason_en": "The death-registration fee schedule could not be verified, so no amount is shown. Check the official portal.",
-      "parameters": [],
-      "fee_rules": []
+      "available": true,
+      "source_url": "https://orgbdr.gov.bd/pages/static-pages/69cf48059d736d71f1a34c8c",
+      "last_verified": "2026-11-05",
+      "scope_note_bn": "রেজিস্ট্রার জেনারেলের কার্যালয়ের প্রকাশিত ফি। অঙ্কগুলো মোট ফি; বাংলা ও ইংরেজি উভয় ভাষার মূল সনদ বা সংশোধনের পর সনদের কপি বিনা ফিতে দেওয়া হয়। মৃত্যুর তারিখ সংশোধনের আলাদা ফি প্রকাশিত তালিকায় নেই—সরকারি অফিসে যাচাই করুন।",
+      "scope_note_en": "Fees published by the Office of the Registrar General. Amounts are totals; the original certificate in both Bangla and English, or a copy after correction, is issued free of charge. A separate fee for correcting the date of death is not in the published table—verify with the official office.",
+      "parameters": [
+        {
+          "id": "request_type",
+          "type": "select",
+          "label_bn": "আবেদনের ধরন",
+          "label_en": "Application type",
+          "options": [
+            {"value": "within_45_days", "label_bn": "৪৫ দিনের মধ্যে নতুন নিবন্ধন", "label_en": "New registration within 45 days"},
+            {"value": "after_45_days_to_5_years", "label_bn": "৪৫ দিনের পর থেকে ৫ বছর পর্যন্ত নিবন্ধন", "label_en": "Registration after 45 days up to 5 years"},
+            {"value": "after_5_years", "label_bn": "৫ বছরের পর নিবন্ধন", "label_en": "Registration after 5 years"},
+            {"value": "other_info_correction", "label_bn": "নাম/পিতা-মাতার নাম/ঠিকানা ইত্যাদি সংশোধন", "label_en": "Name, parents' names, address and other information correction"},
+            {"value": "duplicate_copy", "label_bn": "সনদের নকল কপি", "label_en": "Duplicate certificate copy"}
+          ]
+        }
+      ],
+      "fee_rules": [
+        {
+          "id": "death-within-45-days",
+          "selection": {"request_type": "within_45_days"},
+          "components": [
+            {"id": "fee", "label_bn": "নিবন্ধন ফি", "label_en": "Registration fee", "amount": 0}
+          ],
+          "total": 0,
+          "notes_bn": "মৃত্যুর ৪৫ দিনের মধ্যে নিবন্ধন বিনা ফিতে হয়।",
+          "notes_en": "Registration within 45 days of death is free."
+        },
+        {
+          "id": "death-after-45-days-to-5-years",
+          "selection": {"request_type": "after_45_days_to_5_years"},
+          "components": [
+            {"id": "fee", "label_bn": "নিবন্ধন ফি (মোট)", "label_en": "Registration fee (total)", "amount": 25}
+          ],
+          "total": 25,
+          "notes_bn": "৪৫ দিনের পর থেকে ৫ বছর পর্যন্ত নিবন্ধনের মোট ফি ২৫ টাকা।",
+          "notes_en": "Total registration fee from after 45 days up to 5 years is BDT 25."
+        },
+        {
+          "id": "death-after-5-years",
+          "selection": {"request_type": "after_5_years"},
+          "components": [
+            {"id": "fee", "label_bn": "নিবন্ধন ফি (মোট)", "label_en": "Registration fee (total)", "amount": 50}
+          ],
+          "total": 50,
+          "notes_bn": "৫ বছর পার হওয়ার পর নিবন্ধনের মোট ফি ৫০ টাকা।",
+          "notes_en": "Total registration fee after 5 years is BDT 50."
+        },
+        {
+          "id": "death-other-info-correction",
+          "selection": {"request_type": "other_info_correction"},
+          "components": [
+            {"id": "fee", "label_bn": "তথ্য সংশোধনের আবেদন ফি", "label_en": "Information correction application fee", "amount": 50}
+          ],
+          "total": 50,
+          "notes_bn": "নাম, পিতা-মাতার নাম, ঠিকানা ইত্যাদি সংশোধনের আবেদন ফি ৫০ টাকা।",
+          "notes_en": "Application fee for correcting name, parents' names, address and similar information is BDT 50."
+        },
+        {
+          "id": "death-duplicate-copy",
+          "selection": {"request_type": "duplicate_copy"},
+          "components": [
+            {"id": "fee", "label_bn": "সনদের নকল কপির ফি", "label_en": "Duplicate certificate copy fee", "amount": 50}
+          ],
+          "total": 50,
+          "notes_bn": "বাংলা ও ইংরেজি উভয় ভাষায় সনদের নকল কপির ফি ৫০ টাকা।",
+          "notes_en": "Duplicate certificate copy in both Bangla and English costs BDT 50."
+        }
+      ]
     },
     {
       "service_id": "land_mutation",
-      "label_bn": "জমি হস্তান্তর (মাল্টিজারিফ)",
+      "label_bn": "ভূমি নামজারি (মিউটেশন)",
       "label_en": "Land mutation",
-      "authority_bn": "আল ও জমি অধিদপ্তর",
-      "authority_en": "Department of Land Records",
-      "available": false,
-      "source_url": "https://land.gov.bd/",
-      "last_verified": "2026-10-20",
-      "unavailable_reason_bn": "জমি হস্তান্তরের ফি তালিকা ও একক প্রকাশিত সরকারি সূত্রে যাচাই করা যায়নি, তাই এখানে কোনো অঙ্ক দেখানো হচ্ছে না। সংশ্লিষ্ট সরকারি অফিসে যাচাই করুন।",
-      "unavailable_reason_en": "No single verifiable official fee schedule was located for land mutation, so no amount is shown. Verify with the relevant government office.",
-      "parameters": [],
-      "fee_rules": []
+      "authority_bn": "ভূমি মন্ত্রণালয়",
+      "authority_en": "Ministry of Land",
+      "available": true,
+      "source_url": "https://land.gov.bd/vumisheba-fee",
+      "last_verified": "2026-11-05",
+      "scope_note_bn": "ভূমি মন্ত্রণালয়ের প্রকাশিত ভূমিসেবা ফি। নতুন নামজারি আবেদনে কোর্ট ফি ২০ টাকা, নোটিশ জারি ফি ৫০ টাকা ও ডি.সি.আর. ফি ১,১০০ টাকা—মোট ১,১৭০ টাকা। রিভিউ আবেদনে কোর্ট ফি ও নোটিশ ফি একসাথে ৭০ টাকা এবং রিভিউ ডি.সি.আর. ফি ১,১০০ টাকা। অনলাইনে আবেদনের সময় আবেদন ফি ও নোটিশ ফি একসাথে ৭০ টাকা পরিশোধ করা হয়।",
+      "scope_note_en": "Land service fees published by the Ministry of Land. A new mutation application is court fee BDT 20 + notice issuance fee BDT 50 + DCR fee BDT 1,100 = BDT 1,170. A review application is court fee plus notice fee BDT 70 + review DCR fee BDT 1,100. For online applications, the application and notice fees (BDT 70) are paid together at submission.",
+      "parameters": [
+        {
+          "id": "request_type",
+          "type": "select",
+          "label_bn": "আবেদনের ধরন",
+          "label_en": "Application type",
+          "options": [
+            {"value": "mutation", "label_bn": "নতুন নামজারি আবেদন", "label_en": "New mutation application"},
+            {"value": "review", "label_bn": "রিভিউ আবেদন", "label_en": "Review application"}
+          ]
+        }
+      ],
+      "fee_rules": [
+        {
+          "id": "land-mutation-application",
+          "selection": {"request_type": "mutation"},
+          "components": [
+            {"id": "court_fee", "label_bn": "আবেদনের কোর্ট ফি", "label_en": "Court fee for application", "amount": 20},
+            {"id": "notice_fee", "label_bn": "আবেদন নোটিশ জারি ফি", "label_en": "Application notice issuance fee", "amount": 50},
+            {"id": "dcr_fee", "label_bn": "ডি.সি.আর. ফি", "label_en": "DCR fee", "amount": 1100}
+          ],
+          "total": 1170,
+          "notes_bn": "নতুন নামজারি আবেদনের মোট প্রকাশিত ফি ১,১৭০ টাকা।",
+          "notes_en": "Total published fee for a new mutation application is BDT 1,170."
+        },
+        {
+          "id": "land-mutation-review",
+          "selection": {"request_type": "review"},
+          "components": [
+            {"id": "court_notice_fee", "label_bn": "রিভিউ আবেদনের কোর্ট ফি ও নোটিশ ফি", "label_en": "Review application court fee and notice fee", "amount": 70},
+            {"id": "review_dcr_fee", "label_bn": "রিভিউ ডি.সি.আর. ফি", "label_en": "Review DCR fee", "amount": 1100}
+          ],
+          "total": 1170,
+          "notes_bn": "রিভিউ আবেদনের মোট প্রকাশিত ফি ১,১৭০ টাকা।",
+          "notes_en": "Total published fee for a review application is BDT 1,170."
+        }
+      ]
     }
   ]
 }

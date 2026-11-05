@@ -97,14 +97,31 @@ def test_calculate_rejects_an_unknown_parameter():
         )
 
 
-def test_calculate_rejects_a_service_without_a_verified_schedule():
-    for service in fee_schedules.catalog()["services"]:
-        if not service["available"]:
-            with pytest.raises(ValueError, match="no verified fee schedule"):
-                fee_schedules.calculate(service["service_id"], {})
-            break
-    else:
-        pytest.fail("expected at least one service without a verified schedule")
+def test_calculate_rejects_a_service_without_a_verified_schedule(monkeypatch):
+    nid = fee_schedules.SERVICES["nid"]
+    monkeypatch.setitem(fee_schedules.SERVICES, "nid", {**nid, "available": False})
+    with pytest.raises(ValueError, match="no verified fee schedule"):
+        fee_schedules.calculate("nid", {})
+
+
+def test_calculate_returns_verified_nid_birth_death_and_land_totals():
+    assert fee_schedules.calculate("nid", {"request_type": "nid_correction"})["total"] == 230
+    assert fee_schedules.calculate("nid", {"request_type": "other_correction"})["total"] == 115
+    assert fee_schedules.calculate(
+        "nid", {"request_type": "reissue", "delivery": "urgent"}
+    )["total"] == 575
+    assert fee_schedules.calculate(
+        "birth_registration", {"request_type": "within_45_days"}
+    )["total"] == 0
+    assert fee_schedules.calculate(
+        "birth_registration", {"request_type": "birth_date_correction"}
+    )["total"] == 100
+    assert fee_schedules.calculate(
+        "death_registration", {"request_type": "after_5_years"}
+    )["total"] == 50
+    land = fee_schedules.calculate("land_mutation", {"request_type": "mutation"})
+    assert land["total"] == 1170
+    assert [part["amount"] for part in land["components"]] == [20, 50, 1100]
 
 
 def test_fee_schedule_endpoint_returns_the_public_catalog():
