@@ -73,29 +73,11 @@ export function findMissingDetails(form: ComplaintForm): MissingDetail[] {
   const description = form.description.trim();
   const details = form.details ?? {};
 
-  if (!form.incidentDate.trim()) {
-    missing.push({
-      id: "incident_date",
-      questionBn: "ঘটনাটি কবে ঘটেছে? (তারিখ লিখুন)",
-      questionEn: "When did the incident happen? (enter the date)",
-      required: true,
-    });
-  }
-  if (!form.location.trim()) {
-    missing.push({
-      id: "location",
-      questionBn: "কোন অফিসে ঘটনাটি ঘটেছে?",
-      questionEn: "At which office did the incident happen?",
-      required: true,
-    });
-  }
-  if (!description) {
-    missing.push({
-      id: "description",
-      questionBn: "কী ঘটেছিল, বিস্তারিত লিখুন বা কণ্ঠে বলুন।",
-      questionEn: "What happened? Please describe it in detail, in writing or by voice.",
-      required: true,
-    });
+  // The incident date, the office and the description live only in the main
+  // form (typed or spoken). Asking for them again as follow-up questions
+  // would duplicate those fields, so nothing else is asked until the core
+  // form itself is complete.
+  if (!form.incidentDate.trim() || !form.location.trim() || !description) {
     return missing;
   }
 

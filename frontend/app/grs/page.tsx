@@ -51,7 +51,7 @@ const copy = {
       "এই ব্রাউজারে স্থানীয় ভয়েস রেকর্ডিং চালু করা যায়নি। নিচের ঘরে হাতে লিখতে পারেন—আপনার অডিও কোথাও পাঠানো হচ্ছে না।",
     micPermission: "মাইক্রোফোন ব্যবহারের অনুমতি পাওয়া যায়নি। ব্রাউজারের সেটিংসে অনুমতি দিন বা হাতে লিখুন।",
     micModelMissing:
-      "এই সার্ভারে স্থানীয় ভয়েস মডেল ইনস্টল করা নেই। প্রজেক্টের ফোল্ডারে `npm run fetch-models` চালানোর পর আবার চেষ্টা করুন; ততক্ষণ হাতে লিখুন।",
+      "ভয়েস মডেলের ফাইলগুলো এই ডিপ্লয়ে নেই। প্রজেক্টের ফোল্ডারে একবার `npm run fetch-models` চালিয়ে (প্রায় ৭৬ MB ডাউনলোড) সাইটটি আবার ডিপ্লয়/রিস্টার্ট করুন; ততক্ষণ হাতে লিখুন।",
     micNoSpeech: "কোনো কথা শোনা যায়নি। আবার চেষ্টা করুন বা হাতে লিখুন।",
     micFailed: "কণ্ঠের লেখা পাওয়া যায়নি। আবার চেষ্টা করুন বা হাতে লিখুন।",
     micLoading: "স্থানীয় মডেল প্রস্তুত হচ্ছে…",
@@ -78,6 +78,7 @@ const copy = {
     includeText: "খসড়ায় যোগ করুন",
     questionsTitle: "আরও কিছু তথ্য দরকার",
     questionsHint: "শুধু খসড়াটি সঠিক ও বিশ্বাসযোগ্য করার জন্য প্রয়োজনীয় প্রশ্নগুলো দেওয়া হয়েছে।",
+    requiredNote: "প্রয়োজনীয় ঘরগুলো পূরণ করুন: ঘটনার তারিখ, স্থান/অফিস ও বিবরণ (মাইক্রোফোন দিয়েও বলতে পারেন)।",
     generate: "খসড়া তৈরি করুন",
     generating: "খসড়া তৈরি হচ্ছে…",
     draftTitle: "অভিযোগের খসড়া",
@@ -111,7 +112,7 @@ const copy = {
       "This browser cannot record audio locally. Type the details below instead—your audio is never uploaded.",
     micPermission: "Microphone permission was denied. Allow it in the browser settings or type the details.",
     micModelMissing:
-      "The local voice model is not installed on this server. Run `npm run fetch-models` in the project folder and try again; type the details until then.",
+      "The voice model files are not part of this deployment. Run `npm run fetch-models` once in the project folder (~76 MB download) and redeploy or restart the site; type the details until then.",
     micNoSpeech: "No speech was recognised. Try again or type the details.",
     micFailed: "The speech could not be transcribed. Try again or type the details.",
     micLoading: "Preparing the local model…",
@@ -138,6 +139,7 @@ const copy = {
     includeText: "Include in the draft",
     questionsTitle: "A few more details are needed",
     questionsHint: "Only the questions that make the draft accurate are asked.",
+    requiredNote: "Fill in the required fields first: incident date, place/office and the description (you can also speak them with the microphone).",
     generate: "Create the draft",
     generating: "Creating the draft…",
     draftTitle: "Complaint draft",
@@ -196,6 +198,7 @@ export default function GRSPage() {
 
   const [questions, setQuestions] = useState<MissingDetail[]>([]);
   const [showQuestions, setShowQuestions] = useState(false);
+  const [requiredNote, setRequiredNote] = useState("");
   const [draft, setDraft] = useState<ComplaintDraft | null>(null);
   const [draftBody, setDraftBody] = useState("");
   const [copied, setCopied] = useState(false);
@@ -369,20 +372,30 @@ export default function GRSPage() {
   };
 
   /**
-   * Answers to the follow-up questions. The three core gaps are written back
-   * into the main fields so the draft and the form never disagree.
+   * Answers to the follow-up questions. The required core facts (date,
+   * office, description) are only collected in the main form, so follow-ups
+   * here are always plain detail slots.
    */
   const setDetail = (id: string, value: string) => {
-    if (id === "incident_date") setIncidentDate(value);
-    else if (id === "location") setLocation(value);
-    else if (id === "description") setDescription(value);
-    else setDetails((previous) => ({ ...previous, [id]: value }));
+    setDetails((previous) => ({ ...previous, [id]: value }));
   };
 
   const generate = () => {
+    // The required core facts are collected once, in the form on the left
+    // (typed or spoken). If one is missing, the draft is blocked with a note
+    // instead of re-asking them as duplicated follow-up questions.
+    const coreGaps =
+      !incidentDate.trim() || !location.trim() || !description.trim();
+    if (coreGaps) {
+      setDraft(null);
+      setShowQuestions(false);
+      setQuestions([]);
+      setRequiredNote(t.requiredNote);
+      return;
+    }
+    setRequiredNote("");
     const missing = evaluate();
-    const requiredMissing = missing.filter((item) => item.required);
-    if (requiredMissing.length > 0) {
+    if (missing.some((item) => item.required)) {
       setDraft(null);
       return;
     }
@@ -427,6 +440,7 @@ export default function GRSPage() {
     setRejections([]);
     setQuestions([]);
     setShowQuestions(false);
+    setRequiredNote("");
     setDraft(null);
     setDraftBody("");
     setTranscript("");
@@ -687,6 +701,14 @@ export default function GRSPage() {
             >
               {t.generate}
             </button>
+            {requiredNote && (
+              <p
+                role="alert"
+                className="rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-sm font-medium text-amber-900"
+              >
+                {requiredNote}
+              </p>
+            )}
           </form>
 
           <div className="space-y-4">
@@ -700,15 +722,7 @@ export default function GRSPage() {
                       {lang === "bn" ? question.questionBn : question.questionEn}
                       <input
                         required={question.required}
-                        value={
-                          question.id === "incident_date"
-                            ? incidentDate
-                            : question.id === "location"
-                              ? location
-                              : question.id === "description"
-                                ? description
-                                : details[question.id] ?? ""
-                        }
+                        value={details[question.id] ?? ""}
                         onChange={(event) => setDetail(question.id, event.target.value)}
                         className="mt-2 min-h-11 w-full rounded-lg border border-slate-300 px-3 font-normal"
                       />

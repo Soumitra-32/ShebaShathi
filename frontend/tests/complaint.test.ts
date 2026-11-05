@@ -16,12 +16,14 @@ const baseForm: ComplaintForm = {
 };
 
 describe("findMissingDetails", () => {
-  it("asks for the date, the office and the description when they are empty", () => {
+  it("does not repeat the core form fields as follow-up questions", () => {
     const missing = findMissingDetails({ ...baseForm, incidentDate: "", location: "", description: "" });
     const ids = missing.map((item) => item.id);
-    expect(ids).toContain("incident_date");
-    expect(ids).toContain("location");
-    expect(ids).toContain("description");
+    expect(ids).not.toContain("incident_date");
+    expect(ids).not.toContain("location");
+    expect(ids).not.toContain("description");
+    // The core form is incomplete, so no other questions are asked either.
+    expect(missing).toEqual([]);
   });
 
   it("asks for clarification when the description is too short", () => {
