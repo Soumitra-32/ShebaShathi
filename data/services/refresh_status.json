@@ -1,0 +1,100 @@
+{
+  "checked_at": "2026-11-05T10:54:30+00:00",
+  "interval_hours": 24,
+  "next_check": "2026-11-06T10:54:30+00:00",
+  "services": {
+    "epassport": {
+      "last_checked": "2026-11-05T10:54:26+00:00",
+      "status": "unchanged",
+      "changed_urls": [],
+      "unreachable_urls": [],
+      "skipped_urls": [
+        "https://www.epassport.gov.bd/",
+        "https://www.epassport.gov.bd/instructions/passport-fees"
+      ],
+      "pending_review": false,
+      "hashes": {
+        "https://epassport.gov.bd/instructions/instructions": "15ae56c201cdde79a370cf0c7b143e12141f656930d565f24889b844164a9db2"
+      }
+    },
+    "birth_registration": {
+      "last_checked": "2026-11-05T10:54:27+00:00",
+      "status": "unchanged",
+      "changed_urls": [],
+      "unreachable_urls": [],
+      "skipped_urls": [
+        "https://bdris.gov.bd/",
+        "https://bdris.gov.bd/br/application",
+        "https://bdris.gov.bd/br/correction",
+        "https://bdris.gov.bd/application/print",
+        "https://bdris.gov.bd/br/reprint/add",
+        "https://bdris.gov.bd/br/application/status"
+      ],
+      "pending_review": false,
+      "hashes": {
+        "https://everify.bdris.gov.bd": "614a1933350d30e6070c5c9e223d8747878b8dc0adbd081970d7b07aa13a270e",
+        "https://orgbdr.gov.bd/pages/static-pages/6922df21933eb65569e20100": "c8ca2f16d1641f8f91b84bd61a5a9a11ed4089942b82df57f80888ff3b83d065"
+      }
+    },
+    "nid": {
+      "last_checked": "2026-11-05T10:54:28+00:00",
+      "status": "unchanged",
+      "changed_urls": [],
+      "unreachable_urls": [],
+      "skipped_urls": [
+        "https://services.nidw.gov.bd/",
+        "https://services.nidw.gov.bd/nid-pub/fees",
+        "https://services.nidw.gov.bd/nid-pub/register-account",
+        "https://services.nidw.gov.bd/nid-pub/faq?tab=faq-correction",
+        "https://services.nidw.gov.bd/nid-pub/form/download"
+      ],
+      "pending_review": false,
+      "hashes": {
+        "https://ecs.gov.bd/": "6789186e90f204cbba18e179bc28b3be79ccba150361d57be8c53438d95d0a31"
+      }
+    },
+    "driving_licence": {
+      "last_checked": "2026-11-05T10:54:29+00:00",
+      "status": "unchanged",
+      "changed_urls": [],
+      "unreachable_urls": [],
+      "skipped_urls": [],
+      "pending_review": false,
+      "hashes": {
+        "https://bsp.brta.gov.bd/drivingLicense": "536ec2533d87427d58c5b5e2a158aece922d410e965cce1a19708222cb3cef16",
+        "https://bsp.brta.gov.bd/": "8f8d91629aa1d9924d7fae5a5e61270f28e1043e209e5790a86a6482ff3abe17",
+        "https://bsp.brta.gov.bd/feeCalculator": "65aa0192f4105bf0c4110ea79d593f7cfbb69818ffea8e73ebab4873260e2a48"
+      }
+    },
+    "death_registration": {
+      "last_checked": "2026-11-05T10:54:29+00:00",
+      "status": "unchanged",
+      "changed_urls": [],
+      "unreachable_urls": [],
+      "skipped_urls": [
+        "https://bdris.gov.bd/dr/application",
+        "https://bdris.gov.bd/dr/correction",
+        "https://bdris.gov.bd/dr/reprint/add"
+      ],
+      "pending_review": false,
+      "hashes": {
+        "https://everify.bdris.gov.bd/UDRNVerification": "dd7e5036126d451b0a498d22667862b8de1beb30efc45816d3953333feced939",
+        "https://orgbdr.gov.bd/pages/static-pages/6922df21933eb65569e20100": "c8ca2f16d1641f8f91b84bd61a5a9a11ed4089942b82df57f80888ff3b83d065"
+      }
+    },
+    "land_mutation": {
+      "last_checked": "2026-11-05T10:54:30+00:00",
+      "status": "unchanged",
+      "changed_urls": [],
+      "unreachable_urls": [],
+      "skipped_urls": [
+        "https://mutation.land.gov.bd/nirdeshika",
+        "https://mutation.land.gov.bd/",
+        "https://mutation.land.gov.bd/namjari-steps",
+        "https://mutation.land.gov.bd/search-application"
+      ],
+      "pending_review": false,
+      "hashes": {}
+    }
+  }
+}

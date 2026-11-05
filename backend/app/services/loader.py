@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 import re
 from . import freshness as freshness_helper
+from . import refresh as refresh_helper
 from datetime import date
 from pathlib import Path
 from typing import Any
@@ -244,6 +245,7 @@ def is_enabled(service_id: str) -> bool:
 
 
 def _summary(service: dict) -> dict:
+    source_check = refresh_helper.service_status(service["service_id"])
     return {
         "service_id": service["service_id"],
         "service_name_bn": service["service_name_bn"],
@@ -256,6 +258,10 @@ def _summary(service: dict) -> dict:
         "last_verified": service["last_verified"],
         "review_status": freshness_helper.freshness(service)["status"],
         "review_after_days": freshness_helper.REVIEW_AFTER_DAYS,
+        "last_checked": source_check["last_checked"],
+        "source_check_status": source_check["status"],
+        "source_check_pending_review": source_check["pending_review"],
+        "source_check_interval_hours": source_check["interval_hours"],
         "enabled": service["enabled"],
         "fallback_bn": service["fallback_bn"],
         "fallback_en": service["fallback_en"],
@@ -265,6 +271,27 @@ def _summary(service: dict) -> dict:
             for task in service["tasks"]
         ],
     }
+
+
+def _task_documents(service: dict, task: dict) -> list[dict]:
+    """Resolve a task's document references for the public guide.
+
+    Conditional references are included with ``conditional: true`` so the
+    printable full-service guide can show what may be needed without pretending
+    every branch applies to every applicant.
+    """
+    catalog = {document["id"]: document for document in service.get("documents", [])}
+    resolved = []
+    for reference in task.get("documents", []):
+        source = catalog.get(reference["id"])
+        if source is None:
+            continue
+        resolved.append({
+            **source,
+            "required": reference["required"],
+            "conditional": bool(reference.get("conditions")),
+        })
+    return resolved
 
 
 def service_detail(service_id: str) -> dict:
@@ -278,6 +305,7 @@ def service_detail(service_id: str) -> dict:
                 "label_bn": task["label_bn"],
                 "label_en": task["label_en"],
                 "questions": task.get("questions", []),
+                "documents": _task_documents(service, task),
                 "steps_bn": task["steps_bn"],
                 "steps_en": task["steps_en"],
                 "warnings_bn": task["warnings_bn"],

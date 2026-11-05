@@ -4,12 +4,19 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "../lib/language";
-import { Landmark, ShieldCheck, Fingerprint, UserRound, CarFront, HeartPulse, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
+import { Landmark, ShieldCheck, Fingerprint, UserRound, CarFront, HeartPulse, MapPinned, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import catalog from "../public/services/catalog.json";
 import BuildathonBadge from "../components/buildathon-badge";
 
 const services = catalog.services.filter((service) => service.enabled);
-const serviceIcons = [Fingerprint, UserRound, Landmark, CarFront, HeartPulse];
+const serviceIcons: Record<string, typeof Fingerprint> = {
+  epassport: Fingerprint,
+  birth_registration: UserRound,
+  nid: Landmark,
+  driving_licence: CarFront,
+  death_registration: HeartPulse,
+  land_mutation: MapPinned,
+};
 
 export default function HomePage() {
   const { t } = useTranslation("translation");
@@ -22,7 +29,7 @@ export default function HomePage() {
     return () => window.clearInterval(timer);
   }, []);
   const service = services[activeService];
-  const ServiceIcon = serviceIcons[activeService % serviceIcons.length];
+  const ServiceIcon = serviceIcons[service.service_id] ?? Landmark;
 
   return <main>
     <section className="hero-wrap">

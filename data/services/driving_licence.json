@@ -47,8 +47,8 @@
       "id": "fee_receipt",
       "label_bn": "নির্ধারিত ফি জমাদানের রশিদ",
       "label_en": "Receipt of the designated fee deposit",
-      "notes_bn": "লার্নার: ১ ক্যাটাগরি ৩৪৫ টাকা ও ২ ক্যাটাগরি ৫১৮ টাকা। স্মার্ট কার্ড: পেশাদার ১৪৩৮ টাকা ও অপেশাদার ২৩০০ টাকা। নবায়ন: মেয়াদোত্তীর্ণের ১৫ দিনের মধ্যে অপেশাদার ২১৮৫ টাকা, পেশাদার ১৩২৩ টাকা। ডুপ্লিকেট: হাই সিকিউরিটি কার্ডের ক্ষেত্রে ৬৩৩ টাকা। চূড়ান্ত অঙ্ক ফি ক্যালকুলেটরে যাচাই করুন।",
-      "notes_en": "Learner: category 1 = BDT 345 and category 2 = BDT 518. Smart card: professional BDT 1,438 and non-professional BDT 2,300. Renewal: within 15 days of expiry, non-professional BDT 2,185 and professional BDT 1,323. Duplicate: BDT 633 for a high-security card. Confirm the final amount with the fee calculator.",
+      "notes_bn": "নির্বাচিত লাইসেন্স/আবেদনের ধরন অনুযায়ী নির্ধারিত ফি জমা দিয়ে রশিদ সংরক্ষণ করুন। সব ফি বিভাগে আলাদাভাবে দেখানো হয়েছে।",
+      "notes_en": "Deposit the designated fee for the selected licence or application type and keep the receipt. All amounts are listed in the separate Fee section.",
       "source_url": "https://bsp.brta.gov.bd/drivingLicense",
       "last_verified": "2026-10-17"
     },
@@ -171,8 +171,8 @@
         "Once the application and documents are correct, provide biometrics the same day.",
         "When the smart card is printed, follow the SMS instructions."
       ],
-      "warnings_bn": ["মেয়াদোত্তীর্ণের ১৫ দিন পরে হলে প্রতি বছর অতিরিক্ত ২০০ টাকা জরিমানা প্রযোজ্য।", "পেশাদার লাইসেন্সে ব্যবহারিক পরীক্ষা বাধ্যতামূলক।"],
-      "warnings_en": ["After 15 days beyond expiry, an additional BDT 200 per year applies.", "A practical test is mandatory for a professional licence."],
+      "warnings_bn": ["মেয়াদোত্তীর্ণের ১৫ দিন পরে হলে বিলম্ব ফি প্রযোজ্য হতে পারে; ফি বিভাগে দেখুন।", "পেশাদার লাইসেন্সে ব্যবহারিক পরীক্ষা বাধ্যতামূলক।"],
+      "warnings_en": ["A late fee may apply after 15 days beyond expiry; see the Fee section.", "A practical test is mandatory for a professional licence."],
       "official_links": [
         {"label_bn": "ফি ক্যালকুলেটর", "label_en": "Fee calculator", "url": "https://bsp.brta.gov.bd/feeCalculator"}
       ]

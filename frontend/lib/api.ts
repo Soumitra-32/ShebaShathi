@@ -134,6 +134,10 @@ export interface ServiceSummary {
   last_verified: string;
   review_status?: "fresh" | "due_soon" | "stale" | "unknown";
   review_after_days?: number;
+  last_checked?: string | null;
+  source_check_status?: "not_checked" | "unchanged" | "changed" | "partial" | "unreachable";
+  source_check_pending_review?: boolean;
+  source_check_interval_hours?: number;
   enabled: boolean;
   fallback_bn: string;
   fallback_en: string;
@@ -167,11 +171,24 @@ export interface ServiceQuestion {
   options?: ServiceQuestionOption[];
 }
 
+export interface ServiceTaskDocument {
+  id: string;
+  label_bn: string;
+  label_en: string;
+  notes_bn: string;
+  notes_en: string;
+  source_url: string;
+  last_verified: string;
+  required: boolean;
+  conditional: boolean;
+}
+
 export interface ServiceTaskDetail {
   id: string;
   label_bn: string;
   label_en: string;
   questions: ServiceQuestion[];
+  documents: ServiceTaskDocument[];
   steps_bn: string[];
   steps_en: string[];
   warnings_bn: string[];
@@ -265,6 +282,23 @@ export const reviewCopy: Record<"bn" | "en", Record<ReviewStatus, string>> = {
     due_soon: "Re-check due soon",
     stale: "Re-check needed — verify on the official portal",
     unknown: "Verification status unknown",
+  },
+};
+
+export const sourceCheckCopy: Record<"bn" | "en", Record<"not_checked" | "unchanged" | "changed" | "partial" | "unreachable", string>> = {
+  bn: {
+    not_checked: "দৈনিক সরকারি উৎস যাচাই এখনো চলেনি",
+    unchanged: "আজকের সরকারি উৎস যাচাই: কোনো পরিবর্তন পাওয়া যায়নি",
+    changed: "সরকারি পেজে পরিবর্তন পাওয়া গেছে — পর্যালোচনা বাকি",
+    partial: "কিছু সরকারি পেজে পৌঁছানো যায়নি — আবার যাচাই হবে",
+    unreachable: "সরকারি পেজে পৌঁছানো যায়নি — আবার যাচাই হবে",
+  },
+  en: {
+    not_checked: "Daily official-source check has not run yet",
+    unchanged: "Today's official-source check: no change found",
+    changed: "A change was found on an official page — review pending",
+    partial: "Some official pages were unreachable — will retry",
+    unreachable: "Official pages were unreachable — will retry",
   },
 };
 

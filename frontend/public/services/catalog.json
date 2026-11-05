@@ -1,6 +1,6 @@
 {
   "catalog_version": "1.0",
-  "last_updated": "2026-10-21",
+  "last_updated": "2026-10-17",
   "disclaimer_bn": "ShebaShathi BD একটি স্বাধীন নাগরিক সহায়তা টুল, কোনো সরকারি ওয়েবসাইট নয়। চূড়ান্ত তথ্য সবসময় সংশ্লিষ্ট সরকারি পোর্টালে যাচাই করুন।",
   "disclaimer_en": "ShebaShathi BD is an independent citizen-help tool, not a government website. Always confirm final details on the relevant official portal.",
   "services": [
@@ -10,25 +10,57 @@
       "service_name_en": "e-Passport",
       "authority_bn": "ইমিগ্রেশন ও পাসপোর্ট অধিদপ্তর",
       "authority_en": "Department of Immigration and Passports",
-      "summary_bn": "নতুন আবেদন, নবায়ন/রি-ইস্যু এবং হারানো পাসপোর্টের জন্য প্রয়োজনীয় নথি ও ধাপ। ফি ও বিতরণ সময় আলাদা ফি ক্যালকুলেটরে যাচাই করুন।",
-      "summary_en": "Documents and steps for new applications, renewal/re-issue, and lost passports. Verify fees and delivery timelines in the fee tool.",
+      "summary_bn": "নতুন আবেদন, নবায়ন/রি-ইস্যু এবং হারানো পাসপোর্টের জন্য প্রয়োজনীয় নথি ও ধাপ। ফি ও বিতরণ সময় আলাদা ফি বিভাগে দেখুন।",
+      "summary_en": "Documents and steps for new applications, renewal/re-issue, and lost passports. See the separate Fee section for amounts and delivery timelines.",
       "source_url": "https://epassport.gov.bd/instructions/instructions",
       "last_verified": "2026-10-15",
       "review_status": "fresh",
       "review_after_days": 180,
+      "last_checked": "2026-11-05T10:54:26+00:00",
+      "source_check_status": "unchanged",
+      "source_check_pending_review": false,
+      "source_check_interval_hours": 24,
       "enabled": true,
       "fallback_bn": "এই সুনির্দিষ্ট তথ্যটি যাচাই করা সরকারি উৎসে পাওয়া যায়নি। অনুগ্রহ করে epassport.gov.bd দেখুন।",
       "fallback_en": "The available official sources do not specify this. Please check epassport.gov.bd.",
       "official_links": [
-        {"label_bn": "সরকারি ই-পাসপোর্ট পোর্টাল", "label_en": "Official e-Passport portal", "url": "https://www.epassport.gov.bd/"},
-        {"label_bn": "সরকারি আবেদন নির্দেশনা", "label_en": "Official application instructions", "url": "https://epassport.gov.bd/instructions/instructions"},
-        {"label_bn": "ফি তালিকা", "label_en": "Fee schedule", "url": "https://www.epassport.gov.bd/instructions/passport-fees"}
+        {
+          "label_bn": "সরকারি ই-পাসপোর্ট পোর্টাল",
+          "label_en": "Official e-Passport portal",
+          "url": "https://www.epassport.gov.bd/"
+        },
+        {
+          "label_bn": "সরকারি আবেদন নির্দেশনা",
+          "label_en": "Official application instructions",
+          "url": "https://epassport.gov.bd/instructions/instructions"
+        },
+        {
+          "label_bn": "ফি তালিকা",
+          "label_en": "Fee schedule",
+          "url": "https://www.epassport.gov.bd/instructions/passport-fees"
+        }
       ],
       "tasks": [
-        {"id": "first_time_adult", "label_bn": "প্রথমবারের আবেদন (প্রাপ্তবয়স্ক)", "label_en": "First application (adult)"},
-        {"id": "minor", "label_bn": "শিশুর আবেদন", "label_en": "Child application"},
-        {"id": "renewal", "label_bn": "নবায়ন / পুনরায় ইস্যু", "label_en": "Renewal / re-issue"},
-        {"id": "lost_passport", "label_bn": "পাসপোর্ট হারিয়েছে", "label_en": "Passport lost"}
+        {
+          "id": "first_time_adult",
+          "label_bn": "প্রথমবারের আবেদন (প্রাপ্তবয়স্ক)",
+          "label_en": "First application (adult)"
+        },
+        {
+          "id": "minor",
+          "label_bn": "শিশুর আবেদন",
+          "label_en": "Child application"
+        },
+        {
+          "id": "renewal",
+          "label_bn": "নবায়ন / পুনরায় ইস্যু",
+          "label_en": "Renewal / re-issue"
+        },
+        {
+          "id": "lost_passport",
+          "label_bn": "পাসপোর্ট হারিয়েছে",
+          "label_en": "Passport lost"
+        }
       ]
     },
     {
@@ -43,20 +75,61 @@
       "last_verified": "2026-10-17",
       "review_status": "fresh",
       "review_after_days": 180,
+      "last_checked": "2026-11-05T10:54:27+00:00",
+      "source_check_status": "unchanged",
+      "source_check_pending_review": false,
+      "source_check_interval_hours": 24,
       "enabled": true,
       "fallback_bn": "এই সুনির্দিষ্ট তথ্যটি যাচাই করা সরকারি উৎসে পাওয়া যায়নি। অনুগ্রহ করে bdris.gov.bd দেখুন অথবা স্থানীয় নিবন্ধক অফিসে যোগাযোগ করুন।",
       "fallback_en": "The available official sources do not specify this. Please check bdris.gov.bd or contact your local registrar office.",
       "official_links": [
-        {"label_bn": "সরকারি জন্ম ও মৃত্যু নিবন্ধন পোর্টাল (BDRIS)", "label_en": "Official Birth & Death Registration portal (BDRIS)", "url": "https://bdris.gov.bd/"},
-        {"label_bn": "জন্ম নিবন্ধন তথ্য অনুসন্ধান (everify)", "label_en": "Birth record verification (everify)", "url": "https://everify.bdris.gov.bd"},
-        {"label_bn": "জন্ম ও মৃত্যু নিবন্ধন বিধিমালা, ২০১৮", "label_en": "Birth and Death Registration Rules, 2018", "url": "https://orgbdr.gov.bd/pages/static-pages/6922df21933eb65569e20100"}
+        {
+          "label_bn": "সরকারি জন্ম ও মৃত্যু নিবন্ধন পোর্টাল (BDRIS)",
+          "label_en": "Official Birth & Death Registration portal (BDRIS)",
+          "url": "https://bdris.gov.bd/"
+        },
+        {
+          "label_bn": "জন্ম নিবন্ধন তথ্য অনুসন্ধান (everify)",
+          "label_en": "Birth record verification (everify)",
+          "url": "https://everify.bdris.gov.bd"
+        },
+        {
+          "label_bn": "জন্ম ও মৃত্যু নিবন্ধন বিধিমালা, ২০১৮",
+          "label_en": "Birth and Death Registration Rules, 2018",
+          "url": "https://orgbdr.gov.bd/pages/static-pages/6922df21933eb65569e20100"
+        }
       ],
       "tasks": [
-        {"id": "new_registration", "label_bn": "নতুন নিবন্ধন", "label_en": "New registration"},
-        {"id": "correction", "label_bn": "তথ্য সংশোধন", "label_en": "Correction"},
-        {"id": "reprint", "label_bn": "সনদ পুনঃমুদ্রণ", "label_en": "Certificate reprint"},
-        {"id": "cancellation", "label_bn": "নিবন্ধন বাতিল", "label_en": "Cancellation"},
-        {"id": "verification", "label_bn": "তথ্য অনুসন্ধান", "label_en": "Record verification"}
+        {
+          "id": "new_registration",
+          "label_bn": "নতুন জন্ম নিবন্ধন",
+          "label_en": "New birth registration"
+        },
+        {
+          "id": "correction",
+          "label_bn": "জন্ম তথ্য সংশোধন",
+          "label_en": "Correction of birth information"
+        },
+        {
+          "id": "reprint",
+          "label_bn": "সনদ পুনঃমুদ্রণ",
+          "label_en": "Certificate reprint"
+        },
+        {
+          "id": "cancellation",
+          "label_bn": "সনদ বাতিল",
+          "label_en": "Certificate cancellation"
+        },
+        {
+          "id": "verification",
+          "label_bn": "জন্ম তথ্য অনুসন্ধান/যাচাই",
+          "label_en": "Birth record lookup / verification"
+        },
+        {
+          "id": "status",
+          "label_bn": "আবেদনের বর্তমান অবস্থা",
+          "label_en": "Application status"
+        }
       ]
     },
     {
@@ -71,72 +144,223 @@
       "last_verified": "2026-10-17",
       "review_status": "fresh",
       "review_after_days": 180,
+      "last_checked": "2026-11-05T10:54:28+00:00",
+      "source_check_status": "unchanged",
+      "source_check_pending_review": false,
+      "source_check_interval_hours": 24,
       "enabled": true,
       "fallback_bn": "এই সুনির্দিষ্ট তথ্যটি যাচাই করা সরকারি উৎসে পাওয়া যায়নি। অনুগ্রহ করে services.nidw.gov.bd দেখুন অথবা নির্বাচন কমিশন হেল্পলাইন ১০৫-এ যোগাযোগ করুন।",
       "fallback_en": "The available official sources do not specify this. Please check services.nidw.gov.bd or contact the Election Commission helpline 105.",
       "official_links": [
-        {"label_bn": "NID আবেদন পোর্টাল (নির্বাচন কমিশন)", "label_en": "NID application portal (Election Commission)", "url": "https://services.nidw.gov.bd/"},
-        {"label_bn": "NID ফি হিসাব", "label_en": "NID fee calculator", "url": "https://services.nidw.gov.bd/nid-pub/fees"},
-        {"label_bn": "নির্বাচন কমিশন ওয়েবসাইট (EC)", "label_en": "Election Commission website", "url": "https://ecs.gov.bd/"}
+        {
+          "label_bn": "NID আবেদন পোর্টাল (নির্বাচন কমিশন)",
+          "label_en": "NID application portal (Election Commission)",
+          "url": "https://services.nidw.gov.bd/"
+        },
+        {
+          "label_bn": "NID ফি হিসাব",
+          "label_en": "NID fee calculator",
+          "url": "https://services.nidw.gov.bd/nid-pub/fees"
+        },
+        {
+          "label_bn": "নির্বাচন কমিশন ফ্রেমওয়ার্ক (EC)",
+          "label_en": "Election Commission website",
+          "url": "https://ecs.gov.bd/"
+        }
       ],
       "tasks": [
-        {"id": "new_registration", "label_bn": "নতুন নিবন্ধন", "label_en": "New registration"},
-        {"id": "correction", "label_bn": "তথ্য সংশোধন", "label_en": "Correction"},
-        {"id": "reissue", "label_bn": "পুনঃইস্যু", "label_en": "Re-issue"}
+        {
+          "id": "new_registration",
+          "label_bn": "নতুন NID নিবন্ধন",
+          "label_en": "New NID registration"
+        },
+        {
+          "id": "correction",
+          "label_bn": "NID তথ্য সংশোধন",
+          "label_en": "NID information correction"
+        },
+        {
+          "id": "reissue",
+          "label_bn": "হারানো/নষ্ট কার্ড পুনঃইস্যু",
+          "label_en": "Lost / damaged card re-issue"
+        }
       ]
     },
     {
       "service_id": "driving_licence",
       "service_name_bn": "ড্রাইভিং লাইসেন্স",
-      "service_name_en": "Driving licence",
+      "service_name_en": "Driving Licence",
       "authority_bn": "বাংলাদেশ রোড ট্রান্সপোর্ট অথরিটি (BRTA)",
       "authority_en": "Bangladesh Road Transport Authority (BRTA)",
-      "summary_bn": "শিক্ষানবিশ লাইসেন্স, স্মার্ট কার্ড লাইসেন্স, নবায়ন এবং ডুপ্লিকেট লাইসেন্সের প্রস্তুতি। চূড়ান্ত তথ্য BRTA পোর্টালে যাচাই করুন।",
-      "summary_en": "Prepare for learner licence, smart-card licence, renewal, and duplicate licence. Confirm final details on the BRTA portal.",
+      "summary_bn": "লার্নার/শিক্ষানবিশ, স্মার্ট কার্ড ড্রাইভিং লাইসেন্স, নবায়ন এবং ডুপ্লিকেট লাইসেন্সের প্রস্তুতি। আবেদন BRTA সার্ভিস পোর্টালে সম্পন্ন করুন।",
+      "summary_en": "Prepare for a learner permit, a smart-card driving licence, renewal, and a duplicate licence. Apply on the BRTA Service Portal.",
       "source_url": "https://bsp.brta.gov.bd/drivingLicense",
       "last_verified": "2026-10-17",
       "review_status": "fresh",
       "review_after_days": 180,
+      "last_checked": "2026-11-05T10:54:29+00:00",
+      "source_check_status": "unchanged",
+      "source_check_pending_review": false,
+      "source_check_interval_hours": 24,
       "enabled": true,
-      "fallback_bn": "এই সুনির্দিষ্ট তথ্যটি যাচাই করা সরকারি উৎসে পাওয়া যায়নি। অনুগ্রহ করে bsp.brta.gov.bd দেখুন।",
-      "fallback_en": "The available official sources do not specify this. Please check bsp.brta.gov.bd.",
+      "fallback_bn": "এই সুনির্দিষ্ট তথ্যটি যাচাই করা সরকারি উৎসে পাওয়া যায়নি। অনুগ্রহ করে bsp.brta.gov.bd দেখুন অথবা নিকটস্থ BRTA সার্কেল অফিসে যোগাযোগ করুন।",
+      "fallback_en": "The available official sources do not specify this. Please check bsp.brta.gov.bd or contact your nearest BRTA circle office.",
       "official_links": [
-        {"label_bn": "BRTA ড্রাইভিং লাইসেন্স পেজ", "label_en": "BRTA driving licence page", "url": "https://bsp.brta.gov.bd/drivingLicense"},
-        {"label_bn": "BRTA ফি ক্যালকুলেটর", "label_en": "BRTA fee calculator", "url": "https://bsp.brta.gov.bd/feeCalculator"}
+        {
+          "label_bn": "BRTA সার্ভিস পোর্টাল (BSP)",
+          "label_en": "BRTA Service Portal (BSP)",
+          "url": "https://bsp.brta.gov.bd/"
+        },
+        {
+          "label_bn": "ড্রাইভিং লাইসেন্স প্রক্রিয়া",
+          "label_en": "Driving licence procedure",
+          "url": "https://bsp.brta.gov.bd/drivingLicense"
+        },
+        {
+          "label_bn": "ফি ক্যালকুলেটর",
+          "label_en": "Fee calculator",
+          "url": "https://bsp.brta.gov.bd/feeCalculator"
+        }
       ],
       "tasks": [
-        {"id": "learner", "label_bn": "শিক্ষানবিশ লাইসেন্স", "label_en": "Learner licence"},
-        {"id": "smart_card", "label_bn": "স্মার্ট কার্ড লাইসেন্স", "label_en": "Smart-card licence"},
-        {"id": "renewal", "label_bn": "নবায়ন", "label_en": "Renewal"},
-        {"id": "duplicate", "label_bn": "ডুপ্লিকেট লাইসেন্স", "label_en": "Duplicate licence"}
+        {
+          "id": "learner",
+          "label_bn": "লার্নার / শিক্ষানবিশ লাইসেন্স",
+          "label_en": "Learner / apprentice licence"
+        },
+        {
+          "id": "smart_card",
+          "label_bn": "স্মার্ট কার্ড ড্রাইভিং লাইসেন্স (প্রথম)",
+          "label_en": "Smart-card driving licence (first)"
+        },
+        {
+          "id": "renewal",
+          "label_bn": "ড্রাইভিং লাইসেন্স নবায়ন",
+          "label_en": "Driving licence renewal"
+        },
+        {
+          "id": "duplicate",
+          "label_bn": "ডুপ্লিকেট লাইসেন্স",
+          "label_en": "Duplicate licence"
+        }
       ]
     },
     {
       "service_id": "death_registration",
       "service_name_bn": "মৃত্যু নিবন্ধন",
       "service_name_en": "Death Registration",
-      "authority_bn": "জন্ম ও মৃত্যু নিবন্ধন অধিদপ্তর (BDRIS)",
-      "authority_en": "Directorate of Registration of Births and Deaths (BDRIS)",
-      "summary_bn": "নতুন মৃত্যু নিবন্ধন, তথ্য সংশোধন, সনদ পুনঃমুদ্রণ, বাতিল এবং তথ্য অনুসন্ধানের প্রস্তুতি। আবেদন ও চূড়ান্ত নথি সংশ্লিষ্ট নিবন্ধক অফিসে যাচাই করুন।",
-      "summary_en": "Prepare for new death registration, correction, certificate reprint, cancellation, and record verification. Confirm final documents with your local registrar office.",
-      "source_url": "https://bdris.gov.bd/",
+      "authority_bn": "জন্ম ও মৃত্যু নিবন্ধন অধিদপ্তর (রেজিস্ট্রার জেনারেলের কার্যালয়)",
+      "authority_en": "Office of the Registrar General, Birth and Death Registration",
+      "summary_bn": "নতুন মৃত্যু নিবন্ধন, তথ্য সংশোধন, সনদ পুনঃমুদ্রণ এবং তথ্য যাচাইয়ের প্রস্তুতি। আবেদন BDRIS-এ সম্পন্ন করুন এবং চূড়ান্ত নথি নিবন্ধক অফিসে যাচাই করুন।",
+      "summary_en": "Prepare for new death registration, correction, certificate reprint, and record verification. Apply on BDRIS and confirm final documents with the registrar office.",
+      "source_url": "https://bdris.gov.bd/dr/application",
       "last_verified": "2026-10-17",
       "review_status": "fresh",
       "review_after_days": 180,
+      "last_checked": "2026-11-05T10:54:29+00:00",
+      "source_check_status": "unchanged",
+      "source_check_pending_review": false,
+      "source_check_interval_hours": 24,
       "enabled": true,
       "fallback_bn": "এই সুনির্দিষ্ট তথ্যটি যাচাই করা সরকারি উৎসে পাওয়া যায়নি। অনুগ্রহ করে bdris.gov.bd দেখুন অথবা স্থানীয় নিবন্ধক অফিসে যোগাযোগ করুন।",
       "fallback_en": "The available official sources do not specify this. Please check bdris.gov.bd or contact your local registrar office.",
       "official_links": [
-        {"label_bn": "সরকারি জন্ম ও মৃত্যু নিবন্ধন পোর্টাল (BDRIS)", "label_en": "Official Birth & Death Registration portal (BDRIS)", "url": "https://bdris.gov.bd/"},
-        {"label_bn": "মৃত্যু নিবন্ধন তথ্য অনুসন্ধান (everify)", "label_en": "Death record verification (everify)", "url": "https://everify.bdris.gov.bd"},
-        {"label_bn": "জন্ম ও মৃত্যু নিবন্ধন বিধিমালা, ২০১৮", "label_en": "Birth and Death Registration Rules, 2018", "url": "https://orgbdr.gov.bd/pages/static-pages/6922df21933eb65569e20100"}
+        {
+          "label_bn": "নতুন মৃত্যু নিবন্ধন আবেদন",
+          "label_en": "New death registration application",
+          "url": "https://bdris.gov.bd/dr/application"
+        },
+        {
+          "label_bn": "মৃত্যু তথ্য অনুসন্ধান (everify)",
+          "label_en": "Death record verification (everify)",
+          "url": "https://everify.bdris.gov.bd/UDRNVerification"
+        },
+        {
+          "label_bn": "জন্ম ও মৃত্যু নিবন্ধন বিধিমালা, ২০১৮",
+          "label_en": "Birth and Death Registration Rules, 2018",
+          "url": "https://orgbdr.gov.bd/pages/static-pages/6922df21933eb65569e20100"
+        }
       ],
       "tasks": [
-        {"id": "new_registration", "label_bn": "নতুন নিবন্ধন", "label_en": "New registration"},
-        {"id": "correction", "label_bn": "তথ্য সংশোধন", "label_en": "Correction"},
-        {"id": "reprint", "label_bn": "সনদ পুনঃমুদ্রণ", "label_en": "Certificate reprint"},
-        {"id": "cancellation", "label_bn": "নিবন্ধন বাতিল", "label_en": "Cancellation"},
-        {"id": "verification", "label_bn": "তথ্য অনুসন্ধান", "label_en": "Record verification"}
+        {
+          "id": "new_registration",
+          "label_bn": "নতুন মৃত্যু নিবন্ধন",
+          "label_en": "New death registration"
+        },
+        {
+          "id": "correction",
+          "label_bn": "মৃত্যু তথ্য সংশোধন",
+          "label_en": "Correction of death information"
+        },
+        {
+          "id": "reprint",
+          "label_bn": "সনদ পুনঃমুদ্রণ",
+          "label_en": "Certificate reprint"
+        },
+        {
+          "id": "verification",
+          "label_bn": "মৃত্যু তথ্য অনুসন্ধান/যাচাই",
+          "label_en": "Death record lookup / verification"
+        }
+      ]
+    },
+    {
+      "service_id": "land_mutation",
+      "service_name_bn": "ভূমি নামজারি (মিউটেশন)",
+      "service_name_en": "Land mutation",
+      "authority_bn": "ভূমি মন্ত্রণালয়",
+      "authority_en": "Ministry of Land",
+      "summary_bn": "নতুন নামজারি আবেদন, রিভিউ এবং আবেদনের অবস্থা অনুসরণের প্রস্তুতি। নথি, ধাপ ও ফি সরকারি মিউটেশন পোর্টালে যাচাই করুন।",
+      "summary_en": "Prepare for a new mutation application, a review application, and tracking an application. Confirm documents, steps and fees on the official mutation portal.",
+      "source_url": "https://mutation.land.gov.bd/nirdeshika",
+      "last_verified": "2026-11-05",
+      "review_status": "fresh",
+      "review_after_days": 180,
+      "last_checked": "2026-11-05T10:54:30+00:00",
+      "source_check_status": "unchanged",
+      "source_check_pending_review": false,
+      "source_check_interval_hours": 24,
+      "enabled": true,
+      "fallback_bn": "এই সুনির্দিষ্ট তথ্যটি যাচাই করা সরকারি উৎসে পাওয়া যায়নি। অনুগ্রহ করে mutation.land.gov.bd দেখুন অথবা সহকারী কমিশনার (ভূমি) কার্যালয়ে যোগাযোগ করুন।",
+      "fallback_en": "The available official sources do not specify this. Please check mutation.land.gov.bd or contact the Assistant Commissioner (Land) office.",
+      "official_links": [
+        {
+          "label_bn": "সরকারি মিউটেশন পোর্টাল",
+          "label_en": "Official mutation portal",
+          "url": "https://mutation.land.gov.bd/"
+        },
+        {
+          "label_bn": "ই-মিউটেশন ব্যবহার নির্দেশিকা",
+          "label_en": "e-Mutation user guide",
+          "url": "https://mutation.land.gov.bd/nirdeshika"
+        },
+        {
+          "label_bn": "আবেদন নিষ্পত্তির ধাপসমূহ",
+          "label_en": "Application processing steps",
+          "url": "https://mutation.land.gov.bd/namjari-steps"
+        },
+        {
+          "label_bn": "আবেদনের অবস্থা অনুসরণ",
+          "label_en": "Track an application",
+          "url": "https://mutation.land.gov.bd/search-application"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "new_mutation",
+          "label_bn": "নতুন নামজারি আবেদন",
+          "label_en": "New mutation application"
+        },
+        {
+          "id": "review",
+          "label_bn": "রিভিউ আবেদন",
+          "label_en": "Review application"
+        },
+        {
+          "id": "track_status",
+          "label_bn": "আবেদনের অবস্থা দেখুন",
+          "label_en": "Track application status"
+        }
       ]
     }
   ]

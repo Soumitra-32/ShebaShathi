@@ -27,6 +27,7 @@ _SERVICE_TERMS: dict[str, tuple[str, ...]] = {
     "nid": ("nid", "national id", "national identity", "জাতীয় পরিচয়পত্র", "এনআইডি", "ভোটার আইডি", "election commission"),
     "driving_licence": ("driving licence", "driving license", "driving", "ড্রাইভিং", "লাইসেন্স", "লাইসেন্স", "brta", "learner", "লার্নার"),
     "death_registration": ("death registration", "death certificate", "মৃত্যু নিবন্ধন", "মৃত্যু সনদ", "মৃত্যু সার্টিফিকেট"),
+    "land_mutation": ("mutation", "land mutation", "land", "namjari", "নামজারি", "মিউটেশন", "ভূমি", "জমি", "ভূমি মন্ত্রণালয়"),
 }
 
 # Order is the tie-breaker: more specific / more urgent tasks first.
@@ -61,6 +62,11 @@ _TASK_TERMS: dict[str, list[tuple[str, tuple[str, ...]]]] = {
         ("reprint", ("reprint", "duplicate copy", "another copy", "পুনঃমুদ্রণ", "আরেক কপি")),
         ("verification", ("verify", "verification", "lookup", "যাচাই", "অনুসন্ধান")),
         ("new_registration", ("new", "register", "registration", "নতুন", "নিবন্ধন")),
+    ],
+    "land_mutation": [
+        ("review", ("review", "appeal", "রিভিউ", "আপিল", "পুনর্বিচার")),
+        ("track_status", ("track", "status", "check application", "অবস্থা", "ট্র্যাক", "অনুসরণ")),
+        ("new_mutation", ("new", "mutation", "namjari", "নতুন", "নামজারি", "মিউটেশন")),
     ],
 }
 

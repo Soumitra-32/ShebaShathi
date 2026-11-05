@@ -4,8 +4,8 @@
   "service_name_en": "e-Passport",
   "authority_bn": "ইমিগ্রেশন ও পাসপোর্ট অধিদপ্তর",
   "authority_en": "Department of Immigration and Passports",
-  "summary_bn": "নতুন আবেদন, নবায়ন/রি-ইস্যু এবং হারানো পাসপোর্টের জন্য প্রয়োজনীয় নথি ও ধাপ। ফি ও বিতরণ সময় আলাদা ফি ক্যালকুলেটরে যাচাই করুন।",
-  "summary_en": "Documents and steps for new applications, renewal/re-issue, and lost passports. Verify fees and delivery timelines in the fee tool.",
+  "summary_bn": "নতুন আবেদন, নবায়ন/রি-ইস্যু এবং হারানো পাসপোর্টের জন্য প্রয়োজনীয় নথি ও ধাপ। ফি ও বিতরণ সময় আলাদা ফি বিভাগে দেখুন।",
+  "summary_en": "Documents and steps for new applications, renewal/re-issue, and lost passports. See the separate Fee section for amounts and delivery timelines.",
   "source_url": "https://epassport.gov.bd/instructions/instructions",
   "last_verified": "2026-10-15",
   "fallback_bn": "এই সুনির্দিষ্ট তথ্যটি যাচাই করা সরকারি উৎসে পাওয়া যায়নি। অনুগ্রহ করে epassport.gov.bd দেখুন।",
@@ -94,13 +94,13 @@
       ],
       "steps_bn": [
         "সরকারি e-Passport পোর্টালে নতুন আবেদন পূরণ করুন।",
-        "ফি তালিকায় দেখানো মোট টাকা নির্ধারিত পেমেন্ট মাধ্যমে পরিশোধ করুন।",
+        "সরকারি পেমেন্ট মাধ্যমে নির্ধারিত ফি পরিশোধ করুন (টাকার পরিমাণ ফি বিভাগে দেখুন)।",
         "বায়োমেট্রিক তথ্য দেওয়ার জন্য নির্ধারিত পাসপোর্ট অফিসে যান।",
         "আবেদন ও সংগ্রহ-সংক্রান্ত হালনাগাদ নির্দেশনা সরকারি পোর্টালে দেখুন।"
       ],
       "steps_en": [
         "Complete a new application on the official e-Passport portal.",
-        "Pay the total shown in the fee schedule through a listed payment channel.",
+        "Pay the official fee through a listed payment channel (see the Fee section for amounts).",
         "Visit the assigned passport office for biometric enrolment.",
         "Check the official portal for current application and collection instructions."
       ],
@@ -125,13 +125,13 @@
       ],
       "steps_bn": [
         "সরকারি e-Passport পোর্টালে শিশুর নতুন আবেদন পূরণ করুন।",
-        "ফি তালিকায় দেখানো মোট টাকা নির্ধারিত পেমেন্ট মাধ্যমে পরিশোধ করুন।",
+        "সরকারি পেমেন্ট মাধ্যমে নির্ধারিত ফি পরিশোধ করুন (টাকার পরিমাণ ফি বিভাগে দেখুন)।",
         "বায়োমেট্রিক তথ্য দেওয়ার জন্য নির্ধারিত পাসপোর্ট অফিসে যান।",
         "১৮ বছরের কম বয়সীদের পাসপোর্টের মেয়াদ ৫ বছর এবং পৃষ্ঠা ৪৮টি।"
       ],
       "steps_en": [
         "Complete the child's new application on the official e-Passport portal.",
-        "Pay the total shown in the fee schedule through a listed payment channel.",
+        "Pay the official fee through a listed payment channel (see the Fee section for amounts).",
         "Visit the assigned passport office for biometric enrolment.",
         "Applicants under 18 receive a 5-year, 48-page passport."
       ],
@@ -153,12 +153,12 @@
       ],
       "steps_bn": [
         "সরকারি e-Passport পোর্টালে রি-ইস্যু আবেদন পূরণ করুন।",
-        "ফি তালিকায় দেখানো মোট টাকা নির্ধারিত পেমেন্ট মাধ্যমে পরিশোধ করুন।",
+        "সরকারি পেমেন্ট মাধ্যমে নির্ধারিত ফি পরিশোধ করুন (টাকার পরিমাণ ফি বিভাগে দেখুন)।",
         "বায়োমেট্রিক তথ্য দেওয়ার জন্য নির্ধারিত পাসপোর্ট অফিসে যান।"
       ],
       "steps_en": [
         "Complete a re-issue application on the official e-Passport portal.",
-        "Pay the total shown in the fee schedule through a listed payment channel.",
+        "Pay the official fee through a listed payment channel (see the Fee section for amounts).",
         "Visit the assigned passport office for biometric enrolment."
       ],
       "warnings_bn": ["সরকারি নির্দেশনা অনুযায়ী মূল আগের পাসপোর্ট দেখাতে হবে; সম্পূর্ণ তালিকা সরকারি পোর্টালে যাচাই করুন।"],
@@ -180,13 +180,13 @@
       "steps_bn": [
         "পাসপোর্ট হারানো বা চুরি হলে নিকটস্থ থানায় সাধারণ ডায়েরি (জিডি) করুন।",
         "সরকারি e-Passport পোর্টালে হারানো পাসপোর্টের রি-ইস্যু আবেদন পূরণ করুন।",
-        "ফি তালিকায় দেখানো মোট টাকা নির্ধারিত পেমেন্ট মাধ্যমে পরিশোধ করুন।",
+        "সরকারি পেমেন্ট মাধ্যমে নির্ধারিত ফি পরিশোধ করুন (টাকার পরিমাণ ফি বিভাগে দেখুন)।",
         "বায়োমেট্রিক তথ্য দেওয়ার জন্য নির্ধারিত পাসপোর্ট অফিসে যান।"
       ],
       "steps_en": [
         "Report the lost or stolen passport in a general diary (GD) at the nearest police station.",
         "Complete the lost-passport re-issue application on the official e-Passport portal.",
-        "Pay the total shown in the fee schedule through a listed payment channel.",
+        "Pay the official fee through a listed payment channel (see the Fee section for amounts).",
         "Visit the assigned passport office for biometric enrolment."
       ],
       "warnings_bn": ["সরকারি নির্দেশনা অনুযায়ী জিডি কপি ও আগের পাসপোর্টের ফটোকপি প্রয়োজন; বিস্তারিত সরকারি পোর্টালে যাচাই করুন।"],
@@ -197,3 +197,4 @@
     }
   ]
 }
+

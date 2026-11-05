@@ -41,6 +41,7 @@ from .engine import fee_schedules as fee_schedule_engine
 from .drafter import grs as grs_drafter
 from .services import engine as service_engine
 from .services import loader as service_loader
+from .services import refresh as service_refresh
 from .intake import engine as intake_engine
 from .privacy import contains_identity_number, contains_sensitive_data, screened_note
 from .rag import guard as rag_guard
@@ -164,6 +165,16 @@ async def list_catalog():
         **service_loader.catalog_meta(),
         "services": service_loader.list_services(),
     }
+
+@app.get("/api/services/refresh-status", tags=["Services"])
+async def service_refresh_status():
+    """Last daily official-source check for each enabled service.
+
+    This reports whether the public official pages were reachable and whether
+    their content changed. A change is flagged for human review; verified guide
+    content is never rewritten automatically.
+    """
+    return service_refresh.read_status()
 
 @app.get("/api/services/{service_id}", tags=["Services"])
 async def service_overview(service_id: str):

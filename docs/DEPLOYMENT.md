@@ -78,8 +78,9 @@ the fp32 e5-small weights need roughly 1 GB, so production runs the same
    - The filesystem is ephemeral: nothing is written at runtime that must
      survive restarts (`VECTOR_STORE=numpy` serves read-only).
 6. Verify after the first deploy:
-   - `GET /health` → `index_count > 0`, `ai_ready: true`, `service_count: 5`.
-   - `GET /api/services` lists all five services.
+   - `GET /health` → `index_count > 0`, `ai_ready: true`, `service_count: 6`.
+   - `GET /api/services` lists all six services.
+   - `GET /api/services/refresh-status` returns `pending_review: false` for the latest checked sources.
    - A real `POST /api/intake`, a PII-rejection request, and an
      unsafe-intent request behave as documented.
    - Rate limiting is process-local: run exactly ONE free instance (Render
@@ -119,7 +120,7 @@ the fp32 e5-small weights need roughly 1 GB, so production runs the same
 - HTTPS only; production `CORS_ORIGINS` contains only the Vercel domain (no wildcard with credentials).
 - `DEBUG=false`; no reload/debug servers in production.
 - The Chroma/index directory is baked into the image (never under a static/public dir); on paid plans it would be a private volume.
-- `/health` reports `index_count > 0`, `ai_ready: true`, and `service_count: 5`.
+- `/health` reports `index_count > 0`, `ai_ready: true`, and `service_count: 6`.
 - A real intake request, a PII-rejection request, and an unsafe-intent request behave as documented; the backend log contains no request body text.
 - `LLM_API_KEY` is set only in the host secret store; it is never in the client bundle, repo, or logs.
 - The CSP, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`

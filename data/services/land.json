@@ -1,0 +1,219 @@
+{
+  "service_id": "land_mutation",
+  "service_name_bn": "ভূমি নামজারি (মিউটেশন)",
+  "service_name_en": "Land mutation",
+  "authority_bn": "ভূমি মন্ত্রণালয়",
+  "authority_en": "Ministry of Land",
+  "summary_bn": "নতুন নামজারি আবেদন, রিভিউ এবং আবেদনের অবস্থা অনুসরণের প্রস্তুতি। নথি, ধাপ ও ফি সরকারি মিউটেশন পোর্টালে যাচাই করুন।",
+  "summary_en": "Prepare for a new mutation application, a review application, and tracking an application. Confirm documents, steps and fees on the official mutation portal.",
+  "source_url": "https://mutation.land.gov.bd/nirdeshika",
+  "last_verified": "2026-11-05",
+  "fallback_bn": "এই সুনির্দিষ্ট তথ্যটি যাচাই করা সরকারি উৎসে পাওয়া যায়নি। অনুগ্রহ করে mutation.land.gov.bd দেখুন অথবা সহকারী কমিশনার (ভূমি) কার্যালয়ে যোগাযোগ করুন।",
+  "fallback_en": "The available official sources do not specify this. Please check mutation.land.gov.bd or contact the Assistant Commissioner (Land) office.",
+  "official_links": [
+    {"label_bn": "সরকারি মিউটেশন পোর্টাল", "label_en": "Official mutation portal", "url": "https://mutation.land.gov.bd/"},
+    {"label_bn": "ই-মিউটেশন ব্যবহার নির্দেশিকা", "label_en": "e-Mutation user guide", "url": "https://mutation.land.gov.bd/nirdeshika"},
+    {"label_bn": "আবেদন নিষ্পত্তির ধাপসমূহ", "label_en": "Application processing steps", "url": "https://mutation.land.gov.bd/namjari-steps"},
+    {"label_bn": "আবেদনের অবস্থা অনুসরণ", "label_en": "Track an application", "url": "https://mutation.land.gov.bd/search-application"}
+  ],
+  "documents": [
+    {
+      "id": "khatian_copy",
+      "label_bn": "আবেদনকৃত জমির খতিয়ানের কপি",
+      "label_en": "Copy of the khatian for the applied land",
+      "notes_bn": "সরকারি নির্দেশিকা অনুযায়ী আবেদনকৃত জমির খতিয়ানের কপি স্ক্যান করে PDF আকারে সংযুক্ত করতে হবে।",
+      "notes_en": "The official guide requires a scanned PDF copy of the khatian for the applied land.",
+      "source_url": "https://mutation.land.gov.bd/nirdeshika",
+      "last_verified": "2026-11-05"
+    },
+    {
+      "id": "deed_copy",
+      "label_bn": "ক্রয়সূত্রে জমি হলে দলিলের কপি",
+      "label_en": "Copy of the deed when the land was purchased",
+      "notes_bn": "ক্রয়সূত্রে মালিকানা অর্জিত হলে দলিলের কপি PDF আকারে সংযুক্ত করতে হবে।",
+      "notes_en": "If ownership was acquired by purchase, attach a PDF copy of the deed.",
+      "source_url": "https://mutation.land.gov.bd/nirdeshika",
+      "last_verified": "2026-11-05"
+    },
+    {
+      "id": "court_decree_copy",
+      "label_bn": "আদালতের রায়/ডিক্রি সূত্রে জমি হলে রায়-ডিক্রির কপি",
+      "label_en": "Copy of the court judgment or decree when ownership comes from a court order",
+      "notes_bn": "আদালতের রায় বা ডিক্রির মাধ্যমে মালিকানা অর্জিত হলে রায়-ডিক্রির কপি PDF আকারে সংযুক্ত করতে হবে।",
+      "notes_en": "If ownership was acquired through a court judgment or decree, attach a PDF copy of it.",
+      "source_url": "https://mutation.land.gov.bd/nirdeshika",
+      "last_verified": "2026-11-05"
+    },
+    {
+      "id": "warish_certificate",
+      "label_bn": "ওয়ারিশ সূত্রে জমি হলে ওয়ারিশ সনদ বা সম্পর্কিত কাগজপত্র",
+      "label_en": "Heir certificate or related papers when ownership comes through inheritance",
+      "notes_bn": "ওয়ারিশ সূত্রে মালিকানা অর্জিত হলে সংশ্লিষ্ট কাগজপত্র PDF আকারে সংযুক্ত করতে হবে; নথির ধরন নির্বাচন করে আপলোড করতে হবে।",
+      "notes_en": "If ownership was acquired through inheritance, attach the related papers as a PDF and select the document type during upload.",
+      "source_url": "https://mutation.land.gov.bd/nirdeshika",
+      "last_verified": "2026-11-05"
+    },
+    {
+      "id": "other_source_document",
+      "label_bn": "অন্য সূত্রে জমি হলে সংশ্লিষ্ট কাগজপত্র",
+      "label_en": "Related papers when ownership comes from another source",
+      "notes_bn": "হেবা, নিলাম, বন্দোবস্ত বা অন্য কোনো সূত্রে মালিকানা অর্জিত হলে সংশ্লিষ্ট কাগজপত্র PDF আকারে সংযুক্ত করতে হবে।",
+      "notes_en": "If ownership was acquired by gift, auction, settlement or another source, attach the related papers as a PDF.",
+      "source_url": "https://mutation.land.gov.bd/nirdeshika",
+      "last_verified": "2026-11-05"
+    },
+    {
+      "id": "representative_document",
+      "label_bn": "প্রতিনিধি মারফত আবেদন করলে প্রতিনিধির পরিচয় ও সম্পর্কের প্রমাণ",
+      "label_en": "Representative's identity and relationship proof when applying through a representative",
+      "notes_bn": "আবেদনকারীর পরিবর্তে প্রতিনিধি আবেদন করলে প্রতিনিধির নাম, ঠিকানা, পরিচয়পত্রের তথ্য, বয়স ও আবেদনকারীর সাথে সম্পর্ক আবেদন ফরমে দিতে হবে। এই তথ্য ShebaShathi-তে লিখবেন না; সরাসরি সরকারি পোর্টালে দিন।",
+      "notes_en": "If a representative applies instead of the applicant, the form asks for the representative's name, address, identity document details, age and relationship to the applicant. Do not enter these details into ShebaShathi; enter them directly on the official portal.",
+      "source_url": "https://mutation.land.gov.bd/nirdeshika",
+      "last_verified": "2026-11-05"
+    },
+    {
+      "id": "land_tax_proof",
+      "label_bn": "সর্বশেষ অর্থবছর পর্যন্ত ভূমি উন্নয়ন কর পরিশোধের প্রমাণ",
+      "label_en": "Proof of land development tax payment up to the latest fiscal year",
+      "notes_bn": "সরকারি নির্দেশিকা অনুযায়ী ভূমি উন্নয়ন কর হালনাগাদ থাকতে হবে; না থাকলে বকেয়াসহ হালনাগাদ পরিশোধ করে তা সংরক্ষণ করুন।",
+      "notes_en": "The official guide requires land development tax to be up to date; if it is not, pay the arrears and keep the proof.",
+      "source_url": "https://mutation.land.gov.bd/nirdeshika",
+      "last_verified": "2026-11-05"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "new_mutation",
+      "label_bn": "নতুন নামজারি আবেদন",
+      "label_en": "New mutation application",
+      "questions": [
+        {
+          "field": "source_type",
+          "type": "select",
+          "required": true,
+          "label_bn": "আপনি কোন সূত্রে জমির মালিকানা পেয়েছেন?",
+          "label_en": "How did you acquire ownership of the land?",
+          "options": [
+            {"value": "purchase", "label_bn": "ক্রয়সূত্রে", "label_en": "Purchase"},
+            {"value": "inheritance", "label_bn": "ওয়ারিশ সূত্রে", "label_en": "Inheritance"},
+            {"value": "gift", "label_bn": "হেবা সূত্রে", "label_en": "Gift (heba)"},
+            {"value": "decree", "label_bn": "আদালতের ডিক্রি সূত্রে", "label_en": "Court decree"},
+            {"value": "auction", "label_bn": "নিলাম সূত্রে", "label_en": "Auction"},
+            {"value": "settlement", "label_bn": "বন্দোবস্ত সূত্রে", "label_en": "Settlement"},
+            {"value": "other", "label_bn": "অন্য সূত্রে", "label_en": "Other source"}
+          ]
+        },
+        {
+          "field": "has_representative",
+          "type": "boolean",
+          "required": true,
+          "label_bn": "আবেদনকারীর পরিবর্তে প্রতিনিধি আবেদন করবেন",
+          "label_en": "A representative will apply on the applicant's behalf"
+        }
+      ],
+      "documents": [
+        {"id": "khatian_copy", "required": true, "conditions": []},
+        {"id": "deed_copy", "required": true, "conditions": [{"field": "source_type", "operator": "eq", "value": "purchase"}]},
+        {"id": "court_decree_copy", "required": true, "conditions": [{"field": "source_type", "operator": "eq", "value": "decree"}]},
+        {"id": "warish_certificate", "required": true, "conditions": [{"field": "source_type", "operator": "eq", "value": "inheritance"}]},
+        {"id": "other_source_document", "required": true, "conditions": [{"field": "source_type", "operator": "in", "value": ["gift", "auction", "settlement", "other"]}]},
+        {"id": "representative_document", "required": true, "conditions": [{"field": "has_representative", "operator": "eq", "value": true}]},
+        {"id": "land_tax_proof", "required": true, "conditions": []}
+      ],
+      "steps_bn": [
+        "জমির সর্বশেষ জরিপ (এসএ/এমআরএস, আরএস/বিএস, মহানগর, দিয়ারা বা সিএস—যা প্রযোজ্য) নিশ্চিত করুন।",
+        "খতিয়ান নম্বর, দাগ নম্বর এবং আবেদনকৃত জমির পরিমাণ (একর) প্রস্তুত করুন।",
+        "প্রয়োজনীয় কাগজপত্র আলাদা আলাদা PDF-এ স্ক্যান করুন; প্রতিটি ফাইল সর্বোচ্চ ১.২৫ MB এবং সব ফাইল মিলিয়ে সর্বোচ্চ ২৫ MB রাখুন।",
+        "সরকারি মিউটেশন পোর্টালে মালিকানা অর্জনের সূত্র নির্বাচন করে আবেদন ফরম পূরণ করুন এবং কাগজপত্র সংযুক্ত করুন।",
+        "আবেদন ফি ও নোটিশ জারি ফি একসাথে সরকারি পোর্টালে পরিশোধ করুন (টাকার পরিমাণ ফি বিভাগে দেখুন)।",
+        "আবেদন জমা দিয়ে আবেদন নম্বর সংরক্ষণ করুন; প্রয়োজনে ৩ কর্মদিবসের মধ্যে কাগজপত্র সহকারী কমিশনার (ভূমি) কার্যালয়ে জমা দিন।",
+        "মিউটেশন পোর্টালে আবেদন ট্র্যাক করুন এবং অনুমোদনের পর ডি.সি.আর. ফি অনলাইনে পরিশোধ করে খতিয়ান সংগ্রহ করুন।"
+      ],
+      "steps_en": [
+        "Confirm the latest survey for the land (SA/MRS, RS/BS, city, diara or CS, as applicable).",
+        "Prepare the khatian number, dag number, and the applied land area in acres.",
+        "Scan each required paper as a separate PDF; keep each file at most 1.25 MB and all files together at most 25 MB.",
+        "On the official mutation portal, select how ownership was acquired, complete the application form, and attach the papers.",
+        "Pay the application fee and notice issuance fee together on the official portal (see the Fee section for amounts).",
+        "Submit the application and save the application number; if required, submit the papers to the Assistant Commissioner (Land) office within 3 working days.",
+        "Track the application on the mutation portal; after approval, pay the DCR fee online and collect the khatian."
+      ],
+      "warnings_bn": [
+        "আবেদন একবার জমা দেওয়ার পর সংশোধন করা যায় না—জমা দেওয়ার আগে সব তথ্য যাচাই করুন।",
+        "আবেদনকৃত জমি দখলে না থাকলে, আংশিক খাস/অর্পিত/অধিগ্রহণকৃত হলে, বা ফ্ল্যাট/ফ্লোর স্পেস হলে আবেদনে নির্ধারিত ঘোষণা ও ব্যাখ্যা দিতে হবে।",
+        "এই তালিকা সরকারি নির্দেশিকার সারাংশ; চূড়ান্ত নথি ও শর্ত সরকারি পোর্টাল ও সহকারী কমিশনার (ভূমি) কার্যালয়ে যাচাই করুন।"
+      ],
+      "warnings_en": [
+        "An application cannot be edited after submission—check every detail before submitting.",
+        "If the land is not in your possession, is partly khas/allotted/acquired, or is an apartment/floor space, the application requires the specified declaration and explanation.",
+        "This checklist summarizes the official guide; verify final documents and conditions on the official portal and with the Assistant Commissioner (Land) office."
+      ],
+      "official_links": [
+        {"label_bn": "সরকারি মিউটেশন পোর্টাল", "label_en": "Official mutation portal", "url": "https://mutation.land.gov.bd/"},
+        {"label_bn": "ই-মিউটেশন ব্যবহার নির্দেশিকা", "label_en": "e-Mutation user guide", "url": "https://mutation.land.gov.bd/nirdeshika"}
+      ]
+    },
+    {
+      "id": "review",
+      "label_bn": "রিভিউ আবেদন",
+      "label_en": "Review application",
+      "questions": [],
+      "documents": [
+        {"id": "khatian_copy", "required": true, "conditions": []}
+      ],
+      "steps_bn": [
+        "খতিয়ান চূড়ান্ত বা না-মঞ্জুর হওয়ার পর সরকারি মিউটেশন পোর্টালে রিভিউ আবেদন খুলুন।",
+        "রিভিউ আবেদনের প্রয়োজনীয় তথ্য ও নথি সরকারি পোর্টালে যাচাই করুন।",
+        "রিভিউ আবেদনের ফি ও নোটিশ ফি সরকারি পোর্টালে পরিশোধ করুন (টাকার পরিমাণ ফি বিভাগে দেখুন)।",
+        "প্রয়োজনীয় নথি সহকারী কমিশনার (ভূমি) কার্যালয়ে জমা দিন এবং আবেদন নম্বর সংরক্ষণ করুন।",
+        "মিউটেশন পোর্টালে আবেদনের অবস্থা ট্র্যাক করুন।"
+      ],
+      "steps_en": [
+        "After the khatian is finalized or rejected, open a review application on the official mutation portal.",
+        "Verify the required information and documents for the review application on the official portal.",
+        "Pay the review application fee and notice fee on the official portal (see the Fee section for amounts).",
+        "Submit the required papers to the Assistant Commissioner (Land) office and save the application number.",
+        "Track the application status on the mutation portal."
+      ],
+      "warnings_bn": [
+        "সরকারি নির্দেশিকায় রিভিউ আবেদনের সম্পূর্ণ নথির তালিকা আলাদাভাবে দেওয়া নেই; সহকারী কমিশনার (ভূমি) কার্যালয়ে নিশ্চিত করুন।",
+        "এই তালিকা সরকারি নির্দেশিকার সারাংশ; চূড়ান্ত শর্ত সরকারি পোর্টালে যাচাই করুন।"
+      ],
+      "warnings_en": [
+        "The official guide does not list a separate complete document list for review applications; confirm it with the Assistant Commissioner (Land) office.",
+        "This checklist summarizes the official guide; verify final conditions on the official portal."
+      ],
+      "official_links": [
+        {"label_bn": "সরকারি মিউটেশন পোর্টাল", "label_en": "Official mutation portal", "url": "https://mutation.land.gov.bd/"}
+      ]
+    },
+    {
+      "id": "track_status",
+      "label_bn": "আবেদনের অবস্থা দেখুন",
+      "label_en": "Track application status",
+      "questions": [],
+      "documents": [],
+      "steps_bn": [
+        "সরকারি মিউটেশন পোর্টালের আবেদন ট্র্যাকিং পেজে যান।",
+        "বিভাগ নির্বাচন করে আবেদন আইডি ও প্রয়োজনীয় তথ্য সরাসরি সরকারি পোর্টালে দিন; ShebaShathi-তে NID বা আবেদন নম্বর লিখবেন না।",
+        "আবেদন মঞ্জুর হলে অনলাইনে ডি.সি.আর. ফি পরিশোধ করে খতিয়ান সংগ্রহ করুন।",
+        "আবেদন সম্পর্কে সহায়তা দরকার হলে সহকারী কমিশনার (ভূমি) কার্যালয়ে যোগাযোগ করুন।"
+      ],
+      "steps_en": [
+        "Open the application tracking page on the official mutation portal.",
+        "Select the division and enter the application ID and required details directly on the official portal; do not enter your NID or application number into ShebaShathi.",
+        "If the application is approved, pay the DCR fee online and collect the khatian.",
+        "Contact the Assistant Commissioner (Land) office if you need help with the application."
+      ],
+      "warnings_bn": [
+        "ShebaShathi কোনো ব্যক্তিগত আবেদন নম্বর বা NID সংরক্ষণ করে না এবং সরকারি ট্র্যাকিংয়ের বিকল্প নয়।"
+      ],
+      "warnings_en": [
+        "ShebaShathi does not store personal application numbers or NIDs and is not a substitute for official tracking."
+      ],
+      "official_links": [
+        {"label_bn": "আবেদনের অবস্থা অনুসরণ", "label_en": "Track an application", "url": "https://mutation.land.gov.bd/search-application"}
+      ]
+    }
+  ]
+}

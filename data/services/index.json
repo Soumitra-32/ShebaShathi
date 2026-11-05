@@ -28,6 +28,11 @@
       "service_id": "death_registration",
       "data_file": "death_registration.json",
       "enabled": true
+    },
+    {
+      "service_id": "land_mutation",
+      "data_file": "land.json",
+      "enabled": true
     }
   ]
 }

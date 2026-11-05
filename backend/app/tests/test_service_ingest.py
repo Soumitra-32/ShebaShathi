@@ -7,7 +7,7 @@ def test_service_data_chunks_are_citable_and_cover_all_enabled_services():
     assert docs
     service_ids = {item["metadata"]["service_id"] for item in docs}
     assert service_ids == {
-        "epassport", "birth_registration", "nid", "driving_licence", "death_registration",
+        "epassport", "birth_registration", "nid", "driving_licence", "death_registration", "land_mutation",
     }
     for item in docs:
         metadata = item["metadata"]

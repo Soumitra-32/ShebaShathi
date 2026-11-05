@@ -14,12 +14,63 @@ def test_catalog_lists_enabled_services_with_review_dates():
     assert body["disclaimer_bn"]
     assert body["disclaimer_en"]
     ids = {service["service_id"] for service in body["services"]}
-    assert {"epassport", "birth_registration", "nid", "driving_licence", "death_registration"} <= ids
+    assert {"epassport", "birth_registration", "nid", "driving_licence", "death_registration", "land_mutation"} <= ids
     for service in body["services"]:
         assert service["enabled"] is True
         assert service["source_url"].startswith("https://")
         assert service["last_verified"]
         assert service["tasks"]
+        assert service["source_check_status"]
+
+
+def test_land_mutation_task_documents_and_source_check_endpoint():
+    response = client.get("/api/services/land_mutation")
+    assert response.status_code == 200
+    body = response.json()
+    tasks = {task["id"]: task for task in body["tasks"]}
+    assert {"new_mutation", "review", "track_status"} <= set(tasks)
+    document_ids = {doc["id"] for doc in tasks["new_mutation"]["documents"]}
+    assert {"khatian_copy", "deed_copy", "land_tax_proof"} <= document_ids
+
+    purchase = client.post("/api/services/land_mutation/checklist", json={
+        "task": "new_mutation",
+        "answers": {"source_type": "purchase", "has_representative": False},
+        "language": "en",
+    })
+    assert purchase.status_code == 200
+    ids = {doc["id"] for doc in purchase.json()["documents"]}
+    assert {"khatian_copy", "deed_copy", "land_tax_proof"} <= ids
+    assert "warish_certificate" not in ids
+
+    inheritance = client.post("/api/services/land_mutation/checklist", json={
+        "task": "new_mutation",
+        "answers": {"source_type": "inheritance", "has_representative": True},
+        "language": "bn",
+    })
+    assert inheritance.status_code == 200
+    ids = {doc["id"] for doc in inheritance.json()["documents"]}
+    assert "warish_certificate" in ids and "representative_document" in ids
+    assert "deed_copy" not in ids
+
+    status = client.get("/api/services/refresh-status")
+    assert status.status_code == 200
+    assert "services" in status.json()
+
+
+def test_source_check_flags_a_changed_official_page():
+    from app.services import refresh
+
+    service = loader.get_service("epassport")
+    first = refresh.check_service(service, previous=None, fetcher=lambda url: b"old page", robots_allowed=lambda url: True)
+    assert first["status"] == "unchanged"
+    assert first["pending_review"] is False
+    assert first["hashes"]
+
+    second = refresh.check_service(service, previous=first, fetcher=lambda url: b"new page", robots_allowed=lambda url: True)
+    assert second["status"] == "changed"
+    assert second["pending_review"] is True
+    assert second["changed_urls"]
+    assert second["last_checked"]
 
 
 def test_service_overview_and_unknown_service():

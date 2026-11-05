@@ -56,7 +56,7 @@ def test_ambiguous_text_returns_service_options_instead_of_guessing():
     body = _intake("hello", "en").json()
     assert body["service_id"] is None
     assert body["task_id"] is None
-    assert len(body["service_options"]) == 5
+    assert len(body["service_options"]) == 6
     assert body["confidence"] == 0.0
 
 

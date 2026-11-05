@@ -354,7 +354,8 @@ Rules:
 | `/` | Citizen-services landing page: service directory, "Find my service" CTA, language toggle, disclaimer |
 | `/services` | Directory of enabled services and supported tasks, with guide review dates |
 | `/services/[serviceId]` | Service overview, task choices, official links, source dates, and privacy boundary |
-| `/services/[serviceId]/guide` | Short conditional questionnaire and tailored preparation checklist |
+| `/services/[serviceId]/guide` | Short conditional questionnaire → source-dated document checklist → manually marked phases with progress → printable full task document or completed summary |
+| `/fees` | All published service fees, official source URLs, verification dates, and fee breakdowns (no fees inside the preparation guides) |
 | `/identity-check` | Optional browser-only comparison of selected identity fields; no file upload or network request |
 | `/wizard` | Step-by-step cards (age/type → pages → validity → delivery) with progress bar |
 | `/wizard/result` | Fee breakdown card (base, VAT, total, source + date), checklist, steps, "Download PDF" |
@@ -458,9 +459,16 @@ Rules:
 - [x] P11-4 Default to `anthropic/claude-sonnet-4.6` with optional `LLM_MODEL_FALLBACKS`; report the model that actually answered instead of the configured default.
 - [x] P11-5 Add a plain-text sanitizer for model output, bilingual UI copy, citations, suggestions, and provider/model display in `/copilot`, the floating assistant and the checklist card.
 - **Accept:** Every generated answer passes the verifier or falls back to cited/deterministic text; no identity data reaches the model; `ml_core/` untouched; tests, type check, lint and build pass.
-
-
 - [ ] Review source-dated service rules on a planned cadence and after official notices or user reports.
+
+
+### Phase 12 — Guided Service Workflow + Fee Separation (2026-11-05)
+- [x] P12-1 Add the sixth service area (land mutation) with source-dated tasks, documents, phases, and official links.
+- [x] P12-2 Organize each service as task → questionnaire → document checklist → manually marked phases → printable full task / completed summary; add a printable full-service guide.
+- [x] P12-3 Move all fee display out of the preparation guides into a dedicated `/fees` section; keep the fee checker on `/redflag`.
+- [x] P12-4 Add a once-a-day official-source availability/change check. A detected change is flagged for human review and never auto-promoted to a rule.
+- **Accept:** Each enabled service exposes task choices; progress is manually marked and kept in the browser tab only; full-task and completed-summary printouts work; fees are absent from service guides and present on `/fees`; `last_checked` and `last_verified` are shown separately; `ml_core/` untouched.
+
 - [x] Record each changed rule and its authority in `data/VERIFICATION_LOG.md`.
 - [ ] Flag stale guides in the UI; do not silently promote stale snapshots to current requirements.
 - **Accept:** A release cannot include a modified rule without a source URL, review date, change record, and regression test.
