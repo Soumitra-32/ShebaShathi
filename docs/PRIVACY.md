@@ -1,6 +1,6 @@
 # Privacy and local-processing map
 
-> Scope: the AI intake (`/#intake`), the grounded copilot (`/copilot`), the AI case brief on a verified checklist, the complaint drafter (`/grs`), the document consistency check (`/identity-check`) and the fee checker (`/redflag`).
+> Scope: the AI intake (`/copilot#intake`), the grounded copilot (`/copilot`), the AI case brief on a verified checklist, the complaint drafter (`/grs`), the document consistency check (`/identity-check`) and the fee checker (`/redflag`).
 > Rules for this behaviour live in `docs/SECURITY_ASSESSMENT.md` §3.1.1.
 
 ## What runs where
