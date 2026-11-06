@@ -1,27 +1,33 @@
 {
-  "checked_at": "2026-11-05T10:54:30+00:00",
+  "checked_at": "2026-11-06T09:26:59+00:00",
   "interval_hours": 24,
-  "next_check": "2026-11-06T10:54:30+00:00",
+  "next_check": "2026-11-07T09:26:59+00:00",
   "services": {
     "epassport": {
-      "last_checked": "2026-11-05T10:54:26+00:00",
-      "status": "unchanged",
-      "changed_urls": [],
+      "last_checked": "2026-11-06T09:26:43+00:00",
+      "status": "changed",
+      "changed_urls": [
+        "https://epassport.gov.bd/instructions/instructions"
+      ],
       "unreachable_urls": [],
       "skipped_urls": [
         "https://www.epassport.gov.bd/",
         "https://www.epassport.gov.bd/instructions/passport-fees"
       ],
-      "pending_review": false,
+      "pending_review": true,
       "hashes": {
-        "https://epassport.gov.bd/instructions/instructions": "15ae56c201cdde79a370cf0c7b143e12141f656930d565f24889b844164a9db2"
+        "https://epassport.gov.bd/instructions/instructions": "3a31f9bb7889892a730c1a7b8ef8047cb60fc22b4bc3a921b17675a868c998e0"
       }
     },
     "birth_registration": {
-      "last_checked": "2026-11-05T10:54:27+00:00",
-      "status": "unchanged",
-      "changed_urls": [],
-      "unreachable_urls": [],
+      "last_checked": "2026-11-06T09:26:50+00:00",
+      "status": "changed",
+      "changed_urls": [
+        "https://everify.bdris.gov.bd"
+      ],
+      "unreachable_urls": [
+        "https://orgbdr.gov.bd/pages/static-pages/6922df21933eb65569e20100"
+      ],
       "skipped_urls": [
         "https://bdris.gov.bd/",
         "https://bdris.gov.bd/br/application",
@@ -30,16 +36,18 @@
         "https://bdris.gov.bd/br/reprint/add",
         "https://bdris.gov.bd/br/application/status"
       ],
-      "pending_review": false,
+      "pending_review": true,
       "hashes": {
-        "https://everify.bdris.gov.bd": "614a1933350d30e6070c5c9e223d8747878b8dc0adbd081970d7b07aa13a270e",
+        "https://everify.bdris.gov.bd": "a3fb39e54698d6c9c94475869f9325236f8232cac967895f66195a1a6cb37c07",
         "https://orgbdr.gov.bd/pages/static-pages/6922df21933eb65569e20100": "c8ca2f16d1641f8f91b84bd61a5a9a11ed4089942b82df57f80888ff3b83d065"
       }
     },
     "nid": {
-      "last_checked": "2026-11-05T10:54:28+00:00",
-      "status": "unchanged",
-      "changed_urls": [],
+      "last_checked": "2026-11-06T09:26:52+00:00",
+      "status": "changed",
+      "changed_urls": [
+        "https://ecs.gov.bd/"
+      ],
       "unreachable_urls": [],
       "skipped_urls": [
         "https://services.nidw.gov.bd/",
@@ -48,42 +56,50 @@
         "https://services.nidw.gov.bd/nid-pub/faq?tab=faq-correction",
         "https://services.nidw.gov.bd/nid-pub/form/download"
       ],
-      "pending_review": false,
+      "pending_review": true,
       "hashes": {
-        "https://ecs.gov.bd/": "6789186e90f204cbba18e179bc28b3be79ccba150361d57be8c53438d95d0a31"
+        "https://ecs.gov.bd/": "875de0b3f7c5bc81d7814f46437fb2272e18e456b86edcc4194803e01ed739bb"
       }
     },
     "driving_licence": {
-      "last_checked": "2026-11-05T10:54:29+00:00",
-      "status": "unchanged",
-      "changed_urls": [],
+      "last_checked": "2026-11-06T09:26:57+00:00",
+      "status": "changed",
+      "changed_urls": [
+        "https://bsp.brta.gov.bd/drivingLicense",
+        "https://bsp.brta.gov.bd/",
+        "https://bsp.brta.gov.bd/feeCalculator"
+      ],
       "unreachable_urls": [],
       "skipped_urls": [],
-      "pending_review": false,
+      "pending_review": true,
       "hashes": {
-        "https://bsp.brta.gov.bd/drivingLicense": "536ec2533d87427d58c5b5e2a158aece922d410e965cce1a19708222cb3cef16",
-        "https://bsp.brta.gov.bd/": "8f8d91629aa1d9924d7fae5a5e61270f28e1043e209e5790a86a6482ff3abe17",
-        "https://bsp.brta.gov.bd/feeCalculator": "65aa0192f4105bf0c4110ea79d593f7cfbb69818ffea8e73ebab4873260e2a48"
+        "https://bsp.brta.gov.bd/drivingLicense": "d861c063357594394f790042742f2c43edd692f6d47b596a0face937edaf302c",
+        "https://bsp.brta.gov.bd/": "74f4d9bdd5431c9be06a276c1dbf9c4f849cdf9664392bcd2c2eb2ab9fa2c43b",
+        "https://bsp.brta.gov.bd/feeCalculator": "80c284111a71658fc07e869710970b0e6c2ac365a92213d68e4175437e010f36"
       }
     },
     "death_registration": {
-      "last_checked": "2026-11-05T10:54:29+00:00",
-      "status": "unchanged",
-      "changed_urls": [],
-      "unreachable_urls": [],
+      "last_checked": "2026-11-06T09:26:59+00:00",
+      "status": "changed",
+      "changed_urls": [
+        "https://everify.bdris.gov.bd/UDRNVerification"
+      ],
+      "unreachable_urls": [
+        "https://orgbdr.gov.bd/pages/static-pages/6922df21933eb65569e20100"
+      ],
       "skipped_urls": [
         "https://bdris.gov.bd/dr/application",
         "https://bdris.gov.bd/dr/correction",
         "https://bdris.gov.bd/dr/reprint/add"
       ],
-      "pending_review": false,
+      "pending_review": true,
       "hashes": {
-        "https://everify.bdris.gov.bd/UDRNVerification": "dd7e5036126d451b0a498d22667862b8de1beb30efc45816d3953333feced939",
+        "https://everify.bdris.gov.bd/UDRNVerification": "8ca3998d6fcc23028f6ed0a3274e738824fe6f6a31021892ac483919fe18890d",
         "https://orgbdr.gov.bd/pages/static-pages/6922df21933eb65569e20100": "c8ca2f16d1641f8f91b84bd61a5a9a11ed4089942b82df57f80888ff3b83d065"
       }
     },
     "land_mutation": {
-      "last_checked": "2026-11-05T10:54:30+00:00",
+      "last_checked": "2026-11-06T09:26:59+00:00",
       "status": "unchanged",
       "changed_urls": [],
       "unreachable_urls": [],
