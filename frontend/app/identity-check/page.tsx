@@ -47,6 +47,7 @@ const copy = {
     addFile: "নথি যোগ করুন",
     fileHint: "শুধু PNG/JPEG ছবি বা PDF (সর্বোচ্চ ১২ এমবি)।",
     docType: "নথির ধরন",
+    reviewed: "এই মানগুলো মূল নথির সাথে মিলিয়ে দেখেছি",
     remove: "সরান",
     reading: "পড়া হচ্ছে…",
     ready: "পড়া হয়েছে",
@@ -57,6 +58,7 @@ const copy = {
     fileMalformed: "ফাইলটির প্রকৃত বিষয়বস্তু পড়া গেল না।",
     fileEmpty: "ফাইলটি খালি।",
     fileLimit: "সর্বোচ্চ ৩টি নথি যোগ করা যাবে।",
+    fileDuplicate: "এই ফাইলটি আগেই যোগ করা হয়েছে।",
     modeTitle: "তুলনার ধরন",
     modeSame: "একই ধরনের নথি",
     modeSameHint: "একই সার্টিফিকেটের দুটি কপি বা সংস্করণ (যেমন দুটি NID বা দুটি জন্ম সনদ) ঘরে ঘরে মিলিয়ে দেখে।",
@@ -102,6 +104,7 @@ const copy = {
     addFile: "Add a document",
     fileHint: "PNG/JPEG images or PDF only (12 MB maximum).",
     docType: "Document type",
+    reviewed: "I checked these values against the original document",
     remove: "Remove",
     reading: "Reading…",
     ready: "Read",
@@ -112,6 +115,7 @@ const copy = {
     fileMalformed: "The real content of the file could not be read.",
     fileEmpty: "The file is empty.",
     fileLimit: "At most 3 documents can be added.",
+    fileDuplicate: "This file has already been added.",
     modeTitle: "Comparison type",
     modeSame: "Same type of document",
     modeSameHint: "Two copies or versions of the same certificate (for example two NIDs or two birth certificates), compared field by field.",
@@ -153,6 +157,10 @@ interface ComparisonDoc {
   status: "reading" | "ready" | "error";
   error?: string;
   truncated?: boolean;
+  /** Content hash used to reject the same file twice. */
+  hash: string;
+  /** OCR values are unconfirmed until the user checks them against the original. */
+  reviewed: boolean;
   values: Record<FieldKey, string>;
 }
 
@@ -181,17 +189,20 @@ export default function IdentityCheckPage() {
       malformed: t.fileMalformed,
       empty: t.fileEmpty,
       limit_reached: t.fileLimit,
+      duplicate: t.fileDuplicate,
     };
     return map[reason] ?? t.fileUnsupported;
   };
 
   const addFiles = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
+    const existingHashes = new Set(documents.map((document) => document.hash));
     const result = await validateFiles(Array.from(files), {
       maxFiles: MAX_DOCUMENTS,
       maxBytesPerFile: MAX_FILE_BYTES,
       acceptedKinds: ["image", "pdf"],
       currentCount: documents.length,
+      existingHashes,
     });
     setRejections(result.rejected.map((item) => `${item.name} — ${rejectionMessage(item.reason)}`));
 
@@ -206,6 +217,8 @@ export default function IdentityCheckPage() {
         kind: accepted.kind as FileKind,
         previewUrl,
         status: "reading",
+        hash: accepted.hash,
+        reviewed: false,
         values: emptyValues(),
       };
       setDocuments((previous) => [...previous, document]);
@@ -248,6 +261,12 @@ export default function IdentityCheckPage() {
     );
   };
 
+  const setDocumentReviewed = (id: string, reviewed: boolean) => {
+    setDocuments((previous) =>
+      previous.map((item) => (item.id === id ? { ...item, reviewed } : item))
+    );
+  };
+
   const clearAll = () => {
     setDocuments((previous) => {
       for (const document of previous) releasePreviewUrl(document.previewUrl);
@@ -264,7 +283,7 @@ export default function IdentityCheckPage() {
       valuesByField[field] = documents.map((document) => ({
         docId: document.id,
         value: document.values[field] ?? "",
-        confirmed: true,
+        confirmed: document.reviewed,
       }));
     }
     return compareFields(FIELD_KEYS, valuesByField);
@@ -432,6 +451,21 @@ export default function IdentityCheckPage() {
                       {t.remove}
                     </button>
                   </div>
+                  {document.status === "ready" && (
+                    <label
+                      htmlFor={`doc-reviewed-${document.id}`}
+                      className="mt-2 flex cursor-pointer items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-2 text-xs text-amber-950"
+                    >
+                      <input
+                        id={`doc-reviewed-${document.id}`}
+                        type="checkbox"
+                        checked={document.reviewed}
+                        onChange={(event) => setDocumentReviewed(document.id, event.target.checked)}
+                        className="mt-0.5 h-4 w-4 shrink-0 accent-emerald-700"
+                      />
+                      <span>{t.reviewed}</span>
+                    </label>
+                  )}
                 </li>
               ))}
             </ul>

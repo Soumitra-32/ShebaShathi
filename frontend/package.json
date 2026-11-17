@@ -13,6 +13,9 @@
     "fetch-models": "node scripts/fetch-models.mjs",
     "verify:local": "node scripts/verify-local-processing.mjs",
     "verify:speech": "node scripts/verify-speech-model.mjs",
+    "verify:documents": "node scripts/verify-documents.mjs",
+    "verify:voice": "node scripts/verify-voice.mjs",
+    "verify:services": "node scripts/verify-service-matrix.mjs",
     "verify:privacy": "node scripts/verify-privacy-flows.mjs",
     "verify:intake": "node scripts/verify-intake-ui.mjs"
   },

@@ -49,6 +49,52 @@ export interface PdfTextResult {
   hasTextLayer: boolean;
 }
 
+interface PdfTextItemLike {
+  str: string;
+  transform?: number[];
+  hasEOL?: boolean;
+}
+
+/**
+ * Rebuild readable lines from pdf.js text items.
+ *
+ * Joining every item with a space destroys the line boundaries and makes the
+ * local field extractor read a label and an unrelated neighbouring column as
+ * one value. pdf.js gives each item a text-space y coordinate and an
+ * end-of-line flag, so group by y and start a new line on a y change.
+ */
+export function textItemsToText(items: PdfTextItemLike[]): string {
+  const lines: string[] = [];
+  let current: string[] = [];
+  let currentY: number | null = null;
+
+  const flush = () => {
+    const line = current.join(" ").replace(/[ \t]+/g, " ").trim();
+    if (line) lines.push(line);
+    current = [];
+    currentY = null;
+  };
+
+  for (const item of items) {
+    if (!("str" in item) || typeof item.str !== "string") continue;
+    const y = Array.isArray(item.transform) ? item.transform[5] : null;
+    if (
+      current.length > 0 &&
+      currentY !== null &&
+      typeof y === "number" &&
+      Math.abs(y - currentY) > 1
+    ) {
+      flush();
+    }
+    if (item.str.trim()) current.push(item.str.trim());
+    if (typeof y === "number") currentY = y;
+    if (item.hasEOL) flush();
+  }
+  flush();
+
+  return lines.join("\n").replace(/\n{3,}/g, "\n\n").trim();
+}
+
 /**
  * Read the text layer of every page.
  * The caller must pass a fresh ArrayBuffer because pdf.js detaches it.
@@ -62,11 +108,7 @@ export async function extractPdfText(data: ArrayBuffer): Promise<PdfTextResult> 
   for (let pageNumber = 1; pageNumber <= totalPages; pageNumber += 1) {
     const page = await pdfDocument.getPage(pageNumber);
     const content = await page.getTextContent();
-    const text = content.items
-      .map((item) => ("str" in item ? item.str : ""))
-      .join(" ")
-      .replace(/\s+/g, " ")
-      .trim();
+    const text = textItemsToText(content.items as PdfTextItemLike[]);
     if (text.length > 0) hasTextLayer = true;
     pages.push({ pageNumber, text });
     page.cleanup();

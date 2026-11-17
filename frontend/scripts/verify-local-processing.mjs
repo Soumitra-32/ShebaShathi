@@ -77,10 +77,18 @@ async function main() {
     console.log(hasBengali ? "[verify] PASS ocr bengali image" : "[verify] FAIL ocr bengali image");
   }
 
-  const pdf = files.find((name) => name.endsWith(".pdf"));
-  if (pdf) {
-    const text = await pdfText(join(fixtures, pdf));
-    expectText("pdf text layer", text, ["Rahim Uddin", "12/03/1990", "Salma Begum"]);
+  const textPdfs = [
+    ["identity-text.pdf", ["Rahim Uddin", "13/03/1990", "Karim Uddin", "Salma Begum"]],
+    ["nid-text.pdf", ["Rahim Uddin", "13/03/1990", "Salma Begum"]],
+    ["passport-text.pdf", ["Rahim Uddin", "13/03/1990", "Salma Begum"]],
+  ];
+  for (const [name, needles] of textPdfs) {
+    if (!files.includes(name)) {
+      failures.push(`${name}: fixture missing`);
+      continue;
+    }
+    const text = await pdfText(join(fixtures, name));
+    expectText(`pdf text layer ${name}`, text, needles);
   }
 
   if (failures.length) {

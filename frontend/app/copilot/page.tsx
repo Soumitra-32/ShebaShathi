@@ -366,15 +366,15 @@ export default function CopilotPage() {
                         {message.role === "assistant" && message.response && (
                           <div className="mt-2">
                             <div className="flex flex-wrap items-center gap-2 text-xs">
-                              {message.response.grounded ? (
+                              {message.response.grounded && message.response.answer_found !== false ? (
                                 <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-1 font-semibold text-emerald-800">
                                   <ShieldCheck size={13} aria-hidden="true" /> {t("copilot.grounded")}
                                 </span>
-                              ) : (
+                              ) : message.response.answer_found === false || message.response.answer_found === undefined ? (
                                 <span className="rounded-full bg-amber-100 px-2.5 py-1 font-semibold text-amber-900">
                                   {t("copilot.fallback")}
                                 </span>
-                              )}
+                              ) : null}
                               {message.response.generation_mode === "api" && message.response.llm_provider && (
                                 <span className="text-slate-500">
                                   {t("copilot.answeredBy")}: {message.response.llm_provider}

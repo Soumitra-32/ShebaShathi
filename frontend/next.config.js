@@ -12,7 +12,7 @@ const isDevelopment = process.env.NODE_ENV !== "production";
 function contentSecurityPolicy() {
   const directives = [
     "default-src 'self'",
-    `script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'${isDevelopment ? " 'unsafe-eval'" : ""}`,
+    `script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob:${isDevelopment ? " 'unsafe-eval'" : ""}`,
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' blob: data:",
     "font-src 'self' data:",

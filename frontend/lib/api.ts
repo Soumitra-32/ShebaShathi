@@ -63,8 +63,9 @@ export interface CopilotResponse {
   answer: string;
   citations: Citation[];
   grounded: boolean;
+  answer_found?: boolean;
   retrieved_chunks?: { id: string; score: number; section: string }[];
-  generation_mode?: "api" | "extractive" | "unavailable" | "deterministic" | "safety" | "greeting" | "screened_local";
+  generation_mode?: "api" | "extractive" | "unavailable" | "deterministic" | "safety" | "greeting" | "screened_local" | "not_found" | "clarify";
   llm_provider?: string;
   llm_model?: string | null;
   safety_blocked?: boolean;

@@ -25,7 +25,7 @@ const LABELS: LabelPattern[] = [
     patterns: [
       /পিতার\s*নাম/gi,
       /পিতা(?:র)?\s*নামঃ?/gi,
-      /father(?:'s)?\s*name/gi,
+      /father(?:['’]s)?\s*name/gi,
       /father/gi,
     ],
   },
@@ -34,7 +34,7 @@ const LABELS: LabelPattern[] = [
     patterns: [
       /মাতার\s*নাম/gi,
       /মাতা(?:র)?\s*নামঃ?/gi,
-      /mother(?:'s)?\s*name/gi,
+      /mother(?:['’]s)?\s*name/gi,
       /mother/gi,
     ],
   },
