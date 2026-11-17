@@ -12,6 +12,13 @@ services:
       # Dockerfile (ONNX int8 + ingest at build). Mounting a volume over
       # /app/.chroma would shadow the baked index and break the numpy store.
       CORS_ORIGINS: http://localhost:3000
+      RATE_LIMIT_STORE: sqlite
+      RATE_LIMIT_DB_PATH: /tmp/shebashathi-rate-limits.db
+      SEMANTIC_SCOPE_ENABLED: "true"
+      SEMANTIC_SCOPE_MIN_MARGIN: "0.01"
+      EXTRACTIVE_MIN_SCORE: "0.86"
+      # Local compose is direct; do not trust forwarding headers here.
+      TRUST_PROXY_HEADERS: "false"
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
       interval: 20s

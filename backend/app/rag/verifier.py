@@ -1,6 +1,8 @@
 """Validate model chunk references, source metadata, and numeric claims."""
 import re
 
+from . import guard
+
 _BN_DIGITS = str.maketrans("০১২৩৪৫৬৭৮৯", "0123456789")
 
 
@@ -38,6 +40,8 @@ def verify(answer_data: dict, question: str | None = None) -> dict:
     answer_urls = set(re.findall(r"https?://[^\s)\]}>,]+", answer))
     if any(url not in context_urls for url in answer_urls):
         issues.append("unsupported URL")
+    if answer.strip() and guard.classify(answer):
+        issues.append("unsafe advice")
     return {
         "grounded": not issues,
         "answer": answer,

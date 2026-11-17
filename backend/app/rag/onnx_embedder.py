@@ -15,13 +15,20 @@ evaluation; this module only replaces the runtime inside small containers.
 """
 from __future__ import annotations
 
+import hashlib
 import logging
+import sys
 import threading
 from pathlib import Path
 
 import numpy as np
 
-from ..config import settings
+from ..config import PROJECT_ROOT, settings
+
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+from ml_core.ml.utils.cache import LRUCache
 
 logger = logging.getLogger(__name__)
 
@@ -41,6 +48,10 @@ class OnnxEmbedder:
         self.model_dir = model_dir
         self.threads = threads
         self._session, self._input_names, self._tokenizer = self._load(model_dir, threads)
+        self._query_cache: LRUCache[str, np.ndarray] = LRUCache(
+            maxsize=max(1, int(settings.embedding_cache_size))
+        )
+        self._cache_lock = threading.Lock()
 
     # -- loading ---------------------------------------------------------
     @staticmethod
@@ -80,11 +91,59 @@ class OnnxEmbedder:
         return session, input_names, tokenizer
 
     # -- API ----------------------------------------------------------------
-    def embed(self, texts: list[str], batch_size: int | None = None, task: str = "passage") -> np.ndarray:
-        if not texts:
+    @staticmethod
+    def _apply_prefix(text: str, prefix: str) -> str:
+        if text.startswith(E5_PREFIX_QUERY) or text.startswith(E5_PREFIX_PASSAGE):
+            return text
+        return prefix + text
+
+    def _cache_key(self, prepared_text: str) -> str:
+        payload = f"{self.model_dir}\0{prepared_text}".encode("utf-8")
+        return hashlib.sha256(payload).hexdigest()
+
+    def _cache_get(self, key: str) -> np.ndarray | None:
+        with self._cache_lock:
+            return self._query_cache.get(key)
+
+    def _cache_put(self, key: str, vector: np.ndarray) -> None:
+        with self._cache_lock:
+            self._query_cache.put(key, vector)
+
+    def clear_cache(self) -> None:
+        with self._cache_lock:
+            self._query_cache.clear()
+
+    def cache_info(self) -> dict:
+        with self._cache_lock:
+            return {
+                "size": len(self._query_cache),
+                "maxsize": self._query_cache.maxsize,
+                "hits": self._query_cache.hits,
+                "misses": self._query_cache.misses,
+            }
+
+    def embed(self, texts: list[str], batch_size: int | None = None, task: str = "passage",
+              use_cache: bool = True) -> np.ndarray:
+        if texts is None:
+            texts = []
+        if isinstance(texts, str):
+            texts = [texts]
+        prepared_texts = ["" if text is None else str(text) for text in texts]
+        if not prepared_texts:
             return np.zeros((0, self.dim), dtype=np.float32)
+
         prefix = E5_PREFIX_QUERY if task == "query" else E5_PREFIX_PASSAGE
-        encodings = self._tokenizer.encode_batch([prefix + text for text in texts])
+        prepared = [self._apply_prefix(text, prefix) for text in prepared_texts]
+        unique = list(dict.fromkeys(prepared))
+
+        cache_key = None
+        if use_cache and task == "query" and len(unique) == 1:
+            cache_key = self._cache_key(unique[0])
+            cached = self._cache_get(cache_key)
+            if cached is not None:
+                return cached.reshape(1, -1).copy()
+
+        encodings = self._tokenizer.encode_batch(unique)
         input_ids = np.array([e.ids for e in encodings], dtype=np.int64)
         attention_mask = np.array([e.attention_mask for e in encodings], dtype=np.int64)
         feed: dict[str, np.ndarray] = {
@@ -101,13 +160,21 @@ class OnnxEmbedder:
         counts = np.clip(mask.sum(axis=1), 1e-9, None)
         mean_pooled = summed / counts
         norm = np.clip(np.linalg.norm(mean_pooled, axis=1, keepdims=True), 1e-12, None)
-        return (mean_pooled / norm).astype(np.float32)
+        vectors = (mean_pooled / norm).astype(np.float32)
 
-    def embed_single(self, text: str) -> np.ndarray:
-        return self.embed([text], task="query")[0]
+        if cache_key is not None:
+            self._cache_put(cache_key, vectors[0].copy())
+        if len(unique) == len(prepared):
+            return vectors
 
-    def embed_query(self, text: str) -> np.ndarray:
-        return self.embed([text], task="query")[0]
+        position = {text: index for index, text in enumerate(unique)}
+        return vectors[[position[text] for text in prepared]]
+
+    def embed_single(self, text: str, use_cache: bool = True) -> np.ndarray:
+        return self.embed_query(text, use_cache=use_cache)
+
+    def embed_query(self, text: str, use_cache: bool = True) -> np.ndarray:
+        return self.embed([text], task="query", use_cache=use_cache)[0]
 
     def embed_documents(self, texts: list[str]) -> np.ndarray:
         return self.embed(texts, task="passage")

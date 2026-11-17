@@ -45,7 +45,17 @@ def _detect_service(question: str) -> str | None:
     value = question.casefold()
     if any(term in value for term in ("passport", "পাসপোর্ট", "epassport")):
         return "epassport"
-    if any(term in value for term in ("driving", "licence", "license", "ড্রাইভিং", "লাইসেন্স", "brta")):
+    # A bare "licence" is not enough: trade, business, fire and gun licences
+    # are different services. Require a driving-specific term or an explicit
+    # learner/licence pair.
+    if any(
+        term in value
+        for term in (
+            "driving", "driving licence", "driving license", "motorcycle",
+            "motorbike", "brta", "learner licence", "learner license",
+            "ড্রাইভিং", "মোটরসাইকেল", "লার্নার",
+        )
+    ):
         return "driving_licence"
     return None
 
@@ -67,17 +77,31 @@ def _citation(result: dict[str, Any], quote: str) -> dict[str, str]:
 def _clarification(service_id: str, missing: list[str], language: str) -> dict[str, Any]:
     service = fee_schedules.SERVICES[service_id]
     is_bn = language == "bn"
-    if service_id == "epassport":
-        needed = "পৃষ্ঠা (৪৮/৬৪), মেয়াদ (৫/১০ বছর) এবং ডেলিভারি (সাধারণ/এক্সপ্রেস/সুপার এক্সপ্রেস)"
-        needed_en = "pages (48/64), validity (5/10 years) and delivery (regular/express/super express)"
-    else:
-        needed = "সেবার ধরন (লার্নার/স্মার্ট কার্ড/নবায়ন/ডুপ্লিকেট) এবং প্রযোজ্য হলে পেশাদার/অপেশাদার"
-        needed_en = "service type (learner/smart card/renewal/duplicate) and professional/non-professional where applicable"
+    labels_bn = {
+        "pages": "পৃষ্ঠা (৪৮/৬৪)",
+        "validity_years": "মেয়াদ (৫/১০ বছর)",
+        "delivery": "ডেলিভারি (সাধারণ/এক্সপ্রেস/সুপার এক্সপ্রেস)",
+        "service_type": "সেবার ধরন (লার্নার/স্মার্ট কার্ড/নবায়ন/ডুপ্লিকেট)",
+        "learner_category": "লার্নার ক্যাটাগরি (১/২)",
+        "professional": "পেশাদার/অপেশাদার",
+    }
+    labels_en = {
+        "pages": "pages (48/64)",
+        "validity_years": "validity (5/10 years)",
+        "delivery": "delivery (regular/express/super express)",
+        "service_type": "service type (learner/smart card/renewal/duplicate)",
+        "learner_category": "learner category (1 or 2)",
+        "professional": "professional/non-professional",
+    }
+    labels = labels_bn if is_bn else labels_en
+    needed = ", ".join(labels.get(item, item) for item in missing) or (
+        "the missing fee option" if not is_bn else "প্রয়োজনীয় ফি অপশন"
+    )
     answer = (
         f"সঠিক ফি বলতে {needed} জানতে হবে। প্রকাশিত ফি তালিকা: {service['source_url']} "
         f"(যাচাই: {service['last_verified']})।"
         if is_bn else
-        f"To state the exact fee I need {needed_en}. Published fee schedule: {service['source_url']} "
+        f"To state the exact fee I need {needed}. Published fee schedule: {service['source_url']} "
         f"(verified {service['last_verified']})."
     )
     return {
@@ -88,6 +112,7 @@ def _clarification(service_id: str, missing: list[str], language: str) -> dict[s
             "last_verified": service["last_verified"],
         }, f"Missing parameters: {', '.join(missing)}. The official schedule lists the selectable values.")],
         "grounded": True,
+        "answer_found": True,
         "retrieved_chunks": [],
         "generation_mode": "deterministic",
         "llm_provider": "none",
@@ -218,6 +243,7 @@ def _format(service_id: str, selection: dict[str, str], result: dict[str, Any], 
         "answer": answer,
         "citations": [_citation(result, quote)],
         "grounded": True,
+        "answer_found": True,
         "retrieved_chunks": [],
         "generation_mode": "deterministic",
         "llm_provider": "none",
@@ -258,6 +284,7 @@ def _verification(service_id: str, language: str) -> dict[str, Any]:
         "answer": answer,
         "citations": [citation],
         "grounded": True,
+        "answer_found": True,
         "retrieved_chunks": [],
         "generation_mode": "deterministic",
         "llm_provider": "none",

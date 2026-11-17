@@ -42,6 +42,11 @@ def test_driving_renewal_fee():
     assert "2185" in result["answer"]
 
 
+def test_fee_answer_does_not_treat_a_generic_licence_as_driving():
+    assert fee_answer.answer("What is the fee for a trade licence?", None, "en") is None
+    assert fee_answer.answer("What is the fee for a fire licence?", None, "en") is None
+
+
 def test_non_amount_questions_are_not_intercepted():
     for question in (
         "Regular delivery time after biometrics?",
@@ -59,6 +64,13 @@ def test_fee_verification_points_to_official_page():
     assert "bsp.brta.gov.bd" in result["answer"]
     assert "ফি" in result["answer"]
     assert result["citations"][0]["last_verified"]
+
+
+def test_learner_fee_asks_only_for_the_learner_category():
+    result = fee_answer.answer("What is the learner licence fee?", "driving_licence", "en")
+    assert result is not None
+    assert "learner category" in result["answer"]
+    assert "service type" not in result["answer"]
 
 
 def test_missing_parameters_ask_for_them_instead_of_guessing():

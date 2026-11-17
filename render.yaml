@@ -26,10 +26,25 @@ services:
         value: /app/backend
       - key: RATE_LIMIT_ENABLED
         value: "true"
+      - key: RATE_LIMIT_STORE
+        value: sqlite
+      - key: RATE_LIMIT_DB_PATH
+        value: /tmp/shebashathi-rate-limits.db
       - key: RATE_LIMIT_PER_MINUTE
         value: "60"
       - key: INTAKE_RATE_LIMIT_PER_MINUTE
         value: "60"
+      # Render terminates TLS and forwards the client through its proxy. The
+      # limiter uses the rightmost untrusted X-Forwarded-For value, so a
+      # client-supplied left-hand value cannot choose its own bucket.
+      - key: TRUST_PROXY_HEADERS
+        value: "true"
+      - key: SEMANTIC_SCOPE_ENABLED
+        value: "true"
+      - key: SEMANTIC_SCOPE_MIN_MARGIN
+        value: "0.01"
+      - key: EXTRACTIVE_MIN_SCORE
+        value: "0.86"
       # LLM_API_KEY is intentionally not set here. Without it the copilot
       # stays in cited extractive mode and intake in deterministic keyword
       # mode: no external model call at all. To enable it later, set

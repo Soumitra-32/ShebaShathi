@@ -116,6 +116,13 @@ def test_identity_number_is_rejected_before_any_model_call():
     assert response.json()["error"]["code"] == "IDENTITY_DATA_REJECTED"
 
 
+def test_password_or_otp_is_rejected_before_any_model_call():
+    for text in ("my password is hunter2, passport renewal", "654321 is the code I received"):
+        response = client.post("/api/intake", json={"text": text, "language": "en"})
+        assert response.status_code == 422
+        assert response.json()["error"]["code"] == "IDENTITY_DATA_REJECTED"
+
+
 def test_extra_request_fields_are_rejected():
     response = client.post("/api/intake", json={
         "text": "passport", "language": "en", "profile": {"nid": "123"},

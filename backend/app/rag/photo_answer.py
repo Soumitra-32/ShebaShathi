@@ -114,6 +114,7 @@ def answer(question: str, service_id: str | None = None, language: str = "bn") -
         "answer": answer_text,
         "citations": [_citation(service, child_photo, quote)],
         "grounded": True,
+        "answer_found": True,
         "retrieved_chunks": [],
         "generation_mode": "deterministic",
         "llm_provider": "none",

@@ -90,6 +90,11 @@ class CopilotAnswer(BaseModel):
     answer: str
     citations: List[Citation]
     grounded: bool
+    # True when the assistant produced a meaningful response (a service answer,
+    # a clarification, a safety notice or a greeting) rather than the safe
+    # fallback. It is deliberately separate from ``grounded``: a clarification
+    # or safety notice is not a grounded service fact.
+    answer_found: bool = False
     retrieved_chunks: List[RetrievedChunk] = Field(default_factory=list)
     generation_mode: str = "extractive"
     llm_provider: str = "none"

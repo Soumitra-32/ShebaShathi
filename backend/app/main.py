@@ -43,14 +43,25 @@ from .services import engine as service_engine
 from .services import loader as service_loader
 from .services import refresh as service_refresh
 from .intake import engine as intake_engine
-from .privacy import contains_identity_number, contains_sensitive_data, screened_note
+from .privacy import contains_sensitive_data, screened_note
 from .rag import guard as rag_guard
+from .rag import documents_answer as rag_documents_answer
 from .rag import fee_answer as rag_fee_answer
+from .rag import payment_answer as rag_payment_answer
 from .rag import photo_answer as rag_photo_answer
+from .rag import process_answer as rag_process_answer
 from .rag import status_answer as rag_status_answer
 from .guidance import get_guide as get_status_guide
 from .rag import chat as rag_chat
 from .rag import brief as rag_brief
+from .rag.extractive import supported_excerpt
+from .rag.relevance import (
+    asks_about_task,
+    is_explicitly_unsupported,
+    looks_in_scope,
+    scope_clarification,
+    semantic_in_scope,
+)
 from .rate_limit import SlidingWindowLimiter, enforce as enforce_rate_limit
 
 app = FastAPI(
@@ -108,13 +119,33 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Costly endpoints get a per-client sliding window. The limiter is
-# process-local; see docs/DEPLOYMENT.md for the multi-instance caveat.
+# Costly endpoints get a per-client sliding window. SQLite shares one host;
+# RATE_LIMIT_STORE=redis plus RATE_LIMIT_REDIS_URL is the opt-in shared store
+# for multi-host deployments. A missing/broken optional store degrades to the
+# local window instead of blocking startup.
+_rate_limit_store = (
+    settings.rate_limit_db_path
+    if settings.rate_limit_store in ("sqlite", "redis")
+    else None
+)
+_rate_limit_redis_url = (
+    settings.rate_limit_redis_url if settings.rate_limit_store == "redis" else None
+)
 copilot_limiter = SlidingWindowLimiter(
-    settings.rate_limit_per_minute, enabled=settings.rate_limit_enabled
+    settings.rate_limit_per_minute,
+    enabled=settings.rate_limit_enabled,
+    store_path=_rate_limit_store,
+    namespace="copilot",
+    redis_url=_rate_limit_redis_url,
+    redis_prefix=settings.rate_limit_redis_prefix,
 )
 intake_limiter = SlidingWindowLimiter(
-    settings.intake_rate_limit_per_minute, enabled=settings.rate_limit_enabled
+    settings.intake_rate_limit_per_minute,
+    enabled=settings.rate_limit_enabled,
+    store_path=_rate_limit_store,
+    namespace="intake",
+    redis_url=_rate_limit_redis_url,
+    redis_prefix=settings.rate_limit_redis_prefix,
 )
 
 # =========================================================================
@@ -125,16 +156,17 @@ async def intake(req: IntakeRequest, request: Request):
 
     The response is a routing result, not an official decision. Every document,
     step, fee and eligibility rule still comes from the validated service data.
-    Identity-like numbers are rejected before any model call.
+    Identity-like numbers, codes and credentials are rejected before any model
+    call.
     """
     enforce_rate_limit(intake_limiter, request)
-    if contains_identity_number(req.text):
+    if contains_sensitive_data(req.text):
         raise HTTPException(
             status_code=422,
             detail={
                 "error": {
                     "code": "IDENTITY_DATA_REJECTED",
-                    "message": "Remove ID, passport, phone or OTP numbers. Describe only the service and your situation.",
+                    "message": "Remove ID, passport, phone, email, OTP or password details. Describe only the service and your situation.",
                 }
             },
         )
@@ -263,8 +295,9 @@ async def copilot_ask(req: CopilotAskRequest, request: Request):
     Question-answering with RAG retrieval and citation.
 
     A ``service_id`` scopes retrieval to one authority and selects that
-    service's configured fallback string. Without it, the legacy e-Passport
-    context is used unchanged.
+    service's configured fallback string. Without it, the relevance gate and
+    optional semantic fallback decide scope; a generic fallback is used when no
+    source supports an answer.
 
     Safety order: rate limit, deterministic unsafe-intent guard, deterministic
     tools, then retrieval/generation. A screened question is answered locally
@@ -277,12 +310,39 @@ async def copilot_ask(req: CopilotAskRequest, request: Request):
             answer=rag_guard.safety_message(unsafe_category, req.language),
             citations=[],
             grounded=False,
+            answer_found=True,
             retrieved_chunks=[],
             generation_mode="safety",
             llm_provider="none",
             llm_model=None,
             safety_blocked=True,
         )
+    # Resolve the service and its verified fallback before any deterministic
+    # tool. This also lets an explicitly unsupported service stay on the safe
+    # fallback path instead of being answered as the selected service.
+    from .rag.prompts import FALLBACK_BN as _FB_BN, FALLBACK_EN as _FB_EN
+
+    if req.service_id is not None:
+        try:
+            service = service_loader.get_service(req.service_id)
+        except KeyError:
+            raise HTTPException(status_code=404, detail={"error": {"code": "SERVICE_NOT_FOUND", "message": "The requested service is not available."}})
+        fallback = service["fallback_en"] if req.language == "en" else service["fallback_bn"]
+    else:
+        fallback = _FB_EN if req.language == "en" else _FB_BN
+
+    if is_explicitly_unsupported(req.question):
+        return CopilotAskResponse(
+            answer=fallback,
+            citations=[],
+            grounded=False,
+            answer_found=True,
+            retrieved_chunks=[],
+            generation_mode="not_found",
+            llm_provider="none",
+            llm_model=None,
+        )
+
     # Verified fee amounts are deterministic. The LLM never chooses between
     # regular, express and super-express tiers.
     try:
@@ -291,6 +351,12 @@ async def copilot_ask(req: CopilotAskRequest, request: Request):
         deterministic_fee = None
     if deterministic_fee is not None:
         return CopilotAskResponse(**deterministic_fee)
+    try:
+        deterministic_payment = rag_payment_answer.answer(req.question, req.service_id, req.language)
+    except Exception:
+        deterministic_payment = None
+    if deterministic_payment is not None:
+        return CopilotAskResponse(**deterministic_payment)
     try:
         deterministic_photo = rag_photo_answer.answer(req.question, req.service_id, req.language)
     except Exception:
@@ -303,33 +369,64 @@ async def copilot_ask(req: CopilotAskRequest, request: Request):
         deterministic_status = None
     if deterministic_status is not None:
         return CopilotAskResponse(**deterministic_status)
+    try:
+        deterministic_documents = rag_documents_answer.answer(req.question, req.service_id, req.language)
+    except Exception:
+        deterministic_documents = None
+    if deterministic_documents is not None:
+        return CopilotAskResponse(**deterministic_documents)
+    try:
+        deterministic_process = rag_process_answer.answer(req.question, req.service_id, req.language)
+    except Exception:
+        deterministic_process = None
+    if deterministic_process is not None:
+        return CopilotAskResponse(**deterministic_process)
+
+    # Relevance gate: an unrelated question must never be answered with the
+    # nearest retrieved chunk just because its embedding score is high. The
+    # lexical check runs first; the semantic fallback catches paraphrases.
+    lexical_in_scope = looks_in_scope(req.question, req.service_id)
+    in_scope = lexical_in_scope or semantic_in_scope(req.question)
 
     # Privacy screen: a sensitive-sounding question is answered locally from
     # the retrieved context; it is never forwarded to the model provider.
-    if req.service_id is not None:
-        try:
-            service_loader.get_service(req.service_id)
-        except KeyError:
-            raise HTTPException(status_code=404, detail={"error": {"code": "SERVICE_NOT_FOUND", "message": "The requested service is not available."}})
     if contains_sensitive_data(req.question):
+        note = screened_note(req.language)
+        if not in_scope:
+            return CopilotAskResponse(
+                answer=fallback + note,
+                citations=[],
+                grounded=False,
+                answer_found=False,
+                retrieved_chunks=[],
+                generation_mode="screened_local",
+                llm_provider="none",
+                llm_model=None,
+                safety_blocked=True,
+            )
         from .rag.retriever import retrieve as _retrieve
 
         try:
-            docs = _retrieve(req.question, top_k=settings.top_k, service_id=req.service_id)
+            docs = _retrieve(
+                req.question,
+                top_k=settings.top_k,
+                service_id=req.service_id,
+                language=req.language,
+            )
         except Exception:  # noqa: BLE001 - index unavailable, use the safe fallback
             docs = []
-        note = screened_note(req.language)
-        if docs:
-            first = docs[0]
+        supported = supported_excerpt(req.question, docs)
+        if supported is not None:
             return CopilotAskResponse(
-                answer=first["text"] + note,
+                answer=supported["text"] + note,
                 citations=[{
-                    "title": first["metadata"].get("title", "Official source"),
-                    "url": first["metadata"]["source_url"],
-                    "last_verified": first["metadata"]["last_verified"],
-                    "quote_snippet": first["text"][:300],
+                    "title": supported["metadata"].get("title", "Official source"),
+                    "url": supported["metadata"]["source_url"],
+                    "last_verified": supported["metadata"]["last_verified"],
+                    "quote_snippet": supported["text"][:300],
                 }],
                 grounded=True,
+                answer_found=True,
                 retrieved_chunks=[
                     {"id": d["id"], "score": d["score"], "section": d["metadata"].get("section", "")}
                     for d in docs
@@ -339,12 +436,11 @@ async def copilot_ask(req: CopilotAskRequest, request: Request):
                 llm_model=None,
                 safety_blocked=True,
             )
-        from .rag.prompts import FALLBACK_BN as _FB_BN, FALLBACK_EN as _FB_EN
-
         return CopilotAskResponse(
-            answer=(_FB_EN if req.language == "en" else _FB_BN) + note,
+            answer=fallback + note,
             citations=[],
             grounded=False,
+            answer_found=False,
             retrieved_chunks=[],
             generation_mode="screened_local",
             llm_provider="none",
@@ -352,10 +448,46 @@ async def copilot_ask(req: CopilotAskRequest, request: Request):
             safety_blocked=True,
         )
 
+    if not in_scope:
+        if asks_about_task(req.question):
+            answer = scope_clarification(req.language)
+            generation_mode = "clarify"
+            answer_found = True
+        else:
+            answer = fallback
+            generation_mode = "not_found"
+            answer_found = False
+        return CopilotAskResponse(
+            answer=answer,
+            citations=[],
+            grounded=False,
+            answer_found=answer_found,
+            retrieved_chunks=[],
+            generation_mode=generation_mode,
+            llm_provider="none",
+            llm_model=None,
+            safety_blocked=False,
+        )
+
+    # A purely semantic match does not identify the authority. Ask for a
+    # service rather than running an unscoped search that could cite the wrong
+    # one. A lexical match named the service itself and can search as before.
+    if req.service_id is None and not lexical_in_scope:
+        return CopilotAskResponse(
+            answer=scope_clarification(req.language),
+            citations=[],
+            grounded=False,
+            answer_found=True,
+            retrieved_chunks=[],
+            generation_mode="clarify",
+            llm_provider="none",
+            llm_model=None,
+            safety_blocked=False,
+        )
+
     try:
         from .rag import generator as rag_gen
         from .rag import verifier as rag_ver
-        from .rag.prompts import FALLBACK_BN, FALLBACK_EN
         from .rag.retriever import retrieve
 
         if req.service_id is not None:
@@ -365,29 +497,41 @@ async def copilot_ask(req: CopilotAskRequest, request: Request):
                 raise HTTPException(status_code=404, detail={"error": {"code": "SERVICE_NOT_FOUND", "message": "The requested service is not available."}})
 
         profile = req.profile.model_dump() if req.profile else None
-        docs = retrieve(req.question, top_k=settings.top_k, service_id=req.service_id)
+        docs = retrieve(
+            req.question,
+            top_k=settings.top_k,
+            service_id=req.service_id,
+            language=req.language,
+        )
         answer_result = rag_gen.generate(req.question, profile, req.language, docs=docs, service_id=req.service_id)
 
-        if req.service_id is not None:
-            service = service_loader.get_service(req.service_id)
-            fallback = service["fallback_en"] if req.language == "en" else service["fallback_bn"]
-        else:
-            fallback = FALLBACK_EN if req.language == "en" else FALLBACK_BN
+        if answer_result.get("answerable") is False:
+            return CopilotAskResponse(
+                answer=fallback,
+                citations=[],
+                grounded=False,
+                answer_found=False,
+                retrieved_chunks=[],
+                generation_mode="not_found",
+                llm_provider=answer_result.get("llm_provider", "none"),
+                llm_model=answer_result.get("llm_model"),
+            )
 
         verified = rag_ver.verify(answer_result, req.question)
         if not verified.get("grounded", False):
-            return {
-                "answer": fallback,
-                "citations": [],
-                "grounded": False,
-                "retrieved_chunks": [
+            return CopilotAskResponse(
+                answer=fallback,
+                citations=[],
+                grounded=False,
+                answer_found=False,
+                retrieved_chunks=[
                     {"id": d["id"], "score": d["score"], "section": d["metadata"].get("section", "")}
                     for d in docs
                 ],
-                "generation_mode": answer_result.get("generation_mode", "unavailable"),
-                "llm_provider": answer_result.get("llm_provider", "none"),
-                "llm_model": answer_result.get("llm_model"),
-            }
+                generation_mode=answer_result.get("generation_mode", "unavailable"),
+                llm_provider=answer_result.get("llm_provider", "none"),
+                llm_model=answer_result.get("llm_model"),
+            )
 
         citations = []
         retrieved_by_id = {d["id"]: d for d in docs}
@@ -401,34 +545,35 @@ async def copilot_ask(req: CopilotAskRequest, request: Request):
                 "quote_snippet": chunk["text"][:300],
             })
 
-        return {
-            "answer": verified["answer"],
-            "citations": citations,
-            "grounded": True,
-            "retrieved_chunks": [
+        return CopilotAskResponse(
+            answer=verified["answer"],
+            citations=citations,
+            grounded=True,
+            answer_found=True,
+            retrieved_chunks=[
                 {"id": d["id"], "score": d["score"], "section": d["metadata"].get("section", "")}
                 for d in docs
             ],
-            "generation_mode": answer_result.get("generation_mode", "extractive"),
-            "llm_provider": answer_result.get("llm_provider", "none"),
-            "llm_model": answer_result.get("llm_model"),
-        }
+            generation_mode=answer_result.get("generation_mode", "extractive"),
+            llm_provider=answer_result.get("llm_provider", "none"),
+            llm_model=answer_result.get("llm_model"),
+        )
     except HTTPException:
         raise
     except Exception:
-        fallback = "The retrieval index is unavailable. Please check the official portal." if req.language == "en" else "তথ্যভান্ডারটি এখন পাওয়া যাচ্ছে না। অনুগ্রহ করে সরকারি পোর্টালে যাচাই করুন।"
         if req.service_id is not None and service_loader.is_enabled(req.service_id):
             service = service_loader.get_service(req.service_id)
             fallback = service["fallback_en"] if req.language == "en" else service["fallback_bn"]
-        return {
-            "answer": fallback,
-            "citations": [],
-            "grounded": False,
-            "retrieved_chunks": [],
-            "generation_mode": "unavailable",
-            "llm_provider": "none",
-            "llm_model": None,
-        }
+        return CopilotAskResponse(
+            answer=fallback,
+            citations=[],
+            grounded=False,
+            answer_found=False,
+            retrieved_chunks=[],
+            generation_mode="unavailable",
+            llm_provider="none",
+            llm_model=None,
+        )
 
 @app.post("/api/redflag/check", response_model=RedFlagCheckResponse, tags=["Red Flag"])
 async def check_red_flag(req: RedFlagCheckRequest):

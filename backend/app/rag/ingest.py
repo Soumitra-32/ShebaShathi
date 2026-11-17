@@ -13,7 +13,7 @@ CORPUS_DIR = PROJECT_ROOT / "corpus"
 SERVICES_DIR = PROJECT_ROOT / "data" / "services"
 SERVICES_INDEX = SERVICES_DIR / "index.json"
 FEE_SCHEDULES = PROJECT_ROOT / "data" / "fee_schedules.json"
-INDEX_VERSION = "3"
+INDEX_VERSION = "4"
 
 
 def _parse_markdown(path: Path) -> tuple[dict, str]:
@@ -81,9 +81,10 @@ def _add(
     last_verified: str,
     source_type: str,
     key: str,
+    language: str = "bn+en",
 ) -> None:
     for index, chunk in enumerate(_chunks(text)):
-        source_key = f"{service_id}|{section}|{source_type}|{key}|{index}|{hashlib.sha256(chunk.encode()).hexdigest()}"
+        source_key = f"{service_id}|{section}|{source_type}|{key}|{index}|{language}|{hashlib.sha256(chunk.encode()).hexdigest()}"
         docs.append({
             "id": str(uuid.uuid5(uuid.NAMESPACE_URL, source_key)),
             "text": chunk,
@@ -94,10 +95,30 @@ def _add(
                 "source_title": title,
                 "source_url": source_url,
                 "last_verified": last_verified,
-                "language": "bn+en",
+                "language": language,
                 "source_type": source_type,
             },
         })
+
+
+def _add_pair(
+    docs: list[dict],
+    *,
+    en_text: str,
+    bn_text: str,
+    en_title: str,
+    bn_title: str,
+    **kwargs,
+) -> None:
+    """Index the same fact once per language.
+
+    A bilingual chunk shown verbatim by the no-key extractive path mixes
+    scripts; splitting at index time keeps every excerpt in the language of the
+    request. The two chunks share the same source URL and verification date.
+    """
+    key = kwargs.pop("key")
+    _add(docs, text=en_text, title=en_title, language="en", key=f"{key}:en", **kwargs)
+    _add(docs, text=bn_text, title=bn_title, language="bn", key=f"{key}:bn", **kwargs)
 
 
 def _condition_text(condition: dict) -> str:
@@ -130,16 +151,21 @@ def load_service_documents() -> list[dict]:
         source_url = service["source_url"]
         verified = service["last_verified"]
 
-        _add(
+        _add_pair(
             docs,
             service_id=service_id,
             section="overview",
-            title=f"{name_en} — overview",
-            text=(
-                f"{name_en} ({name_bn}) — {service['authority_en']} / {service['authority_bn']}\n\n"
-                f"Summary (English): {service['summary_en']}\n\n"
-                f"সারসংক্ষেপ (বাংলা): {service['summary_bn']}\n\n"
+            en_title=f"{name_en} — overview",
+            bn_title=f"{name_bn} — সারসংক্ষেপ",
+            en_text=(
+                f"{name_en} — {service['authority_en']}\n\n"
+                f"Summary: {service['summary_en']}\n\n"
                 f"Official source: {source_url}. Last verified: {verified}."
+            ),
+            bn_text=(
+                f"{name_bn} — {service['authority_bn']}\n\n"
+                f"সারসংক্ষেপ: {service['summary_bn']}\n\n"
+                f"সরকারি উৎস: {source_url}. সর্বশেষ যাচাই: {verified}."
             ),
             source_url=source_url,
             last_verified=verified,
@@ -148,16 +174,21 @@ def load_service_documents() -> list[dict]:
         )
 
         for document in service.get("documents", []):
-            _add(
+            _add_pair(
                 docs,
                 service_id=service_id,
                 section="documents",
-                title=f"{name_en} — {document['label_en']}",
-                text=(
-                    f"{name_en} ({name_bn}) — document: {document['label_en']}\n"
+                en_title=f"{name_en} — {document['label_en']}",
+                bn_title=f"{name_bn} — {document['label_bn']}",
+                en_text=(
+                    f"{name_en} — document: {document['label_en']}\n"
                     f"{document['notes_en']}\n\n"
-                    f"বাংলা: {document['label_bn']} — {document['notes_bn']}\n\n"
                     f"Source: {document['source_url']}. Last verified: {document['last_verified']}."
+                ),
+                bn_text=(
+                    f"{name_bn} — নথি: {document['label_bn']}\n"
+                    f"{document['notes_bn']}\n\n"
+                    f"উৎস: {document['source_url']}. সর্বশেষ যাচাই: {document['last_verified']}."
                 ),
                 source_url=document["source_url"],
                 last_verified=document["last_verified"],
@@ -168,22 +199,26 @@ def load_service_documents() -> list[dict]:
         catalog = {document["id"]: document for document in service.get("documents", [])}
         for task in service.get("tasks", []):
             task_title = task["label_en"]
-            task_text = (
-                f"{name_en} ({name_bn}) — {task_title} / {task['label_bn']}\n"
-                f"Task id: {task['id']}\n\n"
-                "Steps (English): " + " ".join(
-                    f"{index + 1}. {step}" for index, step in enumerate(task.get("steps_en", []))
-                ) + "\n\n"
-                "ধাপ (বাংলা): " + " ".join(
-                    f"{index + 1}. {step}" for index, step in enumerate(task.get("steps_bn", []))
-                )
-            )
-            _add(
+            _add_pair(
                 docs,
                 service_id=service_id,
                 section="process",
-                title=f"{name_en} — {task_title} steps",
-                text=task_text,
+                en_title=f"{name_en} — {task_title} steps",
+                bn_title=f"{name_bn} — {task['label_bn']} ধাপ",
+                en_text=(
+                    f"{name_en} — {task_title}\n"
+                    f"Task id: {task['id']}\n\n"
+                    "Steps:\n" + "\n".join(
+                        f"{index + 1}. {step}" for index, step in enumerate(task.get("steps_en", []))
+                    )
+                ),
+                bn_text=(
+                    f"{name_bn} — {task['label_bn']}\n"
+                    f"Task id: {task['id']}\n\n"
+                    "ধাপ:\n" + "\n".join(
+                        f"{index + 1}. {step}" for index, step in enumerate(task.get("steps_bn", []))
+                    )
+                ),
                 source_url=(task.get("official_links") or [{}])[0].get("url", source_url),
                 last_verified=verified,
                 source_type="service_data",
@@ -191,15 +226,19 @@ def load_service_documents() -> list[dict]:
             )
 
             if task.get("warnings_en") or task.get("warnings_bn"):
-                _add(
+                _add_pair(
                     docs,
                     service_id=service_id,
                     section="warnings",
-                    title=f"{name_en} — {task_title} warnings",
-                    text=(
-                        f"{name_en} — {task_title} / {task['label_bn']}\n\n"
-                        "Warnings (English):\n- " + "\n- ".join(task.get("warnings_en", [])) +
-                        "\n\nসতর্কতা (বাংলা):\n- " + "\n- ".join(task.get("warnings_bn", []))
+                    en_title=f"{name_en} — {task_title} warnings",
+                    bn_title=f"{name_bn} — {task['label_bn']} সতর্কতা",
+                    en_text=(
+                        f"{name_en} — {task_title}\n\n"
+                        "Warnings:\n- " + "\n- ".join(task.get("warnings_en", []))
+                    ),
+                    bn_text=(
+                        f"{name_bn} — {task['label_bn']}\n\n"
+                        "সতর্কতা:\n- " + "\n- ".join(task.get("warnings_bn", []))
                     ),
                     source_url=(task.get("official_links") or [{}])[0].get("url", source_url),
                     last_verified=verified,
@@ -208,10 +247,15 @@ def load_service_documents() -> list[dict]:
                 )
 
             if task.get("documents"):
-                lines = [
-                    f"{name_en} — {task_title} / {task['label_bn']}",
+                en_lines = [
+                    f"{name_en} — {task_title}",
                     f"Task id: {task['id']}",
                     "Required documents for this task:",
+                ]
+                bn_lines = [
+                    f"{name_bn} — {task['label_bn']}",
+                    f"Task id: {task['id']}",
+                    "এই কাজের প্রয়োজনীয় নথি:",
                 ]
                 for reference in task["documents"]:
                     document = catalog.get(reference["id"])
@@ -220,14 +264,24 @@ def load_service_documents() -> list[dict]:
                     condition = "always"
                     if reference.get("conditions"):
                         condition = "; ".join(_condition_text(item) for item in reference["conditions"])
-                    role = " (parent/guardian document)" if reference["id"] == "parent_nid" else ""
-                    lines.append(
-                        f"- {document['label_en']}{role} ({document['label_bn']}). "
+                    role_en = " (parent/guardian document)" if reference["id"] == "parent_nid" else ""
+                    role_bn = " (অভিভাবক/অভিভাবকের নথি)" if reference["id"] == "parent_nid" else ""
+                    en_lines.append(
+                        f"- {document['label_en']}{role_en}. "
                         f"{document['notes_en']} Condition: {condition}."
                     )
-                lines.append(
-                    "Steps (English): " + " ".join(
+                    bn_lines.append(
+                        f"- {document['label_bn']}{role_bn}। "
+                        f"{document['notes_bn']} শর্ত: {condition}।"
+                    )
+                en_lines.append(
+                    "Steps:\n" + "\n".join(
                         f"{index + 1}. {step}" for index, step in enumerate(task.get("steps_en", []))
+                    )
+                )
+                bn_lines.append(
+                    "ধাপ:\n" + "\n".join(
+                        f"{index + 1}. {step}" for index, step in enumerate(task.get("steps_bn", []))
                     )
                 )
                 referenced = [
@@ -250,16 +304,22 @@ def load_service_documents() -> list[dict]:
                     # to infer it, and so a "paper photo?" question is not left
                     # unanswered. This describes the verified checklist; it does
                     # not add a requirement.
-                    lines.append(
+                    en_lines.append(
                         "Photo note: this task's document list does not include a separate "
                         "paper photograph; the process includes biometric enrolment."
                     )
-                _add(
+                    bn_lines.append(
+                        "ছবি সংক্রান্ত নোট: এই কাজের নথির তালিকায় আলাদা কাগজের ছবি নেই; "
+                        "প্রক্রিয়ায় বায়োমেট্রিক নিবন্ধন রয়েছে।"
+                    )
+                _add_pair(
                     docs,
                     service_id=service_id,
                     section="documents",
-                    title=f"{name_en} — {task_title} documents",
-                    text="\n".join(lines),
+                    en_title=f"{name_en} — {task_title} documents",
+                    bn_title=f"{name_bn} — {task['label_bn']} নথি",
+                    en_text="\n".join(en_lines),
+                    bn_text="\n".join(bn_lines),
                     source_url=source_url,
                     last_verified=verified,
                     source_type="service_data",
@@ -268,15 +328,16 @@ def load_service_documents() -> list[dict]:
     return docs
 
 
-def _selection_text(service: dict, selection: dict) -> str:
+def _selection_text(service: dict, selection: dict, language: str = "en") -> str:
     parameters = {parameter["id"]: parameter for parameter in service.get("parameters", [])}
+    label_key = "label_bn" if language == "bn" else "label_en"
     parts = []
     for key, value in selection.items():
         parameter = parameters.get(key)
         label = value
         if parameter:
             label = next(
-                (option["label_en"] for option in parameter.get("options", []) if option["value"] == value),
+                (option[label_key] for option in parameter.get("options", []) if option["value"] == value),
                 value,
             )
         parts.append(f"{key}={label}")
@@ -296,30 +357,48 @@ def load_fee_documents() -> list[dict]:
         label_en = service["label_en"]
         label_bn = service["label_bn"]
         for rule in service.get("fee_rules", []):
-            selection = _selection_text(service, rule.get("selection", {}))
-            components = "; ".join(
+            selection_en = _selection_text(service, rule.get("selection", {}), "en")
+            selection_bn = _selection_text(service, rule.get("selection", {}), "bn")
+            components_en = "; ".join(
                 f"{item['label_en']} {item['amount']} BDT"
                 for item in rule.get("components", [])
             )
-            variable = ""
+            components_bn = "; ".join(
+                f"{item['label_bn']} {item['amount']} BDT"
+                for item in rule.get("components", [])
+            )
+            variable_en = ""
+            variable_bn = ""
             if rule.get("variable_components"):
-                variable = "\nVariable: " + "; ".join(
+                variable_en = "\nVariable: " + "; ".join(
                     f"{item['label_en']} {item['amount_per_unit']} BDT per {item['unit_field']}"
                     for item in rule["variable_components"]
                 )
-            _add(
+                variable_bn = "\nপরিবর্তনশীল: " + "; ".join(
+                    f"{item['label_bn']} {item['amount_per_unit']} BDT / {item['unit_field']}"
+                    for item in rule["variable_components"]
+                )
+            _add_pair(
                 docs,
                 service_id=service_id,
                 section="fees",
-                title=f"{label_en} fee — {selection or rule['id']}",
-                text=(
-                    f"{label_en} ({label_bn}) — {selection or rule['id']}\n"
+                en_title=f"{label_en} fee — {selection_en or rule['id']}",
+                bn_title=f"{label_bn} ফি — {selection_bn or rule['id']}",
+                en_text=(
+                    f"{label_en} — {selection_en or rule['id']}\n"
                     f"Total: {rule['total']} BDT.\n"
-                    f"Components: {components}.{variable}\n"
+                    f"Components: {components_en}.{variable_en}\n"
                     f"{rule.get('notes_en', '')}\n"
-                    f"{rule.get('notes_bn', '')}\n"
                     f"Scope: {service.get('scope_note_en', '')}\n"
                     f"Source: {service['source_url']}. Last verified: {service['last_verified']}."
+                ),
+                bn_text=(
+                    f"{label_bn} — {selection_bn or rule['id']}\n"
+                    f"মোট: {rule['total']} BDT।\n"
+                    f"উপাদান: {components_bn}।{variable_bn}\n"
+                    f"{rule.get('notes_bn', '')}\n"
+                    f"পরিধি: {service.get('scope_note_bn', '')}\n"
+                    f"উৎস: {service['source_url']}. সর্বশেষ যাচাই: {service['last_verified']}."
                 ),
                 source_url=service["source_url"],
                 last_verified=service["last_verified"],

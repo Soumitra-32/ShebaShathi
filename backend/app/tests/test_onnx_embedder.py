@@ -40,6 +40,19 @@ def test_embedder_is_deterministic(embedder):
 
 
 @model_available
+def test_embedder_caches_repeated_queries_by_digest(embedder):
+    embedder.clear_cache()
+    hits_before = embedder.cache_info()["hits"]
+    first = embedder.embed_query("passport renewal fee cache check")
+    second = embedder.embed_query("passport renewal fee cache check")
+    info = embedder.cache_info()
+    assert np.array_equal(first, second)
+    assert info["hits"] - hits_before == 1
+    assert all(len(key) == 64 for key in embedder._query_cache._data)
+    assert all("passport" not in key for key in embedder._query_cache._data)
+
+
+@model_available
 def test_batch_embed_documents_shapes_and_normalisation(embedder):
     docs = embedder.embed_documents([
         "The e-Passport application includes a biometric enrolment step.",

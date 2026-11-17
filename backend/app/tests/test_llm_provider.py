@@ -191,7 +191,7 @@ def test_copilot_response_reports_the_provider_and_model(monkeypatch):
         "llm_provider": "openrouter", "llm_model": "anthropic/claude-3.5-sonnet",
     })
 
-    response = TestClient(app).post("/api/copilot/ask", json={"question": "Express fee?", "language": "en"})
+    response = TestClient(app).post("/api/copilot/ask", json={"question": "Tell me about the e-Passport.", "language": "en", "service_id": "epassport"})
     assert response.status_code == 200
     payload = response.json()
     assert payload["llm_provider"] == "openrouter"

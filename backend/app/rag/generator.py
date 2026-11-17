@@ -2,22 +2,32 @@
 import json
 
 from .. import llm
+from .extractive import supported_excerpt
 from .prompts import SYSTEM_PROMPT, plain_text
 from .retriever import retrieve
 
 
 def _extractive_answer(question: str, docs: list[dict], language: str) -> dict:
     if not docs:
-        return {"answer": "", "used_chunk_ids": []}
+        return {"answer": "", "used_chunk_ids": [], "answerable": False}
+    supported = supported_excerpt(question, docs)
+    if supported is None:
+        # The retrieved chunk shares only a service word or is too weak to
+        # answer. Returning the fallback is safer than presenting a near miss.
+        return {"answer": "", "used_chunk_ids": [], "answerable": False}
     # Return retrieved source text as-is; never synthesize unsupported claims offline.
-    return {"answer": docs[0]["text"], "used_chunk_ids": [docs[0]["id"]]}
+    return {"answer": supported["text"], "used_chunk_ids": [supported["id"]], "answerable": True}
 
 
 def generate(question: str, profile=None, language: str = "bn", docs: list[dict] | None = None,
              service_id: str | None = None) -> dict:
-    results = retrieve(question, service_id=service_id) if docs is None else docs
+    results = (
+        retrieve(question, service_id=service_id, language=language)
+        if docs is None else docs
+    )
     if not results:
-        return {"answer": "", "used_chunk_ids": [], "retrieved_chunks": [], "generation_mode": "unavailable"}
+        return {"answer": "", "used_chunk_ids": [], "answerable": False,
+                "retrieved_chunks": [], "generation_mode": "unavailable"}
 
     mode = "extractive"
     generated = None
@@ -38,12 +48,18 @@ def generate(question: str, profile=None, language: str = "bn", docs: list[dict]
             parsed = response.get("parsed")
             if parsed is None:
                 parsed = json.loads(response["content"])
-            if isinstance(parsed.get("answer"), str) and isinstance(parsed.get("used_chunk_ids"), list):
-                parsed["answer"] = plain_text(parsed["answer"])
-                generated = parsed
-                mode = "api"
-                provider = llm.provider_name()
-                model = response.get("model") or llm.model_id()
+            answer = parsed.get("answer")
+            used = parsed.get("used_chunk_ids")
+            answerable = parsed.get("answerable", True)
+            if (not isinstance(answer, str) or not isinstance(used, list)
+                    or not isinstance(answerable, bool)):
+                raise ValueError("invalid answer shape")
+            parsed["answer"] = plain_text(answer)
+            parsed["answerable"] = bool(answerable and parsed["answer"] and used)
+            generated = parsed
+            mode = "api"
+            provider = llm.provider_name()
+            model = response.get("model") or llm.model_id()
         except Exception:
             # The source-grounded extractive path remains available if the optional API fails.
             generated = None

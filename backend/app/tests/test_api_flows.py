@@ -54,7 +54,7 @@ def test_copilot_api_returns_flat_verified_citation(monkeypatch):
         "answer": chunk["text"], "used_chunk_ids": [chunk["id"]],
         "retrieved_chunks": [chunk], "generation_mode": "extractive",
     })
-    response = client.post("/api/copilot/ask", json={"question": "What is the express fee?", "language": "en"})
+    response = client.post("/api/copilot/ask", json={"question": "Tell me about the e-Passport.", "language": "en", "service_id": "epassport"})
     assert response.status_code == 200
     result = response.json()
     assert result["grounded"] is True

@@ -44,7 +44,7 @@ def test_answer_items_ground_with_mocked_retrieval(monkeypatch):
     assert len(questions) == 26
     seen_service: list[str] = []
 
-    def fake_retrieve(question, top_k=None, min_score=None, service_id=None):
+    def fake_retrieve(question, top_k=None, min_score=None, service_id=None, language=None):
         seen_service.append(service_id)
         item = next(q for q in questions if q["question"] == question)
         return [_chunk_for(item)]
@@ -60,7 +60,7 @@ def test_answer_items_ground_with_mocked_retrieval(monkeypatch):
         assert body["grounded"] is True, item["id"]
         normalised_answer = body["answer"].translate(str.maketrans("০১২৩৪৫৬৭৮৯", "0123456789"))
         for token in item["must_contain"]:
-            aliases = {"fee": ("fee", "ফি")}.get(token, (token,))
+            aliases = {"fee": ("fee", "ফি"), "reissue": ("reissue", "re-issue", "re issue", "রিইস্যু")}.get(token, (token,))
             assert any(alias in normalised_answer for alias in aliases), item["id"]
     assert set(seen_service) >= {"epassport", "nid"}
 

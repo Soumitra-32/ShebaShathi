@@ -22,12 +22,36 @@ from ..services import loader
 _BN_DIGITS = str.maketrans("০১২৩৪৫৬৭৮৯", "0123456789")
 
 _SERVICE_TERMS: dict[str, tuple[str, ...]] = {
-    "epassport": ("epassport", "e-passport", "passport", "পাসপোর্ট", "ই-পাসপোর্ট", "immigration", "ইমিগ্রেশন"),
-    "birth_registration": ("birth registration", "birth certificate", "জন্ম নিবন্ধন", "জন্ম সনদ", "জন্ম সার্টিফিকেট", "bdris"),
-    "nid": ("nid", "national id", "national identity", "জাতীয় পরিচয়পত্র", "এনআইডি", "ভোটার আইডি", "election commission"),
-    "driving_licence": ("driving licence", "driving license", "driving", "ড্রাইভিং", "লাইসেন্স", "লাইসেন্স", "brta", "learner", "লার্নার"),
-    "death_registration": ("death registration", "death certificate", "মৃত্যু নিবন্ধন", "মৃত্যু সনদ", "মৃত্যু সার্টিফিকেট"),
-    "land_mutation": ("mutation", "land mutation", "land", "namjari", "নামজারি", "মিউটেশন", "ভূমি", "জমি", "ভূমি মন্ত্রণালয়"),
+    "epassport": (
+        "epassport", "e-passport", "passport", "travel document", "blue travel book",
+        "passport booklet", "blue book", "booklet", "newborn passport",
+        "baby passport", "পাসপোর্ট", "ই-পাসপোর্ট", "ভ্রমণ নথি", "immigration",
+        "ইমিগ্রেশন",
+    ),
+    "birth_registration": (
+        "birth registration", "birth certificate", "birth record", "register a birth",
+        "register birth", "birth registered", "newborn", "new born", "জন্ম নিবন্ধন",
+        "জন্ম সনদ", "জন্ম সার্টিফিকেট", "নবজাতক", "bdris",
+    ),
+    "nid": (
+        "nid", "national id", "national identity", "identity card", "voter id",
+        "voter number", "plastic card", "national identity card", "জাতীয় পরিচয়পত্র",
+        "এনআইডি", "ভোটার আইডি", "পরিচয়পত্র", "election commission",
+    ),
+    "driving_licence": (
+        "driving licence", "driving license", "driving", "motorcycle", "motorbike",
+        "ড্রাইভিং", "মোটরসাইকেল", "brta", "learner", "লার্নার",
+    ),
+    "death_registration": (
+        "death registration", "death certificate", "death record", "register a death",
+        "register death", "passed away", "died", "deceased", "মৃত্যু নিবন্ধন",
+        "মৃত্যু সনদ", "মৃত্যু সার্টিফিকেট", "মারা গেছে", "মৃত",
+    ),
+    "land_mutation": (
+        "mutation", "land mutation", "land", "land record", "land ownership",
+        "transfer ownership", "inherited land", "namjari", "নামজারি", "মিউটেশন",
+        "ভূমি", "জমি", "জমির মালিকানা", "ভূমি মন্ত্রণালয়",
+    ),
 }
 
 # Order is the tie-breaker: more specific / more urgent tasks first.
@@ -35,7 +59,7 @@ _TASK_TERMS: dict[str, list[tuple[str, tuple[str, ...]]]] = {
     "epassport": [
         ("lost_passport", ("lost", "stolen", "missing", "theft", "হারানো", "হারিয়ে", "চুরি", "খোয়া")),
         ("renewal", ("renew", "renewal", "re-issue", "reissue", "expired", "expiry", "নবায়ন", "রি-ইস্যু", "মেয়াদ")),
-        ("minor", ("minor", "child", "son", "daughter", "kid", "baby", "শিশু", "সন্তান", "ছেলে", "মেয়ে", "বাচ্চা", "নাবালক")),
+        ("minor", ("minor", "child", "son", "daughter", "kid", "baby", "infant", "toddler", "শিশু", "সন্তান", "ছেলে", "মেয়ে", "বাচ্চা", "নাবালক", "নবজাতক")),
         ("first_time_adult", ("first time", "first-time", "first", "new", "প্রথম", "নতুন", "প্রথমবার")),
     ],
     "birth_registration": [
@@ -294,6 +318,17 @@ def detect_service(text: str) -> str | None:
     service_text = _NEGATIVE_NID_RE.sub(" ", text)
     service_id, _ = _best_service(_fold(service_text))
     return service_id
+
+
+def detect_task(text: str, service_id: str) -> str | None:
+    """Return the single task clearly named in ``text`` for one service.
+
+    Used by deterministic document answers. Ambiguous text returns ``None`` so
+    the caller shows a task overview instead of guessing a branch.
+    """
+    service_text = _NEGATIVE_NID_RE.sub(" ", text)
+    task_id, _ = _best_task(_fold(service_text), service_id)
+    return task_id
 
 
 def _rule_route(text: str) -> tuple[str | None, str | None, dict[str, Any], float]:    # "NID নেই" is an answer to the minor question, not a request for the NID

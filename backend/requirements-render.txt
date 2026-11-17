@@ -9,3 +9,5 @@ numpy>=1.26.0
 onnxruntime>=1.17.0
 tokenizers>=0.15.0
 huggingface-hub>=0.23.0
+# Optional shared rate-limit store for multi-host deployments.
+redis>=5.0.0

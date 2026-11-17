@@ -50,6 +50,74 @@ def test_retrieval_queries_a_real_persistent_chroma_collection(tmp_path, monkeyp
     assert docs[0]["score"] == 1.0
 
 
+def _where_language(where):
+    if not where:
+        return None
+    if isinstance(where, dict) and "language" in where:
+        return where["language"]
+    if isinstance(where, dict) and "$and" in where:
+        for item in where["$and"]:
+            if isinstance(item, dict) and "language" in item:
+                return item["language"]
+    return None
+
+
+def test_retrieval_prefers_the_requested_language(monkeypatch):
+    calls = []
+
+    class LanguageCollection:
+        def count(self):
+            return 3
+
+        def query(self, **kwargs):
+            calls.append(kwargs.get("where"))
+            language = _where_language(kwargs.get("where"))
+            if language == "en":
+                return {
+                    "ids": [["en-chunk"]],
+                    "documents": [["The previous passport is required."]],
+                    "metadatas": [[{"section": "documents", "language": "en"}]],
+                    "distances": [[0.1]],
+                }
+            return {
+                "ids": [["bn-chunk"]],
+                "documents": [["পূর্ববর্তী পাসপোর্ট প্রয়োজন।"]],
+                "metadatas": [[{"section": "documents", "language": "bn"}]],
+                "distances": [[0.1]],
+            }
+
+    monkeypatch.setattr(retriever, "_collection", lambda: LanguageCollection())
+    monkeypatch.setattr(retriever, "embed_query", lambda query: [1.0, 0.0])
+    docs = retriever.retrieve("What documents for renewal?", language="en")
+    assert [doc["id"] for doc in docs] == ["en-chunk"]
+    assert _where_language(calls[0]) == "en"
+
+
+def test_retrieval_falls_back_when_the_requested_language_has_no_chunk(monkeypatch):
+    calls = []
+
+    class MissingEnglishCollection:
+        def count(self):
+            return 1
+
+        def query(self, **kwargs):
+            calls.append(kwargs.get("where"))
+            if _where_language(kwargs.get("where")) == "en":
+                return {"ids": [[]], "documents": [[]], "metadatas": [[]], "distances": [[]]}
+            return {
+                "ids": [["bn-chunk"]],
+                "documents": [["পূর্ববর্তী পাসপোর্ট প্রয়োজন।"]],
+                "metadatas": [[{"section": "documents", "language": "bn"}]],
+                "distances": [[0.1]],
+            }
+
+    monkeypatch.setattr(retriever, "_collection", lambda: MissingEnglishCollection())
+    monkeypatch.setattr(retriever, "embed_query", lambda query: [1.0, 0.0])
+    docs = retriever.retrieve("What documents for renewal?", language="en")
+    assert [doc["id"] for doc in docs] == ["bn-chunk"]
+    assert len(calls) >= 2
+
+
 def test_verifier_accepts_only_known_chunks_with_supported_numbers():
     answer = {"answer": "Express fee is 6325 taka.", "used_chunk_ids": ["chunk-1"], "retrieved_chunks": [_chunk()]}
     assert verifier.verify(answer)["grounded"] is True
@@ -82,6 +150,17 @@ def test_verifier_rejects_url_not_present_in_cited_source():
     result = verifier.verify(answer)
     assert result["grounded"] is False
     assert "unsupported URL" in result["issues"]
+
+
+def test_verifier_rejects_unsafe_advice_in_the_generated_answer():
+    answer = {
+        "answer": "Use an agent to get this faster.",
+        "used_chunk_ids": ["chunk-1"],
+        "retrieved_chunks": [_chunk(text="Applications are submitted on the official portal.")],
+    }
+    result = verifier.verify(answer)
+    assert result["grounded"] is False
+    assert "unsafe advice" in result["issues"]
 
 
 def test_list_markers_are_formatting_not_numeric_claims():
