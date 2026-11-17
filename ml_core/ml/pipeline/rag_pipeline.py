@@ -120,8 +120,13 @@ class RAGPipeline:
                     return 0.0
             return sorted(chunks, key=_score, reverse=True)[:top_n]
 
-    def search(self, query, top_k=5, min_score=0.35):
-        """Search the vector store for the query."""
+    def search(self, query, top_k=5, min_score=0.35, section=None):
+        """Search the vector store for the query.
+
+        When a reranker is configured, fetch a wider candidate set than the
+        number of results requested. Cross-encoders can only reorder what they
+        receive, so a narrow first stage caps the achievable quality.
+        """
         if self.chroma_store is None:
             raise RuntimeError("RAGPipeline has no chroma_store configured")
         if not isinstance(query, str) or not query.strip():
@@ -130,9 +135,11 @@ class RAGPipeline:
             top_k = max(1, int(top_k or 5))
         except Exception:
             top_k = 5
-        section = self.intent_classifier.predict(query)
+        if not section:
+            section = self.intent_classifier.predict(query)
         query_emb = self.embedder.embed_single(query)
-        candidates = self.chroma_store.query(query_emb, n=top_k)
+        candidate_k = min(50, top_k * 4) if self._reranker else top_k
+        candidates = self.chroma_store.query(query_emb, n=candidate_k)
         if not candidates:
             return []
         if min_score is not None:
@@ -143,7 +150,9 @@ class RAGPipeline:
                 candidates = filtered or candidates[:1]
             except Exception:
                 pass
-        reranked = self._rerank(str(query), candidates, top_n=min(top_k, 3))
+        reranked = self._rerank(
+            str(query), candidates, top_n=min(top_k, 3) if self._reranker else top_k
+        )
         results = []
         for c in reranked:
             try:
@@ -156,8 +165,10 @@ class RAGPipeline:
         return results
 
     def query(self, question, top_k=5, min_score=0.35):
+        # Classify once and pass the section into ``search``. Previously the
+        # question was classified and embedded twice per query.
         section = self.intent_classifier.predict(question)
-        chunks = self.search(question, top_k=top_k, min_score=min_score)
+        chunks = self.search(question, top_k=top_k, min_score=min_score, section=section)
         if not chunks:
             return RAGResult(question=question, section=section, top_chunks=[], final_answer="", generation_mode="unavailable", used_chunk_ids=[], confidence=0.0)
         top_chunks = chunks[:min(top_k, 3)]

@@ -53,6 +53,10 @@ class MLSettings:
     EMBEDDING_BATCH_SIZE: int = _env_int("ML_EMBEDDING_BATCH", 16)
     EMBEDDING_DEVICE: str = _env("ML_EMBEDDING_DEVICE", "cpu")
     EMBEDDING_NORMALIZE: bool = _env_bool("ML_EMBEDDING_NORMALIZE", True)
+    # Bounded cache for repeated *query* embeddings. Keys are SHA-256 digests,
+    # so a user question is not retained in memory as plain text. Passages and
+    # bulk indexing batches are never cached.
+    EMBEDDING_CACHE_SIZE: int = max(1, _env_int("ML_EMBEDDING_CACHE_SIZE", 512))
 
     # This package only supplies embeddings; generation and vector storage live
     # in the backend RAG implementation.

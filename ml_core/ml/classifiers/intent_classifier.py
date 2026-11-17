@@ -1,22 +1,27 @@
 """Intent classifier for semantic section classification.
 
-Replaces the fragile keyword-based _SECTION_HINTS approach in retriever.py
+Replaces the fragile keyword-based ``_SECTION_HINTS`` approach in retriever.py
 with a model-based classifier using multilingual embeddings.
 
 Classification approach:
-1. Embed the query using the same multilingual embedding model used for indexing
-2. Compare against section-specific prototype embeddings
-3. Return the section with highest cosine similarity
+1. Embed the reference examples with the E5 ``passage:`` prefix (they are
+   reference text, not user questions).
+2. Average and normalise each section's examples into one prototype.
+3. Embed the user question with the ``query:`` prefix and return the nearest
+   section prototype plus its cosine score.
 
-Prototype embeddings are computed from the corpus documents in each section.
+Prototype embeddings are cached per process and protected by a lock so a
+concurrent first request cannot build them twice.
 """
 
 from __future__ import annotations
 
+import threading
 from typing import Dict, List, Optional
 
+import numpy as np
+
 from ..embeddings.embedder import LocalEmbedder
-from ..config import settings
 
 
 class IntentClassifier:
@@ -31,11 +36,12 @@ class IntentClassifier:
 
     SECTION_META = {
         "fees": {
-            "keywords": ["fee", "price", "cost", "ফি", "টাকা", "মূল্য", "অর্থ"],
+            "keywords": ["fee", "price", "cost", "taka", "ফি", "টাকা", "মূল্য", "অর্থ"],
             "examples": [
                 "How much does a 48-page passport cost?",
                 "What is the express delivery fee?",
                 "Do I need to pay VAT on the passport fee?",
+                "পাসপোর্টের ফি কত টাকা?",
             ],
         },
         "documents": {
@@ -44,14 +50,25 @@ class IntentClassifier:
                 "What documents do I need for a first-time application?",
                 "Do I need my previous passport for re-issue?",
                 "What photo size do children under 6 need?",
+                "কোন কাগজপত্র লাগবে?",
             ],
         },
         "payment": {
-            "keywords": ["payment", "pay", "cash", "পেমেন্ট", "পরিশোধ", "চালান"],
+            "keywords": ["payment", "pay", "cash", "challan", "পেমেন্ট", "পরিশোধ", "চালান"],
             "examples": [
                 "How can I pay the passport fee?",
                 "Is online payment available?",
                 "Which banks accept A-Challan?",
+                "ফি কীভাবে পরিশোধ করব?",
+            ],
+        },
+        "process": {
+            "keywords": ["step", "steps", "how", "process", "procedure", "renew", "ধাপ", "পদ্ধতি", "প্রক্রিয়া", "নবায়ন"],
+            "examples": [
+                "How do I renew my passport?",
+                "What are the steps for a first-time application?",
+                "What is the procedure for correcting a birth record?",
+                "পাসপোর্ট নবায়নের ধাপ কী?",
             ],
         },
         "grs": {
@@ -60,80 +77,90 @@ class IntentClassifier:
                 "How do I file a grievance for passport delays?",
                 "What is the GRS complaint process?",
                 "How to submit a complaint about document refusal?",
+                "সেবা নিয়ে অভিযোগ করব কীভাবে?",
             ],
         },
     }
 
     def __init__(self, embedder: Optional[LocalEmbedder] = None):
         self.embedder = embedder or LocalEmbedder.get_instance()
-        self._prototypes: Dict[str, List[float]] = {}
+        self._prototypes: Dict[str, np.ndarray] = {}
+        self._prototype_lock = threading.Lock()
 
-    def _compute_prototypes(self) -> Dict[str, List[float]]:
-        """Compute average embedding for each section from examples."""
-        prototypes = {}
-        for section, meta in self.SECTION_META.items():
-            all_embeddings = []
-            for example in meta["examples"]:
-                emb = self.embedder.embed_single(example).tolist()
-                all_embeddings.append(emb)
-            # Average embeddings as prototype
-            avg = [sum(col) / len(col) for col in zip(*all_embeddings)]
-            prototypes[section] = avg
+    def _compute_prototypes(self) -> Dict[str, np.ndarray]:
+        """Compute one normalised average embedding per section.
+
+        All examples are embedded in one passage batch; this is faster than one
+        model call per section and keeps the E5 ``passage:`` prefix consistent.
+        """
+        names = list(self.SECTION_META)
+        examples = [text for name in names for text in self.SECTION_META[name]["examples"]]
+        vectors = np.asarray(self.embedder.embed_documents(examples), dtype=np.float32)
+        if vectors.ndim == 1:
+            vectors = vectors.reshape(1, -1)
+
+        prototypes: Dict[str, np.ndarray] = {}
+        start = 0
+        for name in names:
+            count = len(self.SECTION_META[name]["examples"])
+            prototype = vectors[start:start + count].mean(axis=0)
+            norm = float(np.linalg.norm(prototype)) or 1.0
+            prototypes[name] = prototype / norm
+            start += count
         self._prototypes = prototypes
         return prototypes
 
+    def _ensure_prototypes(self) -> Dict[str, np.ndarray]:
+        if self._prototypes:
+            return self._prototypes
+        with self._prototype_lock:
+            if not self._prototypes:
+                self._compute_prototypes()
+        return self._prototypes
+
     def predict(self, text: str, section: Optional[str] = None) -> str:
-        """
-        Classify a question into a section.
+        """Return the most likely section name for ``text``."""
+        return self.predict_with_score(text, section=section)[0]
 
-        Args:
-            text: The question text to classify.
-            section: If provided, shortcut to this section (used by retriever.py).
+    def predict_with_score(
+        self, text: str, section: Optional[str] = None
+    ) -> tuple[str, float]:
+        """Return ``(section, cosine_score)`` for ``text``.
 
-        Returns:
-            The predicted section name.
+        A caller-provided ``section`` short-circuits classification and reports
+        a score of 1.0. That keeps the pre-existing retriever contract.
         """
         if section:
-            return section
+            return section, 1.0
         if not isinstance(text, str) or not text.strip():
-            return "documents"
+            return "documents", 0.0
 
         query_text = text.strip()
         try:
-            query_emb = self.embedder.embed_single(query_text)
+            prototypes = self._ensure_prototypes()
+            query_emb = np.asarray(
+                self.embedder.embed_query(query_text), dtype=np.float32
+            )
         except Exception:
-            return self._keyword_fallback(query_text)
+            return self._keyword_fallback(query_text), 0.0
 
-        if not self._prototypes:
-            try:
-                self._compute_prototypes()
-            except Exception:
-                return self._keyword_fallback(query_text)
-        if not self._prototypes:
-            return self._keyword_fallback(query_text)
-        best_section = None
-        best_score = -2.0
+        if query_emb.ndim == 1:
+            query_emb = query_emb.reshape(1, -1)
+        norm = float(np.linalg.norm(query_emb)) or 1.0
+        query_vec = (query_emb[0] / norm).astype(np.float32)
 
-        for sec, proto in self._prototypes.items():
-            # Compute cosine similarity
-            try:
-                dot = sum(float(a) * float(b) for a, b in zip(query_emb, proto))
-                norm_a = sum(float(a) * float(a) for a in query_emb) ** 0.5
-                norm_b = sum(float(b) * float(b) for b in proto) ** 0.5
-            except Exception:
-                continue
-            if norm_a > 0 and norm_b > 0:
-                score = dot / (norm_a * norm_b)
-            else:
-                score = -1.0
+        names = list(prototypes)
+        if not names:
+            return self._keyword_fallback(query_text), 0.0
+        matrix = np.vstack([prototypes[name] for name in names])
+        scores = matrix @ query_vec
+        best = int(np.argmax(scores))
+        return names[best], float(scores[best])
 
-            if score > best_score:
-                best_score = score
-                best_section = sec
-
-        if best_section is None:
-            return self._keyword_fallback(query_text)
-        return best_section
+    def clear_prototypes(self) -> None:
+        """Test hook: force prototypes to be rebuilt on the next call."""
+        with self._prototype_lock:
+            self._prototypes = {}
 
     def _keyword_fallback(self, text: str) -> str:
         """Deterministic Bangla/English keyword fallback when embeddings fail."""
