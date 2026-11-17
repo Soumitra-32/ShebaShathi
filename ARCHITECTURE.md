@@ -25,13 +25,13 @@ The model is never the policy engine.
 | `backend/app/services/` | `loader.py` (fail-closed catalog validation), `engine.py` (conditional checklists), `freshness.py` (180-day review status), `refresh.py` (daily official-source availability/change check) |
 | `scripts/refresh_services.py` | Runs the once-a-day public source check and writes `data/services/refresh_status.json`; scheduled by `.github/workflows/refresh-service-guides.yml` |
 | `backend/app/intake/engine.py` | Maps free text to service/task + missing questions |
-| `backend/app/rag/` | `ingest`, `retriever`, `generator`, `verifier`, `guard`, `fee_answer`, `photo_answer`, `prompts` |
+| `backend/app/rag/` | `ingest`, `retriever`, `generator`, `verifier`, `guard`, `fee_answer`, `photo_answer`, `documents_answer`, `process_answer`, `prompts` |
 | `backend/app/llm.py` | OpenAI-compatible adapter (OpenRouter aware); never logs keys |
 | `backend/app/privacy.py` | `contains_identity_number()` heuristic |
-| `backend/app/rate_limit.py` | Process-local sliding-window limiter |
+| `backend/app/rate_limit.py` | Sliding-window limiter with a hashed SQLite store (one host) or process-local memory |
 | `backend/app/drafter/grs.py` | Server GRS draft (kept for API callers; the UI no longer calls it) |
 | `backend/app/tests/` | pytest suite + `eval_questions.json` |
-| `ml_core/` | Shared embedder (`LocalEmbedder`). **Frozen.** |
+| `ml_core/` | Shared `LocalEmbedder` (query cache, batch dedupe), intent classifier and RAG helpers. The backend's production ONNX embedder mirrors the same cache/prefix behaviour. |
 | `data/` | Source of truth: `services/*.json`, `fees.json`, `fee_schedules.json`, `requirements.json`, `VERIFICATION_LOG.md` |
 | `corpus/` | Curated official-source snapshots; front matter must include `service_id`, `source_url`, `last_verified`, `language`, `section` |
 | `frontend/app/` | Routes (see below) |
@@ -48,10 +48,10 @@ The model is never the policy engine.
 Errors use `{error:{code,message}}`. Never return tracebacks, paths, prompts or secrets.
 
 ## Key flows
-- **Intake**: validate (2–1000 chars) → rate limit → `contains_identity_number` reject → guard → LLM classifier if key set, else keyword router → output constrained to catalog service/task/declared answers → missing questions. Modes: `api | rules | confirmed | blocked`.
+- **Intake**: validate (2-1000 chars) → rate limit → `contains_sensitive_data` reject → guard → LLM classifier if key set, else keyword router → output constrained to catalog service/task/declared answers → missing questions. Modes: `api | rules | confirmed | blocked`.
 - **Checklist**: minimal non-sensitive answers → `services/engine.py` → documents/steps/warnings with sources + `review_status`.
 - **Daily source check**: `refresh.py` fetches each service's public official URLs (GET only, robots-aware, 15 s timeout), stores a SHA-256 hash in `data/services/refresh_status.json`, and flags a changed page as `pending_review`. It never rewrites guide content; UI shows `last_checked` and the pending-review warning.
-- **Copilot**: guard → deterministic fee/photo handlers → retrieve (filter `service_id`, top-k 5, min score 0.35) → LLM JSON `{answer, used_chunk_ids}` → verifier (known ids, numeric cross-check) → citations from stored metadata. No key or failed verification → cited excerpt or fallback. Modes: `deterministic | api | extractive | safety`.
+- **Copilot**: guard → deterministic fee/document/photo/status handlers → lexical relevance gate + semantic E5 fallback → retrieve (filter `service_id`, top-k 5, min score 0.35) → LLM JSON `{answer, used_chunk_ids, answerable}` → verifier (known ids, numeric cross-check, unsafe advice). No key or failed verification → supported excerpt or fallback. Modes: `deterministic | api | extractive | safety | not_found | clarify | screened_local`.
 - **Local-only tools**: validate size/type/magic bytes → decode in browser → show as unconfirmed text → clear on reset/unload. No storage, no network.
 
 ## Data contracts
@@ -65,4 +65,4 @@ Errors use `{error:{code,message}}`. Never return tracebacks, paths, prompts or 
 Allowed: public GET response cache and the language preference in `localStorage`. Forbidden: anything derived from user input.
 
 ## Known limitations
-Rate limiter is per-process (needs Redis for multi-instance). CSP allows `'unsafe-inline'` scripts (Next.js). The identity-number filter is heuristic. `main.py` is monolithic (`copilot_ask` is about 130 lines).
+Rate limiting is shared by worker processes on one host via a hashed SQLite file; an optional atomic Redis window covers multi-host deployments when `RATE_LIMIT_STORE=redis` is configured. CSP allows `'unsafe-inline'` scripts (Next.js). The identity/personal-data filter is heuristic. `main.py` is monolithic (`copilot_ask` is about 250 lines).

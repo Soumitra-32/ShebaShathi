@@ -126,17 +126,19 @@ ShebaShathi BD is deliberately limited:
 - Accepts a short description in **Bangla, English or Banglish**.
 - An optional LLM only classifies the service/task; a deterministic keyword router takes over when no key is configured, the provider fails, or the output is invalid.
 - The UI states which mode was used and asks only for missing non-sensitive answers.
-- Identity-like numbers are rejected before any model call.
+- Identity-like numbers, codes and credentials are rejected before any model call; labelled names, addresses and dates of birth are also screened.
 
 ### 3. Grounded AI assistant
 
 - Multi-turn chat at **`/copilot`**, with conversation history held in the browser.
-- Deterministic fee, photo and status tools run first.
-- Other questions are answered only from service-scoped retrieved sources.
+- Deterministic fee, document, photo and status tools run first.
+- Other questions pass a relevance gate before retrieval: a lexical service/task check, then a fail-closed E5 semantic fallback for paraphrases.
+- Off-topic questions return a safe fallback; ambiguous task-only questions ask which service is meant. Neither retrieves nor calls a model.
+- In-scope questions are answered only from service-scoped retrieved sources.
 - Every generated answer is checked against the cited chunks; unsupported numbers or URLs cause a cited/deterministic fallback.
 - Answers include source citations, verification dates, chunk IDs and similarity scores where applicable.
 - Deterministic status answers and the e-Passport fraud-shield card use the same source-dated official guidance.
-- No LLM key is required: the assistant can answer in cited extractive mode.
+- No LLM key is required: deterministic document/fee/photo/status/step answers and a supported cited excerpt cover the no-key path. If an excerpt does not support the question, the safe fallback is shown instead.
 - Optional **AI case brief** rewrites an already-verified checklist in plain language without adding facts.
 
 ### 4. Fee transparency
@@ -261,7 +263,7 @@ Service rules live in `data/services/*.json`. The loader fails closed if a rule 
 │   ├── rag/                     Ingest, retrieval, generation, verifier, guards, tools
 │   ├── guidance/                Verified status and fraud-shield guidance
 │   ├── privacy.py               Identity-number and sensitive-data screens
-│   ├── rate_limit.py            Process-local sliding-window limiter
+│   ├── rate_limit.py            Shared SQLite / process-local window limiter
 │   ├── llm.py                   OpenAI-compatible adapter (OpenRouter-aware)
 │   └── tests/                   pytest suite and evaluation data
 ├── corpus/                      Curated official-source snapshots with front matter
@@ -278,7 +280,7 @@ Service rules live in `data/services/*.json`. The loader fails closed if a rule 
 │   ├── lib/local/               Browser-only OCR, PDF, compare, complaint, speech
 │   ├── locales/                 bn.json and en.json
 │   └── public/                  Self-hosted runtimes, models and static assets
-├── ml_core/                     Shared embedder — treated as frozen
+├── ml_core/                     Shared embedder, intent classifier and RAG helpers
 ├── scripts/                     Maintenance, refresh and verification scripts
 ├── docs/                        Product, security, privacy, deployment and evaluation docs
 ├── docker-compose.yml           Local two-service stack
@@ -382,13 +384,23 @@ All settings come from environment variables. See [`.env.example`](.env.example)
 | `CHROMA_PERSIST_DIR` | `./.chroma` | Vector-store persistence directory |
 | `EMBEDDING_MODEL` | `intfloat/multilingual-e5-small` | Multilingual embedding model |
 | `EMBEDDING_BACKEND` | `torch` | `torch` for local development, `onnx` for the production image |
+| `ML_EMBEDDING_CACHE_SIZE` | `512` | Bounded query-embedding cache (SHA-256 keys; no question text stored) |
 | `VECTOR_STORE` | `chroma` | `chroma` for development, `numpy` for the low-memory production image |
 | `RAG_TOP_K` | `5` | Number of chunks retrieved per question |
 | `RAG_MIN_SCORE` | `0.35` | Minimum similarity score for a usable chunk |
+| `SEMANTIC_SCOPE_ENABLED` | `true` | Enable the E5 relevance fallback after the lexical gate |
+| `SEMANTIC_SCOPE_MIN_SCORE` | `0.82` | Minimum in-domain prototype score |
+| `SEMANTIC_SCOPE_MIN_MARGIN` | `0.01` | Required margin over the nearest out-of-domain examples |
+| `EXTRACTIVE_MIN_SCORE` | `0.86` | Score that can support a no-LLM excerpt with no shared task word |
 | `WARM_RETRIEVAL` | `true` | Warm the index at startup |
-| `RATE_LIMIT_ENABLED` | `true` | Enable process-local rate limiting |
+| `RATE_LIMIT_ENABLED` | `true` | Enable endpoint rate limiting |
+| `RATE_LIMIT_STORE` | `sqlite` | `sqlite` shares hashed windows across workers on one host; `redis` is opt-in for multi-host; `memory` is process-local |
+| `RATE_LIMIT_DB_PATH` | `.state/rate_limits.db` | SQLite file for the shared limiter; relative paths resolve from the repo root |
+| `RATE_LIMIT_REDIS_URL` | empty | Required only when `RATE_LIMIT_STORE=redis`; never commit a credential |
 | `RATE_LIMIT_PER_MINUTE` | `60` | Limit for costly public endpoints |
 | `INTAKE_RATE_LIMIT_PER_MINUTE` | `60` | Limit for the intake endpoint |
+| `TRUST_PROXY_HEADERS` | `false` | Trust the proxy's `X-Forwarded-For` chain; enable only behind a trusted proxy |
+| `TRUSTED_PROXY_IPS` | empty | Comma-separated proxy addresses/CIDRs allowed to supply the forwarded client address |
 
 ### Optional LLM settings
 
@@ -406,7 +418,7 @@ The default `.env.example` shows **OpenRouter** as the recommended provider. Swa
 When no key is configured:
 
 - intake uses the deterministic keyword router (`generation_mode: "rules"`);
-- the copilot answers with cited source excerpts (`generation_mode: "extractive"`);
+- the copilot uses deterministic document/fee/photo/status/step answers or a supported cited excerpt (`generation_mode: "extractive"`), and otherwise the safe fallback;
 - no external model call is made.
 
 ### Frontend setting
@@ -517,7 +529,7 @@ ShebaShathi BD is designed so that sensitive data does not need to leave the bro
 - Service catalog and conditional checklist rules
 - Verified fee catalog delivery
 - Grounded retrieval and optional answer generation
-- Intake classification (optional provider call after the identity-number screen)
+- Intake classification (optional provider call after the sensitive-data screen)
 - Safe error handling and rate limiting
 
 ### Data-handling rules
@@ -622,7 +634,7 @@ No public deployment URL is claimed in this repository.
 | Local tools | Complaint drafter, voice input, document consistency check, fee comparison |
 | Source freshness | Daily automated check with human-review flagging |
 | Evaluation | Recorded e-Passport evaluation; multi-service evaluation set pending |
-| Production scale-out | Rate limiting is process-local; a shared store is needed for multiple instances |
+| Production scale-out | The default SQLite limiter covers one host; multi-host uses the optional Redis store with a managed Redis service |
 
 The project is a **hackathon MVP**, not a production government service. Treat the cited official source and the deterministic checklist as authoritative.
 
@@ -636,8 +648,10 @@ The project is a **hackathon MVP**, not a production government service. Treat t
 - Local Whisper dictation is usable but not perfect; the transcript is editable before use.
 - Services without a verified fee schedule show “manual verification required” and link to the official portal.
 - The intake classifier is a starting point, not an official decision. Ambiguous cases ask the user to choose a service or task.
-- Identity-number screening is shape-based and intentionally conservative; it can miss an unusual format.
-- Rate limiting is process-local. A multi-instance deployment needs a shared store such as Redis.
+- Identity and personal-data screening is shape-based and intentionally conservative; it can miss an unlabelled name, an address or unusual format, and a false positive only answers locally.
+- Rate limiting is shared across worker processes on one host via SQLite. A multi-host deployment must configure the optional Redis store and provision that service; it was not load-tested here.
+- The semantic relevance gate is a fallback calibrated on a curated 84/86 prototype set; it can still reject a valid paraphrase or accept a close off-topic question. When unsure it fails closed.
+- Without an LLM key, a named task gets deterministic steps or a document/fee/photo/status answer. An in-scope paraphrase that names no task and no clear service may still receive the safe fallback when no retrieved chunk shares a task word and no chunk scores high enough. Service/fee chunks are indexed per language, but if the requested language has no source the excerpt may be pure text in the other language.
 - Generated text can vary between runs. The verifier blocks unsupported numbers and URLs, but it cannot prove every paraphrase is ideal.
 - The CSP currently allows `'unsafe-inline'` scripts because of Next.js requirements.
 - No live deployment URL or recorded demo video is included in this repository.

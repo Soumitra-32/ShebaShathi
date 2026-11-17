@@ -67,6 +67,7 @@ Treat browser input, retrieved text, scraped or manually copied source files, LL
 - Never send identity data or browser-only comparison values to the API, an LLM, Chroma, logs, analytics, or URL query parameters.
 - Do not persist sensitive values in localStorage, sessionStorage, IndexedDB, cookies, caches, or server-side sessions. Browser-only comparison state must live in component memory and clear on page exit/reload.
 - Keep complaint details in the user request only; do not persist them. Avoid logging request bodies, prompts, generated complaint text, or personal profile fields.
+- Rate-limit state may persist only as a SHA-256 hash of the client key plus a timestamp in a short-lived operational store. Never store the raw IP, request body or question in that store; expired rows are deleted as the window advances.
 - If future requirements genuinely need new data collection, stop and document purpose, minimum fields, retention, access, deletion, and threat controls before implementation.
 
 #### 3.1.1 Local-only document, voice and complaint processing (added 2026-10-20)
@@ -177,3 +178,5 @@ Do not report “no vulnerabilities” as a guarantee. Report only what was revi
 ## 6. Change history
 
 - 2026-10-17 — Initial security workflow and self-audit requirements created for DeepSeek V4 and other coding agents.
+- 2026-11-16 - Copilot relevance gate, `answer_found` state, assistant-history screening and broader sensitive-data patterns; see `docs/SECURITY_AUDIT_2026-11-16_copilot.md`.
+- 2026-11-17 - Semantic relevance fallback, deterministic document answers, extractive support check, labelled name/address/date-of-birth and document-shape screening, narrower assistant-history screen, and a hashed SQLite rate-limit store shared by worker processes on one host; follow-up hardening adds passage-based E5 prototypes with hard negatives, bare birth-date and unapproved long-number screening, language-split index chunks, opt-in trusted-proxy client keys, an optional atomic Redis window, deterministic published steps for named tasks, and narrower section routing; see `docs/SECURITY_AUDIT_2026-11-17_hardening.md`.

@@ -16,7 +16,9 @@ Status as of 2026-10-30. Phases 0–10 in `docs/PLANNER.md` are implemented exce
 - [ ] T-07 **Multi-service eval set** (PLANNER P8-2): add ≥6 questions each for birth, NID, driving licence, death registration, plus cross-service trick questions; extend `live_eval.py` and `test_eval_offline.py`.
 - [ ] T-08 Refactor `copilot_ask` out of `main.py` into `rag/` (pure move, tests unchanged); consider `APIRouter` modules.
 - [ ] T-09 Backend lint/type tooling (ruff + mypy config) and a CI workflow running pytest, `next lint`, `tsc`, `vitest`, `next build`, `npm audit --omit=dev`.
-- [ ] T-10 Replace the process-local rate limiter with a shared store before multi-instance deploy (Redis), or document single-instance deploy as a requirement in `docs/DEPLOYMENT.md`.
+- [x] T-10 Replace the process-local rate limiter with a shared store before multi-instance deploy (Redis), or document single-instance deploy as a requirement in `docs/DEPLOYMENT.md`. (2026-11-17: default store is now a hashed SQLite window shared by worker processes on one host; `docs/DEPLOYMENT.md` requires one instance and names Redis for any multi-host scale-out.)
+- [x] T-10b Add and document an optional shared store for a genuinely multi-host deployment. (2026-11-17: `RATE_LIMIT_STORE=redis` uses one atomic sorted-set Lua window over a managed `RATE_LIMIT_REDIS_URL`; a missing/broken server degrades to the local store. The default single-instance deployment remains SQLite.)
+- [ ] T-10c Before a genuinely multi-host production deploy, provision Redis, run the live Lua path end to end, and load-test the shared window.
 
 ## P3: Data
 - [ ] T-11 Verify NID, birth registration and death registration fee schedules on official pages, then add them to `data/fee_schedules.json` with dates. Until verified, they stay "manual verification required".

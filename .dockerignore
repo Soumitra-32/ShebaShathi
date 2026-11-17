@@ -12,6 +12,7 @@
 .cache
 .model_cache
 .tmp-test
+.state
 .env
 .env.example
 DECISIONS.md

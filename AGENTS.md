@@ -14,7 +14,7 @@ If documents conflict: code behaviour verified by tests > `DECISIONS.md` (newest
 1. **No hallucinated facts.** Every fee, document, rule, deadline or URL shown to a user comes from `data/` (with `source_url` + `last_verified`) or a retrieved corpus chunk. Otherwise show the service's fallback string.
 2. **Deterministic first.** Fees, checklists, eligibility and routing are code/config. The LLM only classifies intent and explains retrieved text. It never picks a fee, document or rule.
 3. **Privacy.** Never request, send, log or persist NID/BRN/passport/licence numbers, document images, OTPs, credentials, complaint text, OCR output, voice audio or transcripts. Complaint drafting, OCR, voice and document comparison run **in the browser only**, from self-hosted assets, with no cloud fallback.
-4. **Do not modify `ml_core/`** unless the user explicitly authorizes it.
+
 5. **Keep the stack and scope.** Next.js 15 + Tailwind 3 (frontend), FastAPI (backend), Chroma + multilingual-e5-small (RAG). No new services, accounts, databases, telemetry or government-portal automation.
 6. **Bangla first.** Default language is `bn`; every user-facing string needs `bn` and `en`.
 7. **Never fabricate** statistics, fees, source dates or verification claims. Unverified = "manual verification required" plus the official portal link.

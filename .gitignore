@@ -17,4 +17,5 @@ frontend/public/ort/
 frontend/public/pdf/
 frontend/public/models/
 .tmp-test/
+.state/
 backend/models/

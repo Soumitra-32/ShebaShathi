@@ -45,7 +45,27 @@ the fp32 e5-small weights need roughly 1 GB, so production runs the same
      `PYTHONPATH=/app/backend` (all are baked into the Dockerfile too, so they
      only need touching if you change them).
    - Abuse controls (optional): `RATE_LIMIT_ENABLED=true`,
-     `RATE_LIMIT_PER_MINUTE=60`, `INTAKE_RATE_LIMIT_PER_MINUTE=60`
+     `RATE_LIMIT_STORE=sqlite`, `RATE_LIMIT_DB_PATH=/tmp/shebashathi-rate-limits.db`,
+     `RATE_LIMIT_PER_MINUTE=60`, `INTAKE_RATE_LIMIT_PER_MINUTE=60`.
+     `sqlite` shares the hashed window across worker processes **on one host**;
+     `/tmp` is ephemeral, which is fine because this is operational state only.
+     Use `RATE_LIMIT_STORE=memory` for the original process-local behaviour.
+     For a genuinely multi-host deployment, set `RATE_LIMIT_STORE=redis` and
+     `RATE_LIMIT_REDIS_URL` to a managed Redis-compatible service; the Lua
+     sorted-set window is atomic across hosts. Redis is not part of the default
+     single-instance deployment and no Redis service is created by this repo.
+     A missing or unreachable Redis server degrades to the local window rather
+     than failing open or blocking startup.
+   - Client identity behind a proxy: set `TRUST_PROXY_HEADERS=true` only when
+     the backend is reachable exclusively through a trusted proxy, and set
+     `TRUSTED_PROXY_IPS` to the proxy address/CIDR list. The limiter uses the
+     rightmost untrusted `X-Forwarded-For` value, so a client cannot put a fake
+     left-hand value into the bucket. `render.yaml` enables this for Render's
+     terminating proxy; local/direct runs keep it false.
+   - Relevance and no-key answer controls: `SEMANTIC_SCOPE_ENABLED=true`,
+     `SEMANTIC_SCOPE_MIN_SCORE=0.82`, `SEMANTIC_SCOPE_MIN_MARGIN=0.01`,
+     `EXTRACTIVE_MIN_SCORE=0.86`. These change only the gate/support decision,
+     never a fee or document fact.
    - Optional LLM provider (copilot answers and intake classification). For OpenRouter:
      `LLM_API_BASE=https://openrouter.ai/api/v1`, `LLM_MODEL=openai/gpt-4o-mini`
      (or another OpenRouter model id), `LLM_API_KEY=<key you have ROTATED>`,
@@ -83,10 +103,11 @@ the fp32 e5-small weights need roughly 1 GB, so production runs the same
    - `GET /api/services/refresh-status` returns `pending_review: false` for the latest checked sources.
    - A real `POST /api/intake`, a PII-rejection request, and an
      unsafe-intent request behave as documented.
-   - Rate limiting is process-local: run exactly ONE free instance (Render
-     free is a single instance by design). If you ever scale out, replace
-     `backend/app/rate_limit.py` with a shared store and re-review proxy
-     header trust before launch.
+   - The SQLite limiter is shared by worker processes on one host. Run exactly
+     ONE free instance (Render free is a single instance by design). Before
+     scaling across hosts, switch `RATE_LIMIT_STORE=redis` with a managed
+     `RATE_LIMIT_REDIS_URL`, and keep `TRUST_PROXY_HEADERS=true` with the
+     provider's proxy CIDRs in `TRUSTED_PROXY_IPS`.
 
 ## 2. Frontend on Vercel (free, Hobby)
 
@@ -127,7 +148,8 @@ the fp32 e5-small weights need roughly 1 GB, so production runs the same
   and `X-Frame-Options` headers are present on every route.
 - `docker compose up --build` still runs cleanly locally as the fallback demo
   (compose uses the dev requirements and can serve `EMBEDDING_BACKEND=torch`).
-- If you scale beyond one instance, replace the process-local rate limiter before launch; see §1.5.
+- If you scale across hosts, set `RATE_LIMIT_STORE=redis` with a managed shared
+  store before launch; keep proxy trust limited to the provider's CIDRs.
 
 ## 4. Local checks before deploying
 
